@@ -8,6 +8,7 @@ import 'package:maha_kundali_app/components/customTextfield.dart';
 import 'package:maha_kundali_app/components/util.dart';
 import 'package:maha_kundali_app/screens/Authentication/forgotPass.dart';
 import 'package:maha_kundali_app/screens/Authentication/registration.dart';
+import 'package:maha_kundali_app/screens/Home/dashboardScreen.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:maha_kundali_app/theme/style.dart';
 import 'package:http/http.dart' as http;
@@ -34,7 +35,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 1),
       vsync: this,
     );
     _animation = CurvedAnimation(
@@ -136,13 +137,19 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                         isLoading != true
                             ? ElevatedButton(
                                 onPressed: () {
-                                  if (_formKey.currentState!.validate()) {
-                                    setState(() {
-                                      isLoading = true;
-                                    });
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => DashboardScreen(),
+                                    ),
+                                  );
+                                  // if (_formKey.currentState!.validate()) {
+                                  //   setState(() {
+                                  //     isLoading = true;
+                                  //   });
 
-                                    loginUser(context);
-                                  }
+                                  //   loginUser(context);
+                                  // }
                                 },
                                 child: Text('Sign Up'),
                                 style: ElevatedButton.styleFrom(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maha_kundali_app/screens/Home/dashboardScreen.dart';
 
 class SelectLanguageScreen extends StatefulWidget {
   @override
@@ -75,6 +76,11 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
               child: ElevatedButton(
                 onPressed: () {
                   if (_selectedLanguage.isNotEmpty) {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DashboardScreen()),
+                        (route) => false);
                     print('Selected language: $_selectedLanguage');
                     // Perform submit action
                   }
