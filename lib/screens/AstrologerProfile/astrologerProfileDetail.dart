@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maha_kundali_app/screens/chats/chatMessageScreen.dart';
 import 'package:shimmer/shimmer.dart';
 
 class AstrologerProfileScreen extends StatefulWidget {
@@ -13,6 +14,7 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
   bool _isExpanded = false;
   late AnimationController _controller;
   late Animation<double> _animation;
+  bool isFollow = false;
 
   @override
   void initState() {
@@ -150,9 +152,9 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const Text('Vedic Astrologer | 10+ years of Experience',
-                  style: TextStyle(color: Colors.grey)),
+                  style: TextStyle(color: Colors.black)),
               const Text('Languages: Hindi, English',
-                  style: TextStyle(color: Colors.grey)),
+                  style: TextStyle(color: Colors.black)),
               const SizedBox(height: 8),
               const Text('₹500 / minute',
                   style: TextStyle(fontSize: 18, color: Colors.orange)),
@@ -168,12 +170,14 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
                 backgroundColor: Colors.orange,
               ),
               onPressed: () {
-                // Handle follow action
+                setState(() {
+                  isFollow = !isFollow;
+                });
               },
-              child: const Text('Follow'),
+              child: isFollow ? Text('Unfollow') : Text('Follow'),
             ),
             const SizedBox(height: 8),
-            const Text('5000 Followers', style: TextStyle(color: Colors.grey)),
+            const Text('5000 Followers', style: TextStyle(color: Colors.black)),
           ],
         ),
       ],
@@ -349,6 +353,12 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
                 icon: const Icon(Icons.chat),
                 label: const Text('Chat'),
                 onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatScreen(chatId: "1"),
+                    ),
+                  );
                   // Handle chat action
                 },
               ),

@@ -65,6 +65,8 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Cart"),
+        backgroundColor: Colors.orange,
+        centerTitle: true,
         automaticallyImplyLeading: false, // Removes the back button
       ),
       body: Column(
@@ -198,7 +200,7 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 15),
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.orange,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -209,7 +211,7 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
               },
               child: Text(
                 'Place Order (\$${getTotalPrice().toStringAsFixed(2)})',
-                style: const TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 18, color: Colors.white),
               ),
             ),
           ),

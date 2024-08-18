@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:maha_kundali_app/screens/Horoscope/horoscopeDetails.dart';
+import 'package:maha_kundali_app/screens/profileContent/callIntakeForm.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HoroscopeScreen extends StatefulWidget {
@@ -70,6 +72,13 @@ class _HoroscopeScreenState extends State<HoroscopeScreen>
             ),
           ),
           onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CallIntakeFormScreen(),
+              ),
+            );
+
             // Handle navigation to the "I don't know my Sign" screen
           },
           child: const Text("I don't know my Sign",
@@ -132,6 +141,12 @@ class _HoroscopeScreenState extends State<HoroscopeScreen>
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HoroscopeDetailsScreen(),
+                ),
+              );
               // Handle navigation to the specific zodiac screen
             },
             child: Container(

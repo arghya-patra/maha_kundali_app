@@ -189,12 +189,12 @@ class _WalletScreenState extends State<WalletScreen> {
       keyboardType: TextInputType.number,
       decoration: const InputDecoration(
         labelText: 'Enter Amount',
-        labelStyle: TextStyle(color: Colors.orange),
+        labelStyle: TextStyle(color: Colors.white),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.orange),
         ),
         border: OutlineInputBorder(),
-        prefixIcon: Icon(Icons.account_balance_wallet, color: Colors.orange),
+        prefixIcon: Icon(Icons.account_balance_wallet, color: Colors.white),
       ),
     );
   }

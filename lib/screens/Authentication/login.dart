@@ -21,7 +21,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
-  TextEditingController email = TextEditingController();
+  TextEditingController phone = TextEditingController();
   TextEditingController password = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late AnimationController _controller;
@@ -92,9 +92,9 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         KTextField(
-                          title: 'Email',
-                          controller: email,
-                          textInputType: TextInputType.emailAddress,
+                          title: 'Phone',
+                          controller: phone,
+                          textInputType: TextInputType.phone,
                         ),
                         KTextField(
                           title: 'Password',
@@ -151,7 +151,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                                   //   loginUser(context);
                                   // }
                                 },
-                                child: Text('Sign Up'),
+                                child: Text('Login'),
                                 style: ElevatedButton.styleFrom(
                                   foregroundColor: Colors.white,
                                   backgroundColor: Colors.orange,
@@ -350,7 +350,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
     String url = APIData.login;
     print(url.toString());
     var res = await http.post(Uri.parse(url), body: {
-      'email': email.text,
+      'email': phone.text,
       'password': password.text,
     });
     if (res.statusCode == 200) {

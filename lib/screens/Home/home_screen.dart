@@ -1,10 +1,23 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:maha_kundali_app/Blog/blog_screen.dart';
+import 'package:maha_kundali_app/screens/Astro_Ecom/my_order.dart';
+import 'package:maha_kundali_app/screens/Astro_Ecom/productListScreen.dart';
 import 'package:maha_kundali_app/screens/AstrologerProfile/astrologerList.dart';
 import 'package:maha_kundali_app/screens/AstrologerProfile/astrologerProfileDetail.dart';
 import 'package:maha_kundali_app/screens/Home/walletScreen.dart';
+import 'package:maha_kundali_app/screens/Horoscope/horoscopeDetails.dart';
 import 'package:maha_kundali_app/screens/Horoscope/horoscopeScreen.dart';
+import 'package:maha_kundali_app/screens/Numerology/numerologyScreen.dart';
+import 'package:maha_kundali_app/screens/chats/chatListScreen.dart';
+import 'package:maha_kundali_app/screens/chats/chatMessageScreen.dart';
 import 'package:maha_kundali_app/screens/chats/customerSupportChat.dart';
+import 'package:maha_kundali_app/screens/kundli/kundliMatching.dart';
+import 'package:maha_kundali_app/screens/kundli/kundliScreen.dart';
+import 'package:maha_kundali_app/screens/panchang/panchangScreen.dart';
+import 'package:maha_kundali_app/screens/profileContent/buyMembershipScreen.dart';
+import 'package:maha_kundali_app/screens/profileContent/settingsScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -66,20 +79,29 @@ class _HomeScreenState extends State<HomeScreen> {
                   Icons.home,
                   'Home',
                 ),
-                _buildDrawerItem(Icons.book_online, 'Book a Puja'),
-                _buildDrawerItem(Icons.calendar_today, 'Daily Horoscope'),
-                _buildDrawerItem(Icons.chat, 'Customer Support Chat'),
+                //  _buildDrawerItem(Icons.book_online, 'Book a Puja'),
+                _buildDrawerItem(Icons.calendar_today, 'Daily Horoscope',
+                    route: HoroscopeScreen()),
+                _buildDrawerItem(Icons.chat, 'Customer Support Chat',
+                    route: CustomerSupportChat()),
                 _buildDrawerItem(
-                    Icons.account_balance_wallet, 'Wallet Transaction'),
-                _buildDrawerItem(Icons.history, 'Order History'),
-                _buildDrawerItem(Icons.card_membership, 'Buy Membership'),
-                _buildDrawerItem(Icons.shopping_bag, 'Astro Products'),
-                _buildDrawerItem(Icons.book, 'Astro Book'),
-                _buildDrawerItem(Icons.chat_bubble, 'Chat with Astrologers'),
-                _buildDrawerItem(Icons.favorite, 'My Followings'),
-                _buildDrawerItem(Icons.star, 'Free Services'),
-                _buildDrawerItem(Icons.person_add, 'Sign up as Astrologer'),
-                _buildDrawerItem(Icons.settings, 'Settings'),
+                    Icons.account_balance_wallet, 'Wallet Transaction',
+                    route: WalletScreen()),
+                _buildDrawerItem(Icons.history, 'Order History',
+                    route: OrderDetailsScreen()),
+                _buildDrawerItem(Icons.card_membership, 'Buy Membership',
+                    route: BuyMembershipScreen()),
+                _buildDrawerItem(Icons.shopping_bag, 'Astro Products',
+                    route: ShoppingScreen()),
+                //_buildDrawerItem(Icons.book, 'Astro Book'),
+                _buildDrawerItem(Icons.chat_bubble, 'Chat with Astrologers',
+                    route: ChatListScreen()),
+                _buildDrawerItem(Icons.newspaper, 'Blog',
+                    route: AstrologyBlogScreen()),
+                // _buildDrawerItem(Icons.star, 'Free Services'),
+                //  _buildDrawerItem(Icons.person_add, 'Sign up as Astrologer'),
+                _buildDrawerItem(Icons.settings, 'Settings',
+                    route: SettingsScreen()),
                 _buildDrawerItem(Icons.logout, 'Log Out'),
               ],
             ),
@@ -146,21 +168,21 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Dashboard'),
         centerTitle: true,
         actions: [
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CustomerSupportChat(),
-                ),
-              );
-            },
-            child: CircleAvatar(
-              radius: 18,
-              backgroundImage:
-                  AssetImage('images/cart.png'), // replace with your cart image
-            ),
-          ),
+          // GestureDetector(
+          //   onTap: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) => CustomerSupportChat(),
+          //       ),
+          //     );
+          //   },
+          //   child: CircleAvatar(
+          //     radius: 18,
+          //     backgroundImage:
+          //         AssetImage('images/cart.png'), // replace with your cart image
+          //   ),
+          // ),
           const SizedBox(width: 10),
           GestureDetector(
             onTap: () {
@@ -178,10 +200,20 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(width: 10),
-          const CircleAvatar(
-            radius: 18,
-            backgroundImage: AssetImage(
-                'images/notification.png'), // replace with your notification image
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsScreen(),
+                ),
+              );
+            },
+            child: const CircleAvatar(
+              radius: 18,
+              backgroundImage: AssetImage(
+                  'images/notification.png'), // replace with your notification image
+            ),
           ),
           const SizedBox(width: 10),
         ],
@@ -229,14 +261,36 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHorizontalOptions() {
-    final List<Map<String, String>> options = [
-      {'title': '2024 \nSpecial', 'image': 'images/year.jpeg'},
-      {'title': 'Daily \nHoroscope', 'image': 'images/daily_horoscope.png'},
-      {'title': 'Zodiac', 'image': 'images/zodiac.jpeg'},
-      {'title': 'Kundali', 'image': 'images/kundali.png'},
+    final List<Map<String, dynamic>> options = [
+      {
+        'title': '2024 \nSpecial',
+        'image': 'images/year.jpeg',
+        'route': HoroscopeScreen()
+      },
+      {
+        'title': 'Panchang',
+        'image': 'images/panchang_icon.webp',
+        'route': PanchangScreen()
+      },
+      {
+        'title': 'Daily\nHoroscope',
+        'image': 'images/daily_horoscope.png',
+        'route': HoroscopeScreen()
+      },
+      {
+        'title': 'Numerology',
+        'image': 'images/zodiac.jpeg',
+        'route': NumerologyScreen()
+      },
+      {
+        'title': 'Kundali',
+        'image': 'images/kundali.png',
+        'route': KundliScreen()
+      },
       {
         'title': 'Love \nCompatibility',
-        'image': 'images/love_compatibility.png'
+        'image': 'images/love_compatibility.png',
+        'route': KundliMatchingScreen()
       },
     ];
 
@@ -251,8 +305,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => HoroscopeScreen(),
-                ),
+                    builder: (context) => options[index]['route']),
               );
 
               // Handle navigation to other screen
@@ -278,7 +331,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 8),
                   Text(
                     options[index]['title']!,
-                    style: const TextStyle(color: Colors.black),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.black,
+                    ),
                   ),
                 ],
               ),
@@ -389,10 +445,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildChatWithAstrologerSection(BuildContext context) {
     final List<Map<String, String>> astrologers = [
-      {'name': 'Astrologer 5', 'image': 'images/astro1.jpg', 'rating': '4.7'},
-      {'name': 'Astrologer 6', 'image': 'images/astro2.jpg', 'rating': '4.8'},
-      {'name': 'Astrologer 7', 'image': 'images/astro3.jpg', 'rating': '4.6'},
-      {'name': 'Astrologer 8', 'image': 'images/astro2.jpg', 'rating': '4.9'},
+      {'name': 'Astrologer 5', 'image': 'images/astro3.jpg', 'rating': '4.7'},
+      {'name': 'Astrologer 6', 'image': 'images/astro1.jpg', 'rating': '4.8'},
+      {'name': 'Astrologer 7', 'image': 'images/astro2.jpg', 'rating': '4.6'},
+      {'name': 'Astrologer 8', 'image': 'images/astro3.jpg', 'rating': '4.9'},
     ];
 
     return Column(
@@ -409,6 +465,12 @@ class _HomeScreenState extends State<HomeScreen> {
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatScreen(chatId: "1"),
+                    ),
+                  );
                   // Handle navigation to astrologer chat screen
                 },
                 child: Padding(
@@ -482,6 +544,12 @@ class _HomeScreenState extends State<HomeScreen> {
           alignment: Alignment.centerRight,
           child: TextButton(
             onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatListScreen(),
+                ),
+              );
               // Handle view all navigation
             },
             child:
@@ -493,44 +561,54 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildLibraDailyHoroscope() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 10,
-            spreadRadius: 5,
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HoroscopeDetailsScreen(),
           ),
-        ],
-      ),
-      child: Row(
-        children: [
-          const CircleAvatar(
-            radius: 30,
-            backgroundImage: AssetImage('images/libra.jpeg'),
-            backgroundColor: Colors.transparent,
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Libra Daily Horoscope',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                Text(
-                  'Today is a good day to focus on your relationships...',
-                  style: TextStyle(color: Colors.grey[600]),
-                ),
-              ],
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 10,
+              spreadRadius: 5,
             ),
-          ),
-          const Icon(Icons.arrow_forward_ios, color: Colors.orange),
-        ],
+          ],
+        ),
+        child: Row(
+          children: [
+            const CircleAvatar(
+              radius: 30,
+              backgroundImage: AssetImage('images/libra.jpeg'),
+              backgroundColor: Colors.transparent,
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Libra Daily Horoscope',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Today is a good day to focus on your relationships...',
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios, color: Colors.orange),
+          ],
+        ),
       ),
     );
   }

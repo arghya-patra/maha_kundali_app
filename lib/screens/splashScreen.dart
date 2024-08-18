@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:maha_kundali_app/aaa/test.dart';
 import 'package:maha_kundali_app/screens/Authentication/login.dart';
 import 'package:maha_kundali_app/screens/Authentication/registration.dart';
 import 'package:maha_kundali_app/screens/Home/dashBoard.dart';
@@ -46,14 +45,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: kBackgroundDesign(context),
-      child: Scaffold(
-        // backgroundColor: Colors.transparent,
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Center(child: Image.asset('images/logo.png', height: 200)),
-        ),
+    return Scaffold(
+      // backgroundColor: Colors.transparent,
+      body: Image.asset(
+        'images/splash_img.webp',
+        height: MediaQuery.of(context).size.height,
+        fit: BoxFit.fill,
       ),
     );
   }

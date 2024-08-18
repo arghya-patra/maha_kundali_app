@@ -1,6 +1,8 @@
 //if the get api is used to fetch the product details
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:maha_kundali_app/screens/Astro_Ecom/cartScreen.dart';
+import 'package:maha_kundali_app/screens/Astro_Ecom/wishListScreen.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -217,17 +219,30 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         title: Text(_product['title']),
         actions: [
           IconButton(
-            icon: Icon(
-              _isFavorite ? Icons.favorite : Icons.favorite_border,
-              color: _isFavorite ? Colors.red : Colors.white,
-            ),
-            onPressed: _addToWishlist,
-          ),
+              icon: Icon(
+                _isFavorite ? Icons.favorite : Icons.favorite_border,
+                color: _isFavorite ? Colors.red : Colors.white,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WishlistScreen(),
+                  ),
+                );
+              } //_addToWishlist,
+              ),
           Stack(
             children: [
               IconButton(
                 icon: const Icon(Icons.shopping_cart),
                 onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ShoppingCartScreen(),
+                    ),
+                  );
                   // Handle cart screen navigation
                 },
               ),
@@ -654,6 +669,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ShoppingCartScreen(),
+                    ),
+                  );
                   // Handle add to cart
                 },
                 style: ElevatedButton.styleFrom(
@@ -670,7 +691,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   // Handle buy now
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
+                  backgroundColor: const Color.fromARGB(255, 255, 179, 66),
                   padding: const EdgeInsets.all(16),
                 ),
                 child: const Text('Buy Now'),

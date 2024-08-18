@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:maha_kundali_app/screens/Astro_Ecom/my_order.dart';
+import 'package:maha_kundali_app/screens/profileContent/editProfile.dart';
+import 'package:maha_kundali_app/screens/profileContent/settingsSection/changePassword.dart';
+import 'package:maha_kundali_app/screens/profileContent/settingsSection/myAddress.dart';
+import 'package:maha_kundali_app/screens/profileContent/settingsSection/terms.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -48,7 +53,7 @@ class _SettingsScreenState extends State<SettingsScreen>
           controller: _tabController,
           tabs: [
             Tab(text: 'Settings'),
-            Tab(text: 'Payment'),
+            Tab(text: 'Transaction'),
             Tab(text: 'Notifications'),
           ],
           indicatorColor: Colors.white,
@@ -92,13 +97,19 @@ class _SettingsScreenState extends State<SettingsScreen>
     return ListView(
       children: [
         _buildSectionHeader('General'),
-        _buildSettingsOption('My Orders', Icons.shopping_cart),
-        _buildSettingsOption('My Address', Icons.location_on),
-        _buildSettingsOption('Edit Profile', Icons.edit),
-        _buildSettingsOption('Change Password', Icons.lock),
+        _buildSettingsOption('My Orders', Icons.shopping_cart,
+            route: OrderDetailsScreen()),
+        _buildSettingsOption('My Address', Icons.location_on,
+            route: AddMyAddressScreen()),
+        _buildSettingsOption('Edit Profile', Icons.edit,
+            route: EditProfileScreen()),
+        _buildSettingsOption('Change Password', Icons.lock,
+            route: ChangePasswordScreen()),
         _buildSectionHeader('About Us'),
-        _buildSettingsOption('Terms and Conditions', Icons.article),
-        _buildSettingsOption('Privacy Policy', Icons.privacy_tip),
+        _buildSettingsOption('Terms and Conditions', Icons.article,
+            route: TermsAndConditionsScreen()),
+        _buildSettingsOption('Privacy Policy', Icons.privacy_tip,
+            route: TermsAndConditionsScreen()),
         _buildSectionHeader('Notification'),
         _buildNotificationSwitch(),
       ],
@@ -137,12 +148,18 @@ class _SettingsScreenState extends State<SettingsScreen>
     );
   }
 
-  Widget _buildSettingsOption(String title, IconData icon) {
+  Widget _buildSettingsOption(String title, IconData icon, {route}) {
     return ListTile(
       leading: Icon(icon, color: Colors.orange),
       title: Text(title),
       trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
       onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => route,
+          ),
+        );
         // Navigate to corresponding screen
       },
     );

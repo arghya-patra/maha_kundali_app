@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maha_kundali_app/screens/Authentication/registration.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   @override
@@ -65,10 +66,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   print('Sending recovery email to: ${_emailController.text}');
                 },
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.orange,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 50.0, vertical: 15.0),
                 ),
                 child: Text('Send'),
               ),
@@ -77,6 +81,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             Center(
               child: GestureDetector(
                 onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => SignUpScreen()));
                   // Navigate to Create New Account screen
                   print('Navigating to Create New Account screen');
                 },
