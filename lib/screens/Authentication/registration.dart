@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:country_list_pick/country_list_pick.dart';
+import 'package:maha_kundali_app/aaa/test.dart';
 import 'package:maha_kundali_app/components/buttons.dart';
 import 'package:maha_kundali_app/screens/Authentication/login.dart';
 import 'package:maha_kundali_app/screens/Authentication/otpVerification.dart';
@@ -12,6 +14,7 @@ class _SignUpScreenState extends State<SignUpScreen>
     with TickerProviderStateMixin {
   bool _isFormVisible = false;
   bool isLoading = false;
+  String? selectedCountryCode = '+91';
 
   @override
   void initState() {
@@ -75,11 +78,19 @@ class _SignUpScreenState extends State<SignUpScreen>
               child: _isFormVisible
                   ? Row(
                       children: [
-                        Image.asset('images/indian_flag.jpeg', width: 24),
-                        const SizedBox(width: 8),
-                        Text('+91',
-                            style: Theme.of(context).textTheme.subtitle1),
-                        const SizedBox(width: 8),
+                        Container(
+                          //color: Colors.red,
+                          child: CountryListPick(
+                            onChanged: (CountryCode? code) {
+                              setState(() {
+                                selectedCountryCode = code!.dialCode;
+                              });
+                            },
+                            initialSelection: '+91',
+                            useSafeArea: true,
+                          ),
+                        ),
+                        //  const SizedBox(width: 2),
                         const Expanded(
                           child: TextField(
                             keyboardType: TextInputType.phone,
@@ -98,8 +109,7 @@ class _SignUpScreenState extends State<SignUpScreen>
               child: GestureDetector(
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Login()));
-                  // Navigate to Sign In screen
+                      MaterialPageRoute(builder: (context) => VideoCallScreen()));
                 },
                 child: const Text(
                   'Have an account? Sign in!',

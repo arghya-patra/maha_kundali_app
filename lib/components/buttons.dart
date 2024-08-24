@@ -38,15 +38,18 @@ class LoadingButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialButton(
-      height: 45,
-      minWidth: MediaQuery.of(context).size.width * 0.9,
-      shape: materialButtonDesign(),
-      color: color ?? kButtonColor,
-      textColor: kBTextColor,
+    return ElevatedButton(
       onPressed: () {},
       child: CircularProgressIndicator(
         color: kWhiteColor,
+      ),
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.orange,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 15.0),
       ),
     );
   }

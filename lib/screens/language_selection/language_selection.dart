@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maha_kundali_app/screens/Home/dashboardScreen.dart';
+import 'package:maha_kundali_app/screens/Profile_details_register/register_profile.dart';
 
 class SelectLanguageScreen extends StatefulWidget {
   @override
@@ -12,17 +13,17 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
   final List<Map<String, String>> _languages = [
     {'code': 'en', 'name': 'English'},
     {'code': 'hi', 'name': 'हिंदी'},
-    {'code': 'bn', 'name': 'বাংলা'},
-    {'code': 'ta', 'name': 'தமிழ்'},
-    {'code': 'te', 'name': 'తెలుగు'},
-    {'code': 'gu', 'name': 'ગુજરાતી'},
-    {'code': 'mr', 'name': 'मराठी'},
-    {'code': 'pa', 'name': 'ਪੰਜਾਬੀ'},
-    {'code': 'ml', 'name': 'മലയാളം'},
-    {'code': 'kn', 'name': 'ಕನ್ನಡ'},
-    {'code': 'or', 'name': 'ଓଡ଼ିଆ'},
-    {'code': 'as', 'name': 'অসমীয়া'},
-    {'code': 'ur', 'name': 'اردو'},
+    // {'code': 'bn', 'name': 'বাংলা'},
+    // {'code': 'ta', 'name': 'தமிழ்'},
+    // {'code': 'te', 'name': 'తెలుగు'},
+    // {'code': 'gu', 'name': 'ગુજરાતી'},
+    // {'code': 'mr', 'name': 'मराठी'},
+    // {'code': 'pa', 'name': 'ਪੰਜਾਬੀ'},
+    // {'code': 'ml', 'name': 'മലയാളം'},
+    // {'code': 'kn', 'name': 'ಕನ್ನಡ'},
+    // {'code': 'or', 'name': 'ଓଡ଼ିଆ'},
+    // {'code': 'as', 'name': 'অসমীয়া'},
+    // {'code': 'ur', 'name': 'اردو'},
   ];
 
   @override
@@ -76,11 +77,13 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
               child: ElevatedButton(
                 onPressed: () {
                   if (_selectedLanguage.isNotEmpty) {
-                    Navigator.pushAndRemoveUntil(
+                    Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => DashboardScreen()),
-                        (route) => false);
+                            builder: (context) => RegistrationScreen()
+                            //DashboardScreen()
+                            ));
+                    // (route) => false);
                     print('Selected language: $_selectedLanguage');
                     // Perform submit action
                   }

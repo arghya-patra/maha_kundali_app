@@ -1,6 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:maha_kundali_app/apiManager/apiData.dart';
+import 'package:maha_kundali_app/components/util.dart';
+import 'package:maha_kundali_app/screens/Home/dashboardScreen.dart';
 import 'package:maha_kundali_app/screens/language_selection/language_selection.dart';
+import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:http/http.dart' as http;
 
 class OtpVerificationScreen extends StatefulWidget {
   @override
@@ -11,6 +18,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
     with TickerProviderStateMixin {
   late AnimationController _controller;
   bool _resendVisible = false;
+  bool isLoading = false;
   TextEditingController _otpController = TextEditingController();
 
   @override
@@ -18,7 +26,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 30),
+      duration: const Duration(seconds: 30),
     );
 
     _controller.reverse(
@@ -48,9 +56,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Otp verification'),
+        title: const Text('Otp verification'),
         flexibleSpace: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Colors.orange, Colors.deepOrange],
               begin: Alignment.topLeft,
@@ -68,19 +76,19 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
               'Enter the code we have sent to +91xxxxxxx098',
               style: Theme.of(context).textTheme.headline6,
             ),
-            SizedBox(height: 32),
+            const SizedBox(height: 32),
             Center(
               child: AnimatedBuilder(
                 animation: _controller,
                 builder: (context, child) {
                   return Text(
                     _timerText,
-                    style: TextStyle(fontSize: 20, color: Colors.orange),
+                    style: const TextStyle(fontSize: 20, color: Colors.orange),
                   );
                 },
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Center(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50.0),
@@ -102,7 +110,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
                     selectedColor: Colors.orange,
                     inactiveColor: Colors.grey,
                   ),
-                  animationDuration: Duration(milliseconds: 900),
+                  animationDuration: const Duration(milliseconds: 900),
                   enableActiveFill: true,
                   onCompleted: (v) {
                     print("Completed");
@@ -113,7 +121,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
                 ),
               ),
             ),
-            SizedBox(height: 32),
+            const SizedBox(height: 32),
             Center(
               child: GestureDetector(
                 onTap: _resendVisible ? _resendCode : null,
@@ -127,16 +135,17 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
                 ),
               ),
             ),
-            SizedBox(height: 32),
+            const SizedBox(height: 32),
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SelectLanguageScreen(),
-                    ),
-                  );
+                  sendOtp(context);
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => SelectLanguageScreen(),
+                  //   ),
+                  // );
                   // Submit OTP action
                 },
                 style: ElevatedButton.styleFrom(
@@ -145,19 +154,19 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 50.0, vertical: 15.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 50.0, vertical: 15.0),
                 ),
-                child: Text('Submit'),
+                child: const Text('Submit'),
               ),
             ),
-            Spacer(),
+            const Spacer(),
             Center(
               child: GestureDetector(
                 onTap: () {
                   // Navigate to Terms and Policy
                 },
-                child: Text(
+                child: const Text(
                   'By signing up you agree to our terms and policy',
                   style: TextStyle(
                     color: Colors.blue,
@@ -179,5 +188,48 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
       _controller.reset();
       _controller.reverse(from: 1.0);
     });
+  }
+
+  sendOtp(context) async {
+    setState(() {
+      isLoading = true;
+    });
+    String url = APIData.login;
+    print(ServiceManager.tokenID);
+    print(url.toString());
+    var res = await http.post(Uri.parse(url), body: {
+      'action': 'verify-login-otp',
+      'authorizationToken': ServiceManager.tokenID, //8100007581
+      'otp': _otpController.text
+    });
+    if (res.statusCode == 200) {
+      print("______________________________________");
+      print(res.body);
+      print("______________________________________");
+      try {
+        var data = jsonDecode(res.body);
+
+        toastMessage(message: 'Logged In');
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => DashboardScreen()),
+            (route) => false);
+      } catch (e) {
+        toastMessage(message: e.toString());
+        setState(() {
+          isLoading = false;
+        });
+        toastMessage(message: 'Something went wrong');
+      }
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      toastMessage(message: 'Something Went wrong!');
+    }
+    setState(() {
+      isLoading = false;
+    });
+    return 'Success';
   }
 }

@@ -1,346 +1,170 @@
 import 'dart:convert';
-import 'package:flutter/gestures.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/components/buttons.dart';
-import 'package:maha_kundali_app/components/customTextfield.dart';
 import 'package:maha_kundali_app/components/util.dart';
-import 'package:maha_kundali_app/screens/Authentication/forgotPass.dart';
-import 'package:maha_kundali_app/screens/Authentication/registration.dart';
-import 'package:maha_kundali_app/screens/Home/dashboardScreen.dart';
+import 'package:maha_kundali_app/screens/Authentication/login.dart';
+import 'package:maha_kundali_app/screens/Authentication/otpVerification.dart';
+import 'package:country_list_pick/country_list_pick.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
-import 'package:maha_kundali_app/theme/style.dart';
 import 'package:http/http.dart' as http;
 
-class Login extends StatefulWidget {
-  const Login({super.key});
-
+class LoginScreen extends StatefulWidget {
   @override
-  State<Login> createState() => _LoginState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
-  TextEditingController phone = TextEditingController();
-  TextEditingController password = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  bool isObscure = true;
+class _LoginScreenState extends State<LoginScreen>
+    with TickerProviderStateMixin {
+  bool _isFormVisible = false;
   bool isLoading = false;
-  String message = '';
+
+  String? selectedCountryCode = '+91';
+  TextEditingController mobile = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 1),
-      vsync: this,
-    );
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    );
-    _controller.forward();
+    _startAnimation();
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  void _startAnimation() async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    setState(() {
+      _isFormVisible = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        decoration: kBackgroundDesign(context),
-        child: Scaffold(
-            resizeToAvoidBottomInset: true,
-            //  backgroundColor: Colors.purple[50],
-            appBar: AppBar(
-              centerTitle: true,
-              backgroundColor: Colors.orange.shade800,
-              title: const Text('Login'),
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text('Login'),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.deepOrange,
+                Colors.orange,
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
             ),
-            body: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.orange.shade700, Colors.orange.shade300],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
+          ),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AnimatedOpacity(
+              opacity: _isFormVisible ? 1.0 : 0.0,
+              duration: const Duration(seconds: 1),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Login with your phone number',
+                    style: Theme.of(context).textTheme.headline5,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'You will receive an OTP',
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                ],
               ),
-              child: Center(
-                child: ScaleTransition(
-                  scale: _animation,
-                  child: Container(
-                    padding: EdgeInsets.all(20.0),
-                    margin: EdgeInsets.symmetric(horizontal: 25.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 10.0,
-                          offset: Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
+            ),
+            const SizedBox(height: 32),
+            AnimatedContainer(
+              duration: const Duration(seconds: 1),
+              curve: Curves.easeInOut,
+              child: _isFormVisible
+                  ? Row(
                       children: [
-                        KTextField(
-                          title: 'Phone',
-                          controller: phone,
-                          textInputType: TextInputType.phone,
-                        ),
-                        KTextField(
-                          title: 'Password',
-                          controller: password,
-                          obscureText: isObscure,
-                          suffixButton: IconButton(
-                            onPressed: () {
+                        Container(
+                          //color: Colors.red,
+                          child: CountryListPick(
+                            onChanged: (CountryCode? code) {
                               setState(() {
-                                isObscure = !isObscure;
+                                selectedCountryCode = code!.dialCode;
                               });
                             },
-                            icon: Icon(!isObscure
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility),
+                            initialSelection: '+91',
+                            useSafeArea: true,
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(right: 12.0),
-                              child: TextButton(
-                                child: Text(
-                                  "Forgotten Password?",
-                                  style: linkTextStyle(context),
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          ForgotPasswordScreen(),
-                                    ),
-                                  );
-                                },
-                              ),
-                            )
-                          ],
-                        ),
-                        isLoading != true
-                            ? ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => DashboardScreen(),
-                                    ),
-                                  );
-                                  // if (_formKey.currentState!.validate()) {
-                                  //   setState(() {
-                                  //     isLoading = true;
-                                  //   });
-
-                                  //   loginUser(context);
-                                  // }
-                                },
-                                child: Text('Login'),
-                                style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  backgroundColor: Colors.orange,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 50.0, vertical: 15.0),
-                                ),
-                              )
-                            : LoadingButton(),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            style: TextStyle(color: Colors.black54),
-                            children: <TextSpan>[
-                              TextSpan(text: 'Not a registered user ? '),
-                              TextSpan(
-                                text: 'Sign up',
-                                style: linkTextStyle(context),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                SignUpScreen()));
-                                  },
-                              ),
-                            ],
+                        //  const SizedBox(width: 2),
+                        Expanded(
+                          child: TextField(
+                            controller: mobile,
+                            keyboardType: TextInputType.phone,
+                            decoration: const InputDecoration(
+                              labelText: 'Phone Number',
+                              border: OutlineInputBorder(),
+                            ),
                           ),
                         ),
                       ],
-                    ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+            const SizedBox(height: 32),
+            Center(
+              child: GestureDetector(
+                onTap: () {
+                  // Navigator.push(context,
+                  //     MaterialPageRoute(builder: (context) => VideoCallScreen()));
+                },
+                child: const Text(
+                  'Don\'t Have an account? Register Here!',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
                   ),
                 ),
               ),
-            ))
-
-        //    SingleChildScrollView(
-        //     child: Form(
-        //       key: _formKey,
-        //       child: Column(
-        //         mainAxisAlignment: MainAxisAlignment.start,
-        //         children: [
-        //           const SizedBox(height: 50),
-        //           Image.asset(
-        //             'images/logo.png',
-        //             height: 100,
-        //             width: 300,
-        //           ),
-        //           const SizedBox(height: 20),
-        //           Padding(
-        //             padding: const EdgeInsets.symmetric(horizontal: 10),
-        //             child: Text(
-        //                 textAlign: TextAlign.center,
-        //                 style: kHeaderStyle(color: Colors.blueGrey),
-        //                 "Please enter your valid email address, we don't share it with anyone without your consent"),
-        //           ),
-        //           const SizedBox(height: 40),
-        //           KTextField(
-        //             title: 'Email',
-        //             controller: email,
-        //             textInputType: TextInputType.emailAddress,
-        //           ),
-        //           KTextField(
-        //             title: 'Password',
-        //             controller: password,
-        //             obscureText: isObscure,
-        //             suffixButton: IconButton(
-        //               onPressed: () {
-        //                 setState(() {
-        //                   isObscure = !isObscure;
-        //                 });
-        //               },
-        //               icon: Icon(!isObscure
-        //                   ? Icons.visibility_off_outlined
-        //                   : Icons.visibility),
-        //             ),
-        //           ),
-        //           Row(
-        //             mainAxisAlignment: MainAxisAlignment.end,
-        //             children: [
-        //               Padding(
-        //                 padding: const EdgeInsets.only(right: 12.0),
-        //                 child: TextButton(
-        //                   child: Text(
-        //                     "Forgotten Password?",
-        //                     style: linkTextStyle(context),
-        //                   ),
-        //                   onPressed: () {
-        //                     // Navigator.push(
-        //                     //   context,
-        //                     //   MaterialPageRoute(
-        //                     //     builder: (context) => ForgetPasswordScreen(),
-        //                     //   ),
-        //                     // );
-        //                   },
-        //                 ),
-        //               )
-        //             ],
-        //           ),
-        //           Padding(
-        //             padding: const EdgeInsets.symmetric(horizontal: 10),
-        //             child: RichText(
-        //                 textAlign: TextAlign.center,
-        //                 text: TextSpan(
-        //                     style: TextStyle(
-        //                         color:
-        //                             Theme.of(context).textTheme.bodySmall!.color),
-        //                     children: <TextSpan>[
-        //                       const TextSpan(text: 'By continuing you agree to '),
-        //                       TextSpan(
-        //                         text: 'Terms of Use',
-        //                         style: linkTextStyle(context),
-        //                         recognizer: TapGestureRecognizer()
-        //                           ..onTap = () {
-        //                             // Navigator.push(
-        //                             //     context,
-        //                             //     MaterialPageRoute(
-        //                             //         builder: (context) =>
-        //                             //             AboutUsScreen()));
-        //                           },
-        //                       ),
-        //                       const TextSpan(text: ' & '),
-        //                       TextSpan(
-        //                         text: 'Privacy Policy',
-        //                         style: linkTextStyle(context),
-        //                         recognizer: TapGestureRecognizer()
-        //                           ..onTap = () {
-        //                             // Navigator.push(
-        //                             //     context,
-        //                             //     MaterialPageRoute(
-        //                             //         builder: (context) =>
-        //                             //             AboutUsScreen()));
-        //                           },
-        //                       ),
-        //                     ])),
-        //           ),
-        //           SizedBox(
-        //             height: 10,
-        //           ),
-        //           RichText(
-        //             textAlign: TextAlign.center,
-        //             text: TextSpan(
-        //               style: TextStyle(color: Colors.black54),
-        //               children: <TextSpan>[
-        //                 TextSpan(text: 'Not a registered user ? '),
-        //                 TextSpan(
-        //                   text: 'Sign up',
-        //                   style: linkTextStyle(context),
-        //                   recognizer: TapGestureRecognizer()
-        //                     ..onTap = () {
-        //                       // Navigator.push(
-        //                       //     context,
-        //                       //     MaterialPageRoute(
-        //                       //         builder: (context) => Registration()));
-        //                     },
-        //                 ),
-        //               ],
-        //             ),
-        //           ),
-        //           SizedBox(
-        //             height: 70,
-        //           )
-        //         ],
-        //       ),
-        //     ),
-        //   ),
-        //   floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        //   floatingActionButton: isLoading != true
-        //       ? KButton(
-        //           title: 'Login',
-        //           onClick: () {
-        //             if (_formKey.currentState!.validate()) {
-        //               setState(() {
-        //                 isLoading = true;
-        //               });
-
-        //               loginUser(context);
-        //             }
-        //           },
-        //         )
-        //       : LoadingButton(),
-        // ),
-        );
+            ),
+            const SizedBox(height: 32),
+            Center(
+              child: isLoading != true
+                  ? ElevatedButton(
+                      onPressed: () {
+                        loginUser(context);
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => OtpVerificationScreen(),
+                        //   ),
+                        // );
+                      },
+                      child: const Text('Send Otp'),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.orange,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 50.0, vertical: 15.0),
+                      ),
+                    )
+                  : LoadingButton(),
+            ),
+            const Spacer(),
+            Center(
+              child: Text(
+                'Some other text as footer',
+                style: Theme.of(context).textTheme.caption,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<String> loginUser(context) async {
@@ -350,24 +174,31 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
     String url = APIData.login;
     print(url.toString());
     var res = await http.post(Uri.parse(url), body: {
-      'email': phone.text,
-      'password': password.text,
+      'action': 'login',
+      'mobile': '8100007581' // mobile.text, //8100007581
     });
-    if (res.statusCode == 200) {
+    var data = jsonDecode(res.body);
+
+    if (data['status'] == 200) {
       print("______________________________________");
       print(res.body);
       print("______________________________________");
-      var data = jsonDecode(res.body);
       try {
-        print('${data['userInfo']['id']}');
-        ServiceManager().setUser('${data['userInfo']['id']}');
-        ServiceManager().setToken('${data['auth_token']}');
-        ServiceManager.userID = '${data['userInfo']['id']}';
-        ServiceManager.tokenID = '${data['auth_token']}';
-        print(ServiceManager.roleAs);
-        toastMessage(message: 'Logged In');
-        // Navigator.pushAndRemoveUntil(context,
-        //     MaterialPageRoute(builder: (context) => Home()), (route) => false);
+        print(data['status']);
+        print(data['authorizationToken']);
+        toastMessage(message: 'Please check your mobile for OTP!');
+        // print('${data['userInfo']['id']}');
+        // ServiceManager().setUser('${data['userInfo']['id']}');
+        ServiceManager().setToken('${data['authorizationToken']}');
+        // ServiceManager.userID = '${data['userInfo']['id']}';
+        ServiceManager.tokenID = '${data['authorizationToken']}';
+        // print(ServiceManager.roleAs);
+        // ServiceManager().getUserData();
+        // toastMessage(message: 'Logged In');
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => OtpVerificationScreen()),
+            (route) => false);
       } catch (e) {
         toastMessage(message: e.toString());
         setState(() {
@@ -379,7 +210,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
       setState(() {
         isLoading = false;
       });
-      toastMessage(message: 'Invalid email or password');
+      toastMessage(message: 'Invalid data');
     }
     setState(() {
       isLoading = false;
