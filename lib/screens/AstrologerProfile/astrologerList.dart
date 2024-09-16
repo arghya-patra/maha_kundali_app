@@ -406,6 +406,7 @@
 //   }
 // }
 import 'package:flutter/material.dart';
+import 'package:maha_kundali_app/screens/AstrologerProfile/astrologerProfileDetail.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -443,9 +444,6 @@ class _AstrologerListScreenState extends State<AstrologerListScreen> {
             });
         final data = json.decode(response.body);
 
-        print(response.statusCode);
-        print(data);
-
         if (response.statusCode == 200) {
           final data = json.decode(response.body);
           yield List<Map<String, dynamic>>.from(data['list'].map((item) {
@@ -473,6 +471,20 @@ class _AstrologerListScreenState extends State<AstrologerListScreen> {
     }
   }
 
+  Widget _buildChipSection(List<String> skills) {
+    return Container(
+      height: 60.0,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: skills.map((skill) => _buildChip(skill)).toList(),
+      ),
+    );
+
+    //  Wrap(
+    //   children: skills.map((skill) => _buildChip(skill)).toList(),
+    // );
+  }
+
   Widget _buildChip(String label) {
     bool isSelected = _selectedChips.contains(label);
     return Padding(
@@ -492,7 +504,50 @@ class _AstrologerListScreenState extends State<AstrologerListScreen> {
         selectedColor: Colors.orange,
         backgroundColor: Colors.grey[200],
         labelStyle: TextStyle(color: isSelected ? Colors.white : Colors.black),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          side: BorderSide(
+            color: isSelected ? Colors.orange : Colors.grey,
+            width: 1,
+          ),
+        ),
       ),
+    );
+  }
+
+  List<Map<String, dynamic>> _filterAstrologers(
+      List<Map<String, dynamic>> astrologers) {
+    if (_selectedChips.isEmpty) return astrologers;
+    return astrologers.where((astrologer) {
+      return astrologer['skills']
+          .any((skill) => _selectedChips.contains(skill));
+    }).toList();
+  }
+
+  Widget _buildBannerSlider() {
+    return CarouselSlider(
+      options: CarouselOptions(
+        height: 150.0,
+        autoPlay: true,
+        enlargeCenterPage: true,
+      ),
+      items: _banners.map((banner) {
+        return Builder(
+          builder: (BuildContext context) {
+            return Container(
+              width: MediaQuery.of(context).size.width,
+              margin: EdgeInsets.symmetric(horizontal: 5.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+                image: DecorationImage(
+                  image: AssetImage(banner),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            );
+          },
+        );
+      }).toList(),
     );
   }
 
@@ -513,7 +568,39 @@ class _AstrologerListScreenState extends State<AstrologerListScreen> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text('No data available'));
           } else {
-            return _buildAstrologerList(snapshot.data!);
+            final allSkills = List<String>.from(
+              snapshot.data!
+                  .expand((astrologer) => astrologer['skills'])
+                  .toSet(),
+            );
+            final filteredAstrologers = _filterAstrologers(snapshot.data!);
+
+            return Column(
+              children: [
+                _buildChipSection(allSkills),
+                CarouselSlider(
+                  options: CarouselOptions(height: 150.0, autoPlay: true),
+                  items: _banners.map((banner) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width,
+                          margin: EdgeInsets.symmetric(horizontal: 5.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            image: DecorationImage(
+                              image: AssetImage(banner),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
+                ),
+                Expanded(child: _buildAstrologerList(filteredAstrologers)),
+              ],
+            );
           }
         },
       ),
@@ -542,28 +629,55 @@ class _AstrologerListScreenState extends State<AstrologerListScreen> {
       itemCount: astrologers.length,
       itemBuilder: (context, index) {
         final astrologer = astrologers[index];
-        return Card(
-          margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(astrologer['logo']),
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    AstrologerProfileScreen(id: astrologer['user_id']),
+              ),
+            );
+            print(astrologer['user_id']);
+          },
+          child: Card(
+            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            elevation: 5,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundImage: NetworkImage(astrologer['logo']),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          astrologer['name'],
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
+                        SizedBox(height: 5),
+                        Text('${astrologer['experience']} Experience'),
+                        SizedBox(height: 5),
+                        Text('Skills: ${astrologer['skills'].join(', ')}'),
+                        SizedBox(height: 5),
+                        Text('Languages: ${astrologer['langs'].join(', ')}'),
+                        SizedBox(height: 5),
+                        Text('Call Rate: ₹${astrologer['call_rate']} / min'),
+                        Text('Chat Rate: ₹${astrologer['chat_rate']} / min'),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-            title: Text(astrologer['name']),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('${astrologer['experience']} Experience'),
-                Text('Skills: ${astrologer['skills'].join(', ')}'),
-                Text('Languages: ${astrologer['langs'].join(', ')}'),
-                SizedBox(height: 5),
-                Text('Call Rate: ₹${astrologer['call_rate']} / min'),
-                Text('Chat Rate: ₹${astrologer['chat_rate']} / min'),
-              ],
-            ),
-            trailing: Icon(Icons.arrow_forward),
-            onTap: () {
-              // Handle tap event
-            },
           ),
         );
       },

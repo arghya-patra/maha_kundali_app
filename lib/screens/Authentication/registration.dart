@@ -1,159 +1,225 @@
 import 'package:flutter/material.dart';
-import 'package:country_list_pick/country_list_pick.dart';
-import 'package:maha_kundali_app/aaa/test.dart';
-import 'package:maha_kundali_app/components/buttons.dart';
-import 'package:maha_kundali_app/screens/Authentication/login.dart';
+import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/screens/Authentication/otpVerification.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class SignUpScreen extends StatefulWidget {
+class RegistrationScreen extends StatefulWidget {
   @override
-  _SignUpScreenState createState() => _SignUpScreenState();
+  _RegistrationScreenState createState() => _RegistrationScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen>
-    with TickerProviderStateMixin {
-  bool _isFormVisible = false;
-  bool isLoading = false;
-  String? selectedCountryCode = '+91';
+class _RegistrationScreenState extends State<RegistrationScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _mobileController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    _startAnimation();
-  }
+  bool _isLoading = false;
 
-  void _startAnimation() async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    setState(() {
-      _isFormVisible = true;
-    });
+  Future<void> _register() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      String firstName = _firstNameController.text.trim();
+      String lastName = _lastNameController.text.trim();
+      String email = _emailController.text.trim();
+      String mobile = _mobileController.text.trim();
+      String password = _passwordController.text.trim();
+      String url = APIData.login;
+      print(url.toString());
+      var response = await http.post(Uri.parse(url), body: {
+        'action': 'register',
+        'first_name': firstName,
+        'last_name': lastName,
+        'email': email,
+        'mobile': mobile,
+        'password': password
+      });
+      //  var data = jsonDecode(response.body);
+      // var response = await http.post(
+      //   Uri.parse('https://yourapi.com/register'),
+      //   body: json.encode({
+      //     'first_name': firstName,
+      //     'last_name': lastName,
+      //     'email': email,
+      //     'mobile': mobile,
+      //     'password': password,
+      //   }),
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      // );
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (response.statusCode == 200) {
+        // Assuming a successful response contains a "success" key
+        var responseData = json.decode(response.body);
+        if (responseData['isSuccess']) {
+          print(responseData);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => OtpVerificationScreen(
+                        isReg: true,
+                        otp: responseData['userDetails']['otp'].toString(),
+                      )),
+              (route) => false);
+        } else {
+          // Handle errors, e.g., show a snackbar
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(responseData['message']),
+          ));
+        }
+      } else {
+        // Handle errors, e.g., show a snackbar
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Registration failed. Please try again.'),
+        ));
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Sign up'),
+        title: const Text('Registration'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Colors.deepOrange,
-                Colors.orange,
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
+              colors: [Colors.orange, Colors.deepOrange],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AnimatedOpacity(
-              opacity: _isFormVisible ? 1.0 : 0.0,
-              duration: const Duration(seconds: 1),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Register with your phone number',
-                    style: Theme.of(context).textTheme.headline5,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'You will receive an OTP',
-                    style: Theme.of(context).textTheme.subtitle1,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 32),
-            AnimatedContainer(
-              duration: const Duration(seconds: 1),
-              curve: Curves.easeInOut,
-              child: _isFormVisible
-                  ? Row(
-                      children: [
-                        Container(
-                          //color: Colors.red,
-                          child: CountryListPick(
-                            onChanged: (CountryCode? code) {
-                              setState(() {
-                                selectedCountryCode = code!.dialCode;
-                              });
-                            },
-                            initialSelection: '+91',
-                            useSafeArea: true,
-                          ),
-                        ),
-                        //  const SizedBox(width: 2),
-                        const Expanded(
-                          child: TextField(
-                            keyboardType: TextInputType.phone,
-                            decoration: InputDecoration(
-                              labelText: 'Phone Number',
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  : const SizedBox.shrink(),
-            ),
-            const SizedBox(height: 32),
-            Center(
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => VideoCallScreen()));
-                },
-                child: const Text(
-                  'Have an account? Sign in!',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline,
-                  ),
+      body: _isLoading
+          ? Center(
+              child: Shimmer.fromColors(
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildShimmerBox(),
+                    const SizedBox(height: 16),
+                    _buildShimmerBox(),
+                    const SizedBox(height: 16),
+                    _buildShimmerBox(),
+                  ],
                 ),
               ),
-            ),
-            const SizedBox(height: 32),
-            Center(
-              child: isLoading != true
-                  ? ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => OtpVerificationScreen(),
-                          ),
-                        );
-                      },
-                      child: Text('Send Otp'),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  children: [
+                    const SizedBox(height: 16),
+                    _buildTextField(_firstNameController, 'First Name'),
+                    const SizedBox(height: 16),
+                    _buildTextField(_lastNameController, 'Last Name'),
+                    const SizedBox(height: 16),
+                    _buildTextField(_emailController, 'Email', isEmail: true),
+                    const SizedBox(height: 16),
+                    _buildTextField(_mobileController, 'Mobile Number',
+                        isNumber: true),
+                    const SizedBox(height: 16),
+                    _buildTextField(_passwordController, 'Password',
+                        isPassword: true),
+                    const SizedBox(height: 32),
+                    ElevatedButton(
+                      onPressed: _register,
+                      child: const Text('Register'),
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
                         backgroundColor: Colors.orange,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                             horizontal: 50.0, vertical: 15.0),
                       ),
-                    )
-                  : LoadingButton(),
-            ),
-            const Spacer(),
-            Center(
-              child: Text(
-                'Some other text as footer',
-                style: Theme.of(context).textTheme.caption,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ],
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String labelText,
+      {bool isEmail = false, bool isPassword = false, bool isNumber = false}) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: isEmail
+          ? TextInputType.emailAddress
+          : isNumber
+              ? TextInputType.phone
+              : TextInputType.text,
+      obscureText: isPassword,
+      decoration: InputDecoration(
+        labelText: labelText,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
         ),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your $labelText';
+        }
+        if (isEmail && !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+          return 'Please enter a valid email address';
+        }
+        if (isPassword && value.length < 6) {
+          return 'Password must be at least 6 characters';
+        }
+        if (isNumber && value.length != 10) {
+          return 'Please enter a valid mobile number';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildShimmerBox() {
+    return Container(
+      height: 60,
+      width: double.infinity,
+      color: Colors.white,
+    );
+  }
+}
+
+class OtpScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('OTP Verification'),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.orange, Colors.deepOrange],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+      ),
+      body: const Center(
+        child: Text('Enter OTP here'),
       ),
     );
   }

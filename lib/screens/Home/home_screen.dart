@@ -6,15 +6,23 @@ import 'package:maha_kundali_app/screens/Astro_Ecom/my_order.dart';
 import 'package:maha_kundali_app/screens/Astro_Ecom/productListScreen.dart';
 import 'package:maha_kundali_app/screens/AstrologerProfile/astrologerList.dart';
 import 'package:maha_kundali_app/screens/AstrologerProfile/astrologerProfileDetail.dart';
+import 'package:maha_kundali_app/screens/Birth%20Chart/birthChartForm.dart';
+import 'package:maha_kundali_app/screens/Book%20Puja/all_puja.dart';
+import 'package:maha_kundali_app/screens/Book%20Puja/bookPuja.dart';
 import 'package:maha_kundali_app/screens/Home/walletScreen.dart';
 import 'package:maha_kundali_app/screens/Horoscope/horoscopeDetails.dart';
 import 'package:maha_kundali_app/screens/Horoscope/horoscopeScreen.dart';
+import 'package:maha_kundali_app/screens/Kundli/kundliForm.dart';
 import 'package:maha_kundali_app/screens/Numerology/numerologyScreen.dart';
+import 'package:maha_kundali_app/screens/Numerology/numerology_form.dart';
+import 'package:maha_kundali_app/screens/Personal%20Horoscope/personal_horoscope_form.dart';
+import 'package:maha_kundali_app/screens/Service-Report/all_service_report.dart';
 import 'package:maha_kundali_app/screens/chats/chatListScreen.dart';
 import 'package:maha_kundali_app/screens/chats/chatMessageScreen.dart';
 import 'package:maha_kundali_app/screens/chats/customerSupportChat.dart';
-import 'package:maha_kundali_app/screens/kundli/kundliMatching.dart';
-import 'package:maha_kundali_app/screens/kundli/kundliScreen.dart';
+import 'package:maha_kundali_app/screens/match_Making/kundliMatching.dart';
+import 'package:maha_kundali_app/screens/Kundli/kundliScreen.dart';
+import 'package:maha_kundali_app/screens/panchang/panchangForm.dart';
 import 'package:maha_kundali_app/screens/panchang/panchangScreen.dart';
 import 'package:maha_kundali_app/screens/profileContent/buyMembershipScreen.dart';
 import 'package:maha_kundali_app/screens/profileContent/settingsScreen.dart';
@@ -79,7 +87,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Icons.home,
                   'Home',
                 ),
-                //  _buildDrawerItem(Icons.book_online, 'Book a Puja'),
+                _buildDrawerItem(Icons.book_online, 'Book a Puja',
+                    route: PujaScreen()),
                 _buildDrawerItem(Icons.calendar_today, 'Daily Horoscope',
                     route: HoroscopeScreen()),
                 _buildDrawerItem(Icons.chat, 'Customer Support Chat',
@@ -88,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Icons.account_balance_wallet, 'Wallet Transaction',
                     route: WalletScreen()),
                 _buildDrawerItem(Icons.history, 'Order History',
-                    route: OrderDetailsScreen()),
+                    route: OrderHistoryScreen()),
                 _buildDrawerItem(Icons.card_membership, 'Buy Membership',
                     route: BuyMembershipScreen()),
                 _buildDrawerItem(Icons.shopping_bag, 'Astro Products',
@@ -265,12 +274,12 @@ class _HomeScreenState extends State<HomeScreen> {
       {
         'title': '2024 \nSpecial',
         'image': 'images/year.jpeg',
-        'route': HoroscopeScreen()
+        'route': AllServiceReportScreen()
       },
       {
         'title': 'Panchang',
         'image': 'images/panchang_icon.webp',
-        'route': PanchangScreen()
+        'route': PanchangFormScreen()
       },
       {
         'title': 'Daily\nHoroscope',
@@ -280,17 +289,27 @@ class _HomeScreenState extends State<HomeScreen> {
       {
         'title': 'Numerology',
         'image': 'images/zodiac.jpeg',
-        'route': NumerologyScreen()
+        'route': NumerologyFormScreen()
       },
       {
         'title': 'Kundali',
         'image': 'images/kundali.png',
-        'route': KundliScreen()
+        'route': KundliScreen() // KundliScreen()
       },
       {
         'title': 'Love \nCompatibility',
         'image': 'images/love_compatibility.png',
         'route': KundliMatchingScreen()
+      },
+      {
+        'title': 'Personal\nHoroscope',
+        'image': 'images/daily_horoscope.png',
+        'route': PersonalHoroscopeFormScreen()
+      },
+      {
+        'title': 'Birth Chart',
+        'image': 'images/panchang_icon.webp',
+        'route': BirthChartFormScreen()
       },
     ];
 
@@ -370,7 +389,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AstrologerProfileScreen(),
+                      builder: (context) => AstrologerProfileScreen(
+                        id: '583',
+                      ),
                     ),
                   );
                   // Handle navigation to astrologer screen
@@ -566,7 +587,9 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => HoroscopeDetailsScreen(),
+            builder: (context) => HoroscopeDetailsScreen(
+              zodiac: 'libra',
+            ),
           ),
         );
       },

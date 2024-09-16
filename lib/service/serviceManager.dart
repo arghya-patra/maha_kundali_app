@@ -32,7 +32,7 @@ class ServiceManager {
   void getUserID() async {
     final prefs = await SharedPreferences.getInstance();
     userID = prefs.getString('userID') ?? '';
-    getUserData();
+    //getUserData();---need to use later
   }
 
   void setToken(String userID) async {
@@ -43,7 +43,7 @@ class ServiceManager {
   void getTokenID() async {
     final prefs = await SharedPreferences.getInstance();
     tokenID = prefs.getString('tokenID') ?? '';
-    getUserData();
+    //getUserData();---need to use later
   }
 
   void setAddressID(String addressID) async {

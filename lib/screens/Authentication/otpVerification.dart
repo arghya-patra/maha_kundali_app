@@ -10,6 +10,11 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:http/http.dart' as http;
 
 class OtpVerificationScreen extends StatefulWidget {
+  String? otp;
+  bool isReg = false;
+  String? mobile;
+  OtpVerificationScreen(
+      {super.key, this.otp, required this.isReg, this.mobile});
   @override
   _OtpVerificationScreenState createState() => _OtpVerificationScreenState();
 }
@@ -73,7 +78,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Enter the code we have sent to +91xxxxxxx098',
+              'Enter the code we have sent to your number otp: ${widget.otp}',
               style: Theme.of(context).textTheme.headline6,
             ),
             const SizedBox(height: 32),
@@ -98,6 +103,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
                   controller: _otpController,
                   autoDisposeControllers: false,
                   animationType: AnimationType.fade,
+                  keyboardType: TextInputType.number,
                   pinTheme: PinTheme(
                     shape: PinCodeFieldShape.box,
                     borderRadius: BorderRadius.circular(5),
@@ -124,7 +130,12 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
             const SizedBox(height: 32),
             Center(
               child: GestureDetector(
-                onTap: _resendVisible ? _resendCode : null,
+                onTap: _resendVisible
+                    ? () {
+                        _resendCode();
+                        loginUser(context);
+                      }
+                    : null,
                 child: Text(
                   'Didn\'t receive OTP? Resend',
                   style: TextStyle(
@@ -196,19 +207,33 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
     });
     String url = APIData.login;
     print(ServiceManager.tokenID);
-    print(url.toString());
-    var res = await http.post(Uri.parse(url), body: {
+    var bodyReg = {'action': 'register-mobile', 'otp': _otpController.text};
+    var bodyLogin = {
       'action': 'verify-login-otp',
       'authorizationToken': ServiceManager.tokenID, //8100007581
       'otp': _otpController.text
-    });
-    if (res.statusCode == 200) {
+    };
+    print(url.toString());
+    var res = await http.post(Uri.parse(url),
+        body: widget.isReg ? bodyReg : bodyLogin);
+    var data = jsonDecode(res.body);
+    if (data['status'] == 200) {
       print("______________________________________");
       print(res.body);
       print("______________________________________");
       try {
-        var data = jsonDecode(res.body);
-
+        print(data['status']);
+        print(data['authorizationToken']);
+        print('${data['userDetails']['userId']}');
+        ServiceManager().setUser('${data['userDetails']['userId']}');
+        ServiceManager()
+            .setToken('${data['userDetails']['authorizationToken']}');
+        ServiceManager.userID = '${data['userDetails']['userId']}';
+        ServiceManager.tokenID = '${data['userDetails']['authorizationToken']}';
+        print(ServiceManager.userID);
+        print(ServiceManager.tokenID);
+        // print(ServiceManager.roleAs);
+        //  ServiceManager().getUserData();
         toastMessage(message: 'Logged In');
         Navigator.pushAndRemoveUntil(
             context,
@@ -226,6 +251,61 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
         isLoading = false;
       });
       toastMessage(message: 'Something Went wrong!');
+    }
+    setState(() {
+      isLoading = false;
+    });
+    return 'Success';
+  }
+
+  Future<String> loginUser(context) async {
+    setState(() {
+      isLoading = true;
+    });
+    String url = APIData.login;
+    print(url.toString());
+    var res = await http.post(Uri.parse(url), body: {
+      'action': 'login',
+      'mobile': widget.mobile // mobile.text, //8100007581
+    });
+    var data = jsonDecode(res.body);
+
+    if (data['status'] == 200) {
+      print("______________________________________");
+      print(res.body);
+      print("______________________________________");
+      try {
+        print(data['status']);
+        print(data['authorizationToken']);
+        toastMessage(message: 'Please check your mobile for OTP!');
+        // print('${data['userInfo']['id']}');
+        // ServiceManager().setUser('${data['userInfo']['id']}');
+        ServiceManager().setToken('${data['authorizationToken']}');
+        // ServiceManager.userID = '${data['userInfo']['id']}';
+        ServiceManager.tokenID = '${data['authorizationToken']}';
+        // print(ServiceManager.roleAs);
+        // ServiceManager().getUserData();
+        // toastMessage(message: 'Logged In');
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => OtpVerificationScreen(
+                      isReg: false,
+                      otp: data['otp'].toString(),
+                    )),
+            (route) => false);
+      } catch (e) {
+        toastMessage(message: e.toString());
+        setState(() {
+          isLoading = false;
+        });
+        toastMessage(message: 'Something went wrong');
+      }
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      toastMessage(message: data['message']);
     }
     setState(() {
       isLoading = false;

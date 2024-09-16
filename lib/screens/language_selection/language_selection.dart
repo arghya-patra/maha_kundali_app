@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maha_kundali_app/screens/Authentication/registration.dart';
 import 'package:maha_kundali_app/screens/Home/dashboardScreen.dart';
 import 'package:maha_kundali_app/screens/Profile_details_register/register_profile.dart';
 

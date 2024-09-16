@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:maha_kundali_app/screens/Authentication/login.dart';
 import 'package:maha_kundali_app/screens/profileContent/buyMembershipScreen.dart';
 import 'package:maha_kundali_app/screens/profileContent/callIntakeForm.dart';
 import 'package:maha_kundali_app/screens/profileContent/editProfile.dart';
 import 'package:maha_kundali_app/screens/profileContent/settingsScreen.dart';
+import 'package:maha_kundali_app/service/serviceManager.dart';
+import 'package:maha_kundali_app/theme/style.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -26,6 +29,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _isLoading = false;
       });
     });
+  }
+
+  Future<String?> logoutBuilder(BuildContext context,
+      {required Function() onClickYes}) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        actionsAlignment: MainAxisAlignment.spaceEvenly,
+        title: Text('Logout', style: kHeaderStyle()),
+        content: const Text('Are you sure you want to logout?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'Cancel'),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: onClickYes,
+            child: const Text('Yes'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _showImageSourceActionSheet() async {
@@ -175,10 +200,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             builder: (context) => CallIntakeFormScreen()));
                   }),
                   _buildProfileOption('Logout', Icons.logout, () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => LogoutScreen()));
+                    logoutBuilder(context, onClickYes: () {
+                      try {
+                        Navigator.pop(context);
+                        setState(() {
+                          _isLoading = true;
+                        });
+                        ServiceManager().removeAll();
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginScreen()),
+                            (route) => false);
+                      } catch (e) {
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      }
+                    });
                   }),
                 ],
               ),
@@ -249,20 +288,6 @@ class UserManagementScreen extends StatelessWidget {
       ),
       body: Center(
         child: Text('User Management Screen'),
-      ),
-    );
-  }
-}
-
-class LogoutScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Logout'),
-      ),
-      body: Center(
-        child: Text('Logout Screen'),
       ),
     );
   }

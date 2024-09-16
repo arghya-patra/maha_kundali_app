@@ -141,10 +141,13 @@ class _HoroscopeScreenState extends State<HoroscopeScreen>
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
+              print(zodiacSigns[index]['name'].toString().toLowerCase());
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => HoroscopeDetailsScreen(),
+                  builder: (context) => HoroscopeDetailsScreen(
+                    zodiac: zodiacSigns[index]['name'].toString().toLowerCase(),
+                  ),
                 ),
               );
               // Handle navigation to the specific zodiac screen

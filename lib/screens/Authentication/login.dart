@@ -7,6 +7,8 @@ import 'package:maha_kundali_app/components/util.dart';
 import 'package:maha_kundali_app/screens/Authentication/login.dart';
 import 'package:maha_kundali_app/screens/Authentication/otpVerification.dart';
 import 'package:country_list_pick/country_list_pick.dart';
+import 'package:maha_kundali_app/screens/Authentication/registration.dart';
+import 'package:maha_kundali_app/screens/Profile_details_register/register_profile.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:http/http.dart' as http;
 
@@ -116,6 +118,10 @@ class _LoginScreenState extends State<LoginScreen>
             Center(
               child: GestureDetector(
                 onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RegistrationScreen()));
                   // Navigator.push(context,
                   //     MaterialPageRoute(builder: (context) => VideoCallScreen()));
                 },
@@ -175,7 +181,7 @@ class _LoginScreenState extends State<LoginScreen>
     print(url.toString());
     var res = await http.post(Uri.parse(url), body: {
       'action': 'login',
-      'mobile': '8100007581' // mobile.text, //8100007581
+      'mobile': mobile.text // mobile.text, //8100007581
     });
     var data = jsonDecode(res.body);
 
@@ -197,7 +203,12 @@ class _LoginScreenState extends State<LoginScreen>
         // toastMessage(message: 'Logged In');
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => OtpVerificationScreen()),
+            MaterialPageRoute(
+                builder: (context) => OtpVerificationScreen(
+                      mobile: mobile.text,
+                      isReg: false,
+                      otp: data['otp'].toString(),
+                    )),
             (route) => false);
       } catch (e) {
         toastMessage(message: e.toString());
@@ -210,7 +221,7 @@ class _LoginScreenState extends State<LoginScreen>
       setState(() {
         isLoading = false;
       });
-      toastMessage(message: 'Invalid data');
+      toastMessage(message: data['message']);
     }
     setState(() {
       isLoading = false;

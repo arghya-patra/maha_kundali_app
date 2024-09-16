@@ -1,10 +1,16 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:maha_kundali_app/apiManager/apiData.dart';
+import 'package:maha_kundali_app/components/util.dart';
 import 'package:maha_kundali_app/screens/Astro_Ecom/my_order.dart';
 import 'package:maha_kundali_app/screens/profileContent/editProfile.dart';
 import 'package:maha_kundali_app/screens/profileContent/settingsSection/changePassword.dart';
+import 'package:maha_kundali_app/screens/profileContent/settingsSection/contactUs.dart';
 import 'package:maha_kundali_app/screens/profileContent/settingsSection/myAddress.dart';
 import 'package:maha_kundali_app/screens/profileContent/settingsSection/terms.dart';
+import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:http/http.dart' as http;
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -15,18 +21,15 @@ class _SettingsScreenState extends State<SettingsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _isLoading = true;
+  List<Map<String, dynamic>>? _transactionData;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
 
-    // Simulate loading time for shimmer effect
-    Future.delayed(Duration(seconds: 2), () {
-      setState(() {
-        _isLoading = false;
-      });
-    });
+    // Fetch data on initialization
+    _fetchTransactionDetails();
   }
 
   @override
@@ -35,13 +38,43 @@ class _SettingsScreenState extends State<SettingsScreen>
     super.dispose();
   }
 
+  Future<void> _fetchTransactionDetails() async {
+    String url = APIData.login;
+
+    try {
+      var res = await http.post(Uri.parse(url), body: {
+        'action': 'transaction',
+        'authorizationToken': ServiceManager.tokenID
+      });
+
+      var data = jsonDecode(res.body);
+      if (data['isSuccess'] == true && data['status'] == 200) {
+        setState(() {
+          _transactionData =
+              List<Map<String, dynamic>>.from(data['transaction_list']);
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+        toastMessage(message: 'Something went wrong');
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      toastMessage(message: e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: const Text('Settings'),
         flexibleSpace: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Colors.orange, Colors.deepOrange],
               begin: Alignment.topLeft,
@@ -52,16 +85,17 @@ class _SettingsScreenState extends State<SettingsScreen>
         bottom: TabBar(
           controller: _tabController,
           tabs: [
-            Tab(text: 'Settings'),
-            Tab(text: 'Transaction'),
-            Tab(text: 'Notifications'),
+            const Tab(text: 'Settings'),
+            const Tab(text: 'Transaction'),
+            const Tab(text: 'Notifications'),
           ],
           indicatorColor: Colors.white,
-          labelStyle: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+          labelStyle:
+              const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
         ),
       ),
       body: _isLoading
-          ? _buildShimmerEffect()
+          ? Center(child: CircularProgressIndicator())
           : TabBarView(
               controller: _tabController,
               children: [
@@ -73,43 +107,37 @@ class _SettingsScreenState extends State<SettingsScreen>
     );
   }
 
-  Widget _buildShimmerEffect() {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
-      child: ListView(
-        children: List.generate(6, (index) => _buildShimmerListItem()),
-      ),
-    );
-  }
-
-  Widget _buildShimmerListItem() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        height: 60.0,
-        color: Colors.white,
-      ),
-    );
-  }
-
   Widget _buildSettingsTab() {
     return ListView(
       children: [
         _buildSectionHeader('General'),
         _buildSettingsOption('My Orders', Icons.shopping_cart,
-            route: OrderDetailsScreen()),
-        _buildSettingsOption('My Address', Icons.location_on,
-            route: AddMyAddressScreen()),
+            route: OrderHistoryScreen()),
+        // _buildSettingsOption('My Address', Icons.location_on,
+        //     route: AddMyAddressScreen()),
         _buildSettingsOption('Edit Profile', Icons.edit,
             route: EditProfileScreen()),
-        _buildSettingsOption('Change Password', Icons.lock,
-            route: ChangePasswordScreen()),
+        // _buildSettingsOption('Change Password', Icons.lock,
+        //     route: ChangePasswordScreen()),
         _buildSectionHeader('About Us'),
         _buildSettingsOption('Terms and Conditions', Icons.article,
-            route: TermsAndConditionsScreen()),
+            route: TermsAndConditionsScreen(
+              action: 'terms-of-service',
+            )),
         _buildSettingsOption('Privacy Policy', Icons.privacy_tip,
-            route: TermsAndConditionsScreen()),
+            route: TermsAndConditionsScreen(
+              action: 'privacy-policy',
+            )),
+        _buildSettingsOption('Refund Polocy', Icons.article,
+            route: TermsAndConditionsScreen(
+              action: 'refund-policy',
+            )),
+        _buildSettingsOption('About Us', Icons.privacy_tip,
+            route: TermsAndConditionsScreen(
+              action: 'about-us',
+            )),
+        _buildSettingsOption('Contact Us', Icons.contact_page,
+            route: ContactUsScreen()),
         _buildSectionHeader('Notification'),
         _buildNotificationSwitch(),
       ],
@@ -117,17 +145,26 @@ class _SettingsScreenState extends State<SettingsScreen>
   }
 
   Widget _buildPaymentTab() {
+    if (_transactionData == null || _transactionData!.isEmpty) {
+      return Center(child: Text('No transactions found'));
+    }
     return ListView(
-      children: [
-        _buildSectionHeader('Last Transactions'),
-        ...List.generate(10, (index) => _buildTransactionItem(index + 1)),
-        TextButton(
-          onPressed: () {
-            // View more action
-          },
-          child: Text('View More'),
-        ),
-      ],
+      children: _transactionData!
+          .map((transaction) => _buildTransactionItem(transaction))
+          .toList(),
+    );
+  }
+
+  Widget _buildTransactionItem(Map<String, dynamic> transaction) {
+    return ListTile(
+      leading: Icon(Icons.payment, color: Colors.green),
+      title: Text(transaction['service_name'] ?? 'No Service Name'),
+      subtitle: Text(
+          'ID: ${transaction['trans_id'] ?? 'N/A'}\nDate: ${transaction['date']}'),
+      trailing: Text(
+        '₹${transaction['amount']}',
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
     );
   }
 
@@ -142,17 +179,18 @@ class _SettingsScreenState extends State<SettingsScreen>
       padding: const EdgeInsets.all(16.0),
       child: Text(
         title,
-        style: TextStyle(
+        style: const TextStyle(
             fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.orange),
       ),
     );
   }
 
-  Widget _buildSettingsOption(String title, IconData icon, {route}) {
+  Widget _buildSettingsOption(String title, IconData icon,
+      {required Widget route}) {
     return ListTile(
       leading: Icon(icon, color: Colors.orange),
       title: Text(title),
-      trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
+      trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey),
       onTap: () {
         Navigator.push(
           context,
@@ -160,31 +198,18 @@ class _SettingsScreenState extends State<SettingsScreen>
             builder: (context) => route,
           ),
         );
-        // Navigate to corresponding screen
       },
     );
   }
 
   Widget _buildNotificationSwitch() {
     return SwitchListTile(
-      title: Text('Allow Notifications'),
+      title: const Text('Allow Notifications'),
       value: true,
       onChanged: (bool value) {
         // Handle notification switch
       },
-      secondary: Icon(Icons.notifications_active, color: Colors.orange),
-    );
-  }
-
-  Widget _buildTransactionItem(int index) {
-    return ListTile(
-      leading: Icon(Icons.payment, color: Colors.green),
-      title: Text('Transaction $index'),
-      subtitle: Text('Details of the transaction'),
-      trailing: Text(
-        '₹${index * 100}',
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
+      secondary: const Icon(Icons.notifications_active, color: Colors.orange),
     );
   }
 
@@ -196,7 +221,7 @@ class _SettingsScreenState extends State<SettingsScreen>
       ),
       title: Text('Notification Title $index'),
       subtitle: Text('This is the detail of notification $index.'),
-      trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
+      trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey),
       onTap: () {
         // Handle notification click
       },

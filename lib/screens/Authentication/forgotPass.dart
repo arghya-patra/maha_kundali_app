@@ -81,8 +81,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             Center(
               child: GestureDetector(
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => SignUpScreen()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RegistrationScreen()));
                   // Navigate to Create New Account screen
                   print('Navigating to Create New Account screen');
                 },

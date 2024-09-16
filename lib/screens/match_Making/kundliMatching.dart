@@ -1,7 +1,14 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:maha_kundali_app/screens/kundli/matchReport.dart';
+import 'package:maha_kundali_app/apiManager/apiData.dart';
+import 'package:maha_kundali_app/screens/match_Making/matchMakingModel.dart';
+import 'package:maha_kundali_app/screens/match_Making/matchReport.dart';
+import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:http/http.dart' as http;
 
 class KundliMatchingScreen extends StatefulWidget {
   @override
@@ -13,17 +20,21 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
   final TextEditingController _boyNameController = TextEditingController();
   final TextEditingController _boyDobController = TextEditingController();
   final TextEditingController _boyTimeController = TextEditingController();
+  String boyFormattedDate = '';
   final TextEditingController _boyPlaceController = TextEditingController();
 
   final TextEditingController _girlNameController = TextEditingController();
   final TextEditingController _girlDobController = TextEditingController();
+  String girlFormattedDate = '';
   final TextEditingController _girlTimeController = TextEditingController();
   final TextEditingController _girlPlaceController = TextEditingController();
 
   bool _isLoading = true;
   late AnimationController _animationController;
   late Animation<double> _blinkAnimation;
-
+  String selectedTimezone = "IST";
+  int hour = 0;
+  int minute = 0;
   @override
   void initState() {
     super.initState();
@@ -68,6 +79,7 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
     if (picked != null) {
       setState(() {
         controller.text = DateFormat('dd/MM/yyyy').format(picked);
+        print(controller.text);
       });
     }
   }
@@ -78,8 +90,46 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
         await showTimePicker(context: context, initialTime: TimeOfDay.now());
     if (picked != null) {
       setState(() {
-        controller.text = picked.format(context);
+        final String formattedTime = picked.hour.toString().padLeft(2, '0') +
+            ':' +
+            picked.minute.toString().padLeft(2, '0');
+        controller.text = formattedTime;
+        print(formattedTime);
+        // controller.text = picked.format(context);
+        // print(controller.text);
+        hour = picked.hour;
+        minute = picked.minute;
       });
+    }
+  }
+
+  submitData() async {
+    String url = APIData.login;
+    print(url.toString());
+    final response = await http.post(Uri.parse(url), body: {
+      'action': 'free-service-type',
+      'authorizationToken': ServiceManager.tokenID,
+      'type': 'matchmaking',
+      'boy_name': _boyNameController.text,
+      'boy_dob': _boyDobController.text,
+      'boy_tob': _boyTimeController.text,
+      'boy_pob': _boyPlaceController.text,
+      'girl_name': _girlNameController.text,
+      'girl_dob': _girlDobController.text,
+      'girl_tob': _girlTimeController.text,
+      'girl_pob': _girlPlaceController.text,
+      'lang': 'en',
+      'boy_lat': '22.54111111',
+      'boy_lon': '88.33777778',
+      'girl_lat': '22.54111111',
+      'girl_lon': '88.33777778'
+    });
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      return Matchmaking.fromJson(jsonDecode(response.body)['matchmaking']);
+    } else {
+      throw Exception('Failed to load horoscope details');
     }
   }
 
@@ -160,13 +210,36 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
                       timeController: _girlTimeController,
                       placeController: _girlPlaceController),
                   const SizedBox(height: 30),
+                  _buildLabel('Timezone'),
+                  _buildFieldContainer(
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      value: selectedTimezone,
+                      underline: const SizedBox(),
+                      items: ["IST", "GMT", "PST", "EST"].map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedTimezone = value!;
+                        });
+                      },
+                    ),
+                  ),
                   Center(
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        Matchmaking match = await submitData();
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => KundliMatchingResultScreen(),
+                            builder: (context) => MatchmakingResultScreen(
+                              matchmaking: match,
+                            ),
                           ),
                         );
                         // Navigate to compatibility results screen
@@ -189,6 +262,25 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
                 ],
               ),
             ),
+    );
+  }
+
+  Widget _buildLabel(String label) {
+    return Text(
+      label,
+      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    );
+  }
+
+  Widget _buildFieldContainer({required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: child,
     );
   }
 

@@ -1,212 +1,249 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:maha_kundali_app/apiManager/apiData.dart';
+import 'package:maha_kundali_app/service/serviceManager.dart';
+import 'dart:convert';
 import 'package:shimmer/shimmer.dart';
 
-class OrderDetailsScreen extends StatefulWidget {
+class OrderHistoryScreen extends StatefulWidget {
   @override
-  _OrderDetailsScreenState createState() => _OrderDetailsScreenState();
+  _OrderHistoryScreenState createState() => _OrderHistoryScreenState();
 }
 
-class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
-  final List<Map<String, dynamic>> orders = [
-    {
-      'image': 'images/book.png',
-      'title': 'Product 1',
-      'quantity': 1,
-      'price': 29.99,
-      'status': 'Delivered',
-    },
-    {
-      'image': 'images/book.png',
-      'title': 'Product 2',
-      'quantity': 2,
-      'price': 49.99,
-      'status': 'Shipped',
-    },
-    {
-      'image': 'images/book.png',
-      'title': 'Product 3',
-      'quantity': 1,
-      'price': 19.99,
-      'status': 'Delivered',
-    },
-  ];
-
+class _OrderHistoryScreenState extends State<OrderHistoryScreen>
+    with SingleTickerProviderStateMixin {
+  TabController? _tabController;
+  Map<String, dynamic>? _data;
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
+    _tabController = TabController(length: 4, vsync: this);
+    _fetchOrderHistory();
+  }
+
+  Future<void> _fetchOrderHistory() async {
+    setState(() {
+      _isLoading = true;
+    });
+    String url = APIData.login;
+    print(url.toString());
+    final response = await http.post(Uri.parse(url), body: {
+      'action': 'orderhistory',
+      'authorizationToken': ServiceManager.tokenID,
+    });
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      setState(() {
+        _data = json.decode(response.body);
+        _isLoading = false;
+      });
+    } else {
       setState(() {
         _isLoading = false;
       });
-    });
+      throw Exception('Failed to load order history');
+    }
   }
 
-  void _showCancelOptions(int index) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
-                  labelText: 'Cancel Reason',
-                  border: OutlineInputBorder(),
-                ),
-                items: ['Reason 1', 'Reason 2', 'Reason 3']
-                    .map((reason) => DropdownMenuItem<String>(
-                          value: reason,
-                          child: Text(reason),
-                        ))
-                    .toList(),
-                onChanged: (value) {},
-              ),
-              const SizedBox(height: 10),
-              const TextField(
-                decoration: InputDecoration(
-                  labelText: 'Additional Comments',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () {},
-                child: const Text('Submit'),
-              ),
-            ],
+  Widget _buildOverviewTable() {
+    if (_data == null) return Container();
+
+    final overview = _data!['my_order_overview'] as List<dynamic>;
+
+    return DataTable(
+      columns: [
+        DataColumn(label: Text('Order Type')),
+        DataColumn(label: Text('Total')),
+      ],
+      rows: overview.map<DataRow>((item) {
+        final key = item.keys.first;
+        final value = item[key] ?? 'N/A';
+        return DataRow(
+          cells: [
+            DataCell(Text(key)),
+            DataCell(Text(value.toString())),
+          ],
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildTabContent(List<dynamic> items, String type) {
+    if (_isLoading) {
+      return _buildShimmer();
+    }
+
+    if (items.isEmpty) {
+      return Center(
+          child: Text('No orders to show',
+              style: TextStyle(fontSize: 18, color: Colors.grey)));
+    }
+
+    return ListView.builder(
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        final item = items[index];
+        return Card(
+          color: const Color.fromARGB(255, 255, 211, 153),
+          elevation: 5,
+          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (type == 'call')
+                  Row(
+                    children: [
+                      Icon(Icons.phone, color: Colors.blue),
+                      SizedBox(width: 8),
+                      Expanded(
+                          child: Text('Call Order #${item['call_id']}',
+                              style: TextStyle(fontWeight: FontWeight.bold))),
+                    ],
+                  ),
+                if (type == 'chat')
+                  Row(
+                    children: [
+                      Icon(Icons.chat, color: Colors.green),
+                      SizedBox(width: 8),
+                      Expanded(
+                          child: Text('Chat with ${item['astrologer_name']}',
+                              style: TextStyle(fontWeight: FontWeight.bold))),
+                    ],
+                  ),
+                if (type == 'puja')
+                  Row(
+                    children: [
+                      Icon(Icons.calendar_today, color: Colors.purple),
+                      SizedBox(width: 8),
+                      Expanded(
+                          child: Text('Puja Booking #${item['booking_id']}',
+                              style: TextStyle(fontWeight: FontWeight.bold))),
+                    ],
+                  ),
+                if (type == 'report')
+                  Row(
+                    children: [
+                      Icon(Icons.report, color: Colors.red),
+                      SizedBox(width: 8),
+                      Expanded(
+                          child: Text('Report #${item['booking_id']}',
+                              style: TextStyle(fontWeight: FontWeight.bold))),
+                    ],
+                  ),
+                SizedBox(height: 8),
+                Text('Date: ${item['date']}',
+                    style: TextStyle(color: Colors.grey[600])),
+                SizedBox(height: 4),
+                if (type == 'chat' || type == 'puja')
+                  Text('Amount: ${item['amount']}',
+                      style: TextStyle(color: Colors.grey[600])),
+                if (type == 'puja')
+                  Text('Puja: ${item['puja_name']}',
+                      style: TextStyle(color: Colors.grey[600])),
+                if (type == 'report')
+                  Text('Report: ${item['report_name'] ?? 'N/A'}',
+                      style: TextStyle(color: Colors.grey[600])),
+              ],
+            ),
           ),
         );
       },
     );
   }
 
-  Widget _buildOrderTile(Map<String, dynamic> order, int index) {
-    return Card(
-      elevation: 4.0,
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Image.asset(order['image'], width: 80),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(order['title'],
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
-                      Text('Quantity: ${order['quantity']}'),
-                      Text('Price: \$${order['price']}'),
-                    ],
-                  ),
-                ),
-                Icon(
-                  order['status'] == 'Delivered'
-                      ? Icons.check_circle
-                      : Icons.local_shipping,
-                  color: order['status'] == 'Delivered'
-                      ? Colors.green
-                      : Colors.orange,
-                ),
-              ],
+  Widget _buildShimmer() {
+    return ListView.builder(
+      itemCount: 5,
+      itemBuilder: (context, index) {
+        return Shimmer.fromColors(
+          baseColor: Colors.grey,
+          highlightColor: Colors.blueGrey,
+          child: Card(
+            elevation: 5,
+            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
             ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                if (order['status'] == 'Delivered') ...[
-                  const Text('Rate Product: '),
-                  IconButton(
-                    icon: const Icon(Icons.star_border),
-                    onPressed: () {
-                      // Implement rating logic
-                    },
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      height: 16,
+                      color: Colors.white,
+                    ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.star_border),
-                    onPressed: () {
-                      // Implement rating logic
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.star_border),
-                    onPressed: () {
-                      // Implement rating logic
-                    },
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: Container(
+                      height: 16,
+                      color: Colors.white,
+                    ),
                   ),
                 ],
-                const Spacer(),
-                if (order['status'] != 'Delivered')
-                  TextButton(
-                    onPressed: () => _showCancelOptions(index),
-                    child: const Text('Cancel Order',
-                        style: TextStyle(color: Colors.red)),
-                  ),
-              ],
-            ),
-            if (order['status'] == 'Delivered')
-              TextButton(
-                onPressed: () {
-                  // Implement exchange logic
-                },
-                child: const Text('Exchange',
-                    style: TextStyle(color: Colors.blue)),
               ),
-          ],
-        ),
-      ),
+            ),
+          ),
+        );
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Orders'),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.orange, Colors.deepOrange],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+      appBar: AppBar(title: Text('Order History')),
+      body: Column(
+        children: [
+          Expanded(
+            child: Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text('Overview',
+                      style: Theme.of(context).textTheme.headline6),
+                ),
+                Expanded(
+                  child: _buildOverviewTable(),
+                ),
+              ],
             ),
           ),
-        ),
-      ),
-      body: _isLoading
-          ? ListView.builder(
-              itemCount: orders.length,
-              itemBuilder: (context, index) {
-                return Shimmer.fromColors(
-                  baseColor: Colors.grey[300]!,
-                  highlightColor: Colors.grey[100]!,
-                  child: Container(
-                    height: 120,
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                );
-              },
-            )
-          : ListView.builder(
-              itemCount: orders.length,
-              itemBuilder: (context, index) {
-                return _buildOrderTile(orders[index], index);
-              },
+          Container(),
+          SizedBox(
+            height: 120,
+          ),
+          TabBar(
+            controller: _tabController,
+            tabs: [
+              Tab(text: 'Calls'),
+              Tab(text: 'Chats'),
+              Tab(text: 'Puja'),
+              Tab(text: 'Reports'),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildTabContent(_data?['call_list'] ?? [], 'call'),
+                _buildTabContent(_data?['chat_list'] ?? [], 'chat'),
+                _buildTabContent(_data?['pooja_booking_list'] ?? [], 'puja'),
+                _buildTabContent(_data?['report_booking_list'] ?? [], 'report'),
+              ],
             ),
+          ),
+        ],
+      ),
     );
   }
 }

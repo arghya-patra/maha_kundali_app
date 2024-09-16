@@ -4,18 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
+import 'package:maha_kundali_app/screens/Birth%20Chart/birthChartDetails.dart';
 import 'package:maha_kundali_app/screens/Kundli/kundliDetails.dart';
 import 'package:maha_kundali_app/screens/Kundli/kundliModel.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:http/http.dart' as http;
 
-class KundliScreen extends StatefulWidget {
+class BirthChartFormScreen extends StatefulWidget {
   @override
-  _KundliScreenState createState() => _KundliScreenState();
+  _BirthChartFormScreenState createState() => _BirthChartFormScreenState();
 }
 
-class _KundliScreenState extends State<KundliScreen>
+class _BirthChartFormScreenState extends State<BirthChartFormScreen>
     with SingleTickerProviderStateMixin {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _placeController = TextEditingController();
@@ -25,7 +26,7 @@ class _KundliScreenState extends State<KundliScreen>
   bool _isLoading = true;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
-
+  String? svgData;
   @override
   void initState() {
     super.initState();
@@ -90,7 +91,7 @@ class _KundliScreenState extends State<KundliScreen>
     final response = await http.post(Uri.parse(url), body: {
       'action': 'free-service-type',
       'authorizationToken': ServiceManager.tokenID,
-      'type': 'kundali',
+      'type': 'birthchart',
       'name': _nameController.text,
       'dob': _dateController.text,
       'tob': _timeController.text,
@@ -103,30 +104,16 @@ class _KundliScreenState extends State<KundliScreen>
     print(response.body);
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final basicDetails =
-          BasicDetails.fromJson(data['horoscope']['basic_details']);
-      final ascendantReport = AscendantReport.fromJson(
-          data['horoscope']['ascendant_report']['response'][0]);
-      final moonSign =
-          MoonSign.fromJson(data['horoscope']['moonsign']['response']);
-      final sunSign =
-          SunSign.fromJson(data['horoscope']['sunsign']['response']);
-      // final planetDetails = Map<String, PlanetDetails>.from(data['horoscope']
-      //         ['planet_details']
-      //     .map((k, v) => MapEntry(k, PlanetDetails.fromJson(v))));
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      setState(() {
+        svgData = data['content'];
+        // isLoading = false;
+      });
 
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => KundliDetailsScreen(
-            basicDetails: basicDetails,
-            ascendantReport: ascendantReport,
-            moonSign: moonSign,
-            sunSign: sunSign,
-            //planetDetails: planetDetails,
-          ),
-        ),
+            builder: (context) => BirthChartScreen(svgData: svgData)),
       );
     } else {
       throw Exception('Failed to load horoscope details');
@@ -137,7 +124,7 @@ class _KundliScreenState extends State<KundliScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kundli Details'),
+        title: const Text('Know your Birth Chart'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -173,29 +160,8 @@ class _KundliScreenState extends State<KundliScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Replace with actual Kundli image asset
-                    const SizedBox(height: 20),
-                    Center(
-                      child: FadeTransition(
-                        opacity: _fadeAnimation,
-                        child: Image.asset('images/kundali.png'),
-                      ),
-                    ),
                     const Text(
-                      "What is Kundli?",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      "Kundli is a detailed chart that represents the positioning of stars and planets at the time of a person's birth.",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(height: 30),
-                    const Text(
-                      "Get Your Kundli?",
+                      "Get Your Chart?",
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,

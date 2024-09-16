@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:maha_kundali_app/screens/Authentication/login.dart';
 import 'package:maha_kundali_app/screens/Authentication/registration.dart';
-import 'package:maha_kundali_app/screens/Home/dashBoard.dart';
 import 'package:maha_kundali_app/screens/Home/dashboardScreen.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:maha_kundali_app/theme/style.dart';
@@ -21,8 +20,8 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // ServiceManager().getUserID();
-    // ServiceManager().getTokenID();
+    ServiceManager().getUserID();
+    ServiceManager().getTokenID();
     // LocationService().fetchLocation();
     _timer = Timer.periodic(Duration(seconds: 3), (timer) {
       if (ServiceManager.userID != '') {

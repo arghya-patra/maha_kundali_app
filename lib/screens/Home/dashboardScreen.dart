@@ -1,9 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:maha_kundali_app/apiManager/apiData.dart';
+import 'package:maha_kundali_app/components/util.dart';
 import 'package:maha_kundali_app/screens/Astro_Ecom/cartScreen.dart';
 import 'package:maha_kundali_app/screens/Astro_Ecom/productListScreen.dart';
 import 'package:maha_kundali_app/screens/Home/home_screen.dart';
 import 'package:maha_kundali_app/screens/Home/profile.dart';
 import 'package:maha_kundali_app/screens/chats/chatListScreen.dart';
+import 'package:maha_kundali_app/service/serviceManager.dart';
+import 'package:http/http.dart' as http;
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -13,10 +19,12 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    getDashboardData(context);
     _tabController = TabController(length: 5, vsync: this);
   }
 
@@ -24,6 +32,41 @@ class _DashboardScreenState extends State<DashboardScreen>
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  getDashboardData(context) async {
+    setState(() {
+      isLoading = true;
+    });
+    String url = APIData.login;
+    print(ServiceManager.tokenID);
+    print(url.toString());
+    var res = await http.post(Uri.parse(url), body: {
+      'action': 'dashboard-overview',
+      'authorizationToken': ServiceManager.tokenID, //8100007581
+    });
+    var data = jsonDecode(res.body);
+    if (data['status'] == 200) {
+      print("______________________________________");
+      print(res.body);
+      print("______________________________________");
+      try {} catch (e) {
+        toastMessage(message: e.toString());
+        setState(() {
+          isLoading = false;
+        });
+        toastMessage(message: 'Something went wrong');
+      }
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      toastMessage(message: 'Something Went wrong!');
+    }
+    setState(() {
+      isLoading = false;
+    });
+    return 'Success';
   }
 
   @override
