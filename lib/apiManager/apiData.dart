@@ -2,7 +2,7 @@ import 'package:maha_kundali_app/service/serviceManager.dart';
 
 class APIData {
   //Auth profile Api
-  static const String baseURL = 'https://mahakundali.hitechmart.in/';
+  static const String baseURL = 'https://mahakundali.com/';
 
   static const String login = '${baseURL}app-api.php';
   static const String registration = '${baseURL}api/register';

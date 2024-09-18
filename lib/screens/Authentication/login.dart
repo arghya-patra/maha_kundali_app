@@ -139,13 +139,11 @@ class _LoginScreenState extends State<LoginScreen>
               child: isLoading != true
                   ? ElevatedButton(
                       onPressed: () {
-                        loginUser(context);
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => OtpVerificationScreen(),
-                        //   ),
-                        // );
+                        if (mobile.text.isEmpty) {
+                          toastMessage(message: 'Enter Phone Number');
+                        } else {
+                          loginUser(context);
+                        }
                       },
                       child: const Text('Send Otp'),
                       style: ElevatedButton.styleFrom(
