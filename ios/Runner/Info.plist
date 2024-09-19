@@ -4,6 +4,10 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>We need access to your photo library to allow you to upload images.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>We need access to your camera to allow you to take pictures.</string>
 	<key>CFBundleDisplayName</key>
 	<string>Maha Kundali App</string>
 	<key>CFBundleExecutable</key>
