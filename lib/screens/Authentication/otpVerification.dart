@@ -79,7 +79,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
           children: [
             Text(
               'Enter the code we have sent to your number otp: ${widget.otp}',
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 32),
             Center(

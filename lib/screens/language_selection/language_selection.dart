@@ -49,7 +49,7 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
           children: [
             Text(
               'Please select your language',
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             SizedBox(height: 16),
             Wrap(

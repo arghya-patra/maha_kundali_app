@@ -39,7 +39,7 @@ class KundliDetailsScreen extends StatelessWidget {
             children: [
               Text(
                 'Basic Details',
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               Divider(),
               _buildDetail('Name', basicDetails.name),
@@ -49,7 +49,7 @@ class KundliDetailsScreen extends StatelessWidget {
               SizedBox(height: 16.0),
               Text(
                 'Ascendant Report',
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               Divider(),
               _buildDetail('Ascendant', ascendantReport.ascendant),
@@ -65,7 +65,7 @@ class KundliDetailsScreen extends StatelessWidget {
               SizedBox(height: 16.0),
               Text(
                 'Moon Sign',
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               Divider(),
               _buildDetail('Moon Sign', moonSign.moonSign),
@@ -73,7 +73,7 @@ class KundliDetailsScreen extends StatelessWidget {
               SizedBox(height: 16.0),
               Text(
                 'Sun Sign',
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               Divider(),
               _buildDetail('Sun Sign', sunSign.sunSign),

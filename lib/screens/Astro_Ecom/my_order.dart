@@ -210,7 +210,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
                 Container(
                   padding: EdgeInsets.all(16.0),
                   child: Text('Overview',
-                      style: Theme.of(context).textTheme.headline6),
+                      style: Theme.of(context).textTheme.titleLarge),
                 ),
                 Expanded(
                   child: _buildOverviewTable(),

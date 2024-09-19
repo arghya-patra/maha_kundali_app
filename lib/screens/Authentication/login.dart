@@ -70,12 +70,12 @@ class _LoginScreenState extends State<LoginScreen>
                 children: [
                   Text(
                     'Login with your phone number',
-                    style: Theme.of(context).textTheme.headline5,
+                    style: TextStyle(fontSize: 20),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'You will receive an OTP',
-                    style: Theme.of(context).textTheme.subtitle1,
+                    style: TextStyle(fontSize: 18),
                   ),
                 ],
               ),
@@ -162,7 +162,7 @@ class _LoginScreenState extends State<LoginScreen>
             Center(
               child: Text(
                 'Some other text as footer',
-                style: Theme.of(context).textTheme.caption,
+                style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
           ],

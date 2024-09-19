@@ -164,10 +164,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   SizedBox(height: 16),
                   Text('John Doe',
-                      style: Theme.of(context).textTheme.headline6),
+                      style: Theme.of(context).textTheme.titleLarge),
                   SizedBox(height: 8),
                   Text('johndoe@example.com',
-                      style: Theme.of(context).textTheme.subtitle1),
+                      style: Theme.of(context).textTheme.titleMedium),
                   SizedBox(height: 32),
                   _buildProfileOption('Edit Profile', Icons.edit, () {
                     Navigator.push(
