@@ -406,6 +406,7 @@
 //   }
 // }
 import 'package:flutter/material.dart';
+import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/screens/AstrologerProfile/astrologerProfileDetail.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:shimmer/shimmer.dart';
@@ -435,13 +436,13 @@ class _AstrologerListScreenState extends State<AstrologerListScreen> {
   // Stream for fetching astrologers data
   Stream<List<Map<String, dynamic>>> _fetchAstrologers() async* {
     while (true) {
+      String url = APIData.login;
+      print(url.toString());
       try {
-        final response = await http.post(
-            Uri.parse('https://mahakundali.hitechmart.in/app-api.php'),
-            body: {
-              'action': 'astrologer-list',
-              'authorizationToken': ServiceManager.tokenID
-            });
+        final response = await http.post(Uri.parse(url), body: {
+          'action': 'astrologer-list',
+          'authorizationToken': ServiceManager.tokenID
+        });
         final data = json.decode(response.body);
 
         if (response.statusCode == 200) {
