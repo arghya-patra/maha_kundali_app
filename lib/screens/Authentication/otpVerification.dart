@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/components/util.dart';
+import 'package:maha_kundali_app/screens/Authentication/login.dart';
 import 'package:maha_kundali_app/screens/Home/dashboardScreen.dart';
 import 'package:maha_kundali_app/screens/language_selection/language_selection.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
@@ -207,7 +208,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
     });
     String url = APIData.login;
     print(ServiceManager.tokenID);
-    var bodyReg = {'action': 'register-mobile', 'otp': _otpController.text};
+    var bodyReg = {
+      'action': 'verify-register-otp',
+      'authorizationToken': ServiceManager.tokenID,
+      'otp': _otpController.text
+    };
     var bodyLogin = {
       'action': 'verify-login-otp',
       'authorizationToken': ServiceManager.tokenID, //8100007581
@@ -217,28 +222,44 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
     var res = await http.post(Uri.parse(url),
         body: widget.isReg ? bodyReg : bodyLogin);
     var data = jsonDecode(res.body);
+    print(data['status']);
     if (data['status'] == 200) {
       print("______________________________________");
       print(res.body);
       print("______________________________________");
       try {
-        print(data['status']);
-        print(data['authorizationToken']);
-        print('${data['userDetails']['userId']}');
-        ServiceManager().setUser('${data['userDetails']['userId']}');
-        ServiceManager()
-            .setToken('${data['userDetails']['authorizationToken']}');
-        ServiceManager.userID = '${data['userDetails']['userId']}';
-        ServiceManager.tokenID = '${data['userDetails']['authorizationToken']}';
-        print(ServiceManager.userID);
-        print(ServiceManager.tokenID);
-        // print(ServiceManager.roleAs);
-        //  ServiceManager().getUserData();
-        toastMessage(message: 'Logged In');
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => DashboardScreen()),
-            (route) => false);
+        if (widget.isReg == false) {
+          print(data['status']);
+          print(data['authorizationToken']);
+          print('${data['userDetails']['userId']}');
+          ServiceManager().setUser('${data['userDetails']['userId']}');
+          ServiceManager()
+              .setToken('${data['userDetails']['authorizationToken']}');
+
+          ServiceManager.userID = '${data['userDetails']['userId']}';
+          ServiceManager.tokenID =
+              '${data['userDetails']['authorizationToken']}';
+          ServiceManager().getUserData();
+          // ServiceManager.userEmail = '${data['userDetails']['email']}';
+          // ServiceManager.userMobile = '${data['userDetails']['mobile']}';
+          // ServiceManager.profileURL = '${data['userDetails']['logo']}';
+          // ServiceManager.userName = '${data['userDetails']['name']}';
+
+          print(ServiceManager.userID);
+          print(ServiceManager.tokenID);
+          // print(ServiceManager.roleAs);
+          //  ServiceManager().getUserData();
+          toastMessage(message: 'Logged In');
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => DashboardScreen()),
+              (route) => false);
+        } else {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => LoginScreen()),
+              (route) => false);
+        }
       } catch (e) {
         toastMessage(message: e.toString());
         setState(() {

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -13,12 +14,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final ImagePicker _picker = ImagePicker();
   String _profileImage = 'images/profile.jpeg'; // Initial profile image
   File? _image;
+  final fullNameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneNumberController = TextEditingController();
+  final passwordController = TextEditingController();
 
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    fullNameController.text = ServiceManager.userName;
+    emailController.text = ServiceManager.userEmail;
+    phoneNumberController.text = ServiceManager.userMobile;
+
     // Simulate a loading delay
     Future.delayed(Duration(seconds: 2), () {
       setState(() {
@@ -96,11 +105,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final fullNameController = TextEditingController();
-    final emailController = TextEditingController();
-    final phoneNumberController = TextEditingController();
-    final passwordController = TextEditingController();
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Profile'),
@@ -130,12 +134,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       _image == null
                           ? CircleAvatar(
                               radius: 50,
-                              backgroundImage: AssetImage(_profileImage)
+                              backgroundImage:
+                                  NetworkImage(ServiceManager.profileURL),
                               //FileImage(File(_image!.path))
                               //_image!=null? FileImage(File(_image.path)):AssetImage(_profileImage),
 
                               // backgroundImage: AssetImage(_profileImage),
-                              )
+                            )
                           : CircleAvatar(
                               radius: 50,
                               backgroundImage: FileImage(File(_image!.path))
@@ -168,11 +173,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   SizedBox(height: 16),
                   _buildTextField(
                       label: 'Phone Number', controller: phoneNumberController),
-                  SizedBox(height: 16),
-                  _buildTextField(
-                      label: 'Password',
-                      controller: passwordController,
-                      isPassword: true),
+                  // SizedBox(height: 16),
+                  // _buildTextField(
+                  //     label: 'Password',
+                  //     controller: passwordController,
+                  //     isPassword: true),
                   SizedBox(height: 32),
                   ElevatedButton(
                     onPressed: () {

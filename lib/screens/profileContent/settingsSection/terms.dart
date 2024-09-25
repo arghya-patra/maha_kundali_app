@@ -29,6 +29,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
     });
 
     if (response.statusCode == 200) {
+      print(response.body);
       // If the server returns a 200 OK response, parse the JSON.
       return json.decode(response.body);
     } else {
@@ -41,7 +42,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        //title: const Text('Settings'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -70,8 +71,11 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                     terms['title'],
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 16),
-                  Image.network(terms['img'], height: 200, fit: BoxFit.cover),
+                  // SizedBox(height: 16),
+                  // terms['title'] == 'About Us'
+                  //     ? Image.network(terms['img'],
+                  //         height: 200, fit: BoxFit.contain)
+                  //     : Container(),
                   SizedBox(height: 16),
                   Html(data: terms['contents']),
                 ],

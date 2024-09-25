@@ -67,27 +67,53 @@ class ServiceManager {
   }
 
   void getUserData() async {
-    String url = APIData.userDetails;
+    String url = APIData.login;
     print(url);
-    var res = await http.get(Uri.parse(url), headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer ${ServiceManager.tokenID}',
+    var res = await http.post(Uri.parse(url), body: {
+      'action': 'user-details',
+      'authorizationToken': ServiceManager.tokenID, //8100007581
     });
+    var data = jsonDecode(res.body);
     if (res.statusCode == 200) {
       var data = jsonDecode(res.body);
       print(data.toString());
-      userName = '${data['data']['name']}';
-      userEmail = '${data['data']['email']}';
-      profileURL = '${data['data']['profile_image']}';
-      userMobile = data['data']['mobile'] ?? '';
-      userAltMobile = data['data']['alternative_mob'] ?? '';
-      userDob = data['data']['dob'] ?? '';
-      designation = data['data']['Designation'] ?? '';
-      userBranchID = data['data']['branchId'] ?? '';
-      roleAs = '${data['data']['use_role']}';
+      userName = '${data['userDetails']['name']}';
+      userEmail = '${data['userDetails']['email']}';
+      profileURL = '${data['userDetails']['logo']}';
+      userMobile = data['userDetails']['mobile'] ?? '';
+      // userAltMobile = data['astrologerDetails']['alternative_mob'] ?? '';
+      // userDob = data['astrologerDetails']['dob'] ?? '';
+      // designation = data['astrologerDetails']['Designation'] ?? '';
+      // userBranchID = data['astrologerDetails']['branchId'] ?? '';
+      // roleAs = '${data['astrologerDetails']['use_role']}';
     } else {
       // print('Status Code: ${res.statusCode}');
       // print(res.body);
     }
   }
+
+  // void getUserData() async {
+  //   String url = APIData.login;
+  //   print(url);
+  //   var res = await http.get(Uri.parse(url), headers: {
+  //     'Accept': 'application/json',
+  //     'Authorization': 'Bearer ${ServiceManager.tokenID}',
+  //   });
+  //   if (res.statusCode == 200) {
+  //     var data = jsonDecode(res.body);
+  //     print(data.toString());
+  //     userName = '${data['userDetails']['name']}';
+  //     userEmail = '${data['userDetails']['email']}';
+  //     profileURL = '${data['userDetails']['profile_image']}';
+  //     userMobile = data['userDetails']['mobile'] ?? '';
+  //     userAltMobile = data['userDetails']['alternative_mob'] ?? '';
+  //     userDob = data['userDetails']['dob'] ?? '';
+  //     designation = data['userDetails']['Designation'] ?? '';
+  //     userBranchID = data['userDetails']['branchId'] ?? '';
+  //     roleAs = '${data['userDetails']['use_role']}';
+  //   } else {
+  //     // print('Status Code: ${res.statusCode}');
+  //     // print(res.body);
+  //   }
+  // }
 }

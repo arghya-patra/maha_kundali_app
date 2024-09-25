@@ -41,6 +41,7 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 255, 221, 170),
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Login'),
@@ -57,116 +58,131 @@ class _LoginScreenState extends State<LoginScreen>
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AnimatedOpacity(
-              opacity: _isFormVisible ? 1.0 : 0.0,
-              duration: const Duration(seconds: 1),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Login with your phone number',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'You will receive an OTP',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ],
-              ),
+      body: Stack(
+        children: [
+          Opacity(
+            opacity: 0.08, // Adjust the opacity level here
+            child: Image.asset(
+              'images/ganesh.png', // Your image path
+              fit: BoxFit.cover, // To cover the entire background
+              height: double.infinity,
+              width: double.infinity,
             ),
-            const SizedBox(height: 32),
-            AnimatedContainer(
-              duration: const Duration(seconds: 1),
-              curve: Curves.easeInOut,
-              child: _isFormVisible
-                  ? Row(
-                      children: [
-                        Container(
-                          //color: Colors.red,
-                          child: CountryListPick(
-                            onChanged: (CountryCode? code) {
-                              setState(() {
-                                selectedCountryCode = code!.dialCode;
-                              });
-                            },
-                            initialSelection: '+91',
-                            useSafeArea: true,
-                          ),
-                        ),
-                        //  const SizedBox(width: 2),
-                        Expanded(
-                          child: TextField(
-                            controller: mobile,
-                            keyboardType: TextInputType.phone,
-                            decoration: const InputDecoration(
-                              labelText: 'Phone Number',
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  : const SizedBox.shrink(),
-            ),
-            const SizedBox(height: 32),
-            Center(
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => RegistrationScreen()));
-                  // Navigator.push(context,
-                  //     MaterialPageRoute(builder: (context) => VideoCallScreen()));
-                },
-                child: const Text(
-                  'Don\'t Have an account? Register Here!',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 100.0, left: 16, right: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedOpacity(
+                  opacity: _isFormVisible ? 1.0 : 0.0,
+                  duration: const Duration(seconds: 1),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Image.asset(
+                      //   'images/ganesh.png',
+                      //   height: MediaQuery.of(context).size.height / 4,
+                      //   fit: BoxFit.fill,
+                      // ),
+                      const Text(
+                        'Login with your phone number',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ),
-            const SizedBox(height: 32),
-            Center(
-              child: isLoading != true
-                  ? ElevatedButton(
-                      onPressed: () {
-                        if (mobile.text.isEmpty) {
-                          toastMessage(message: 'Enter Phone Number');
-                        } else {
-                          loginUser(context);
-                        }
-                      },
-                      child: const Text('Send Otp'),
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.orange,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 50.0, vertical: 15.0),
+                const SizedBox(height: 32),
+                AnimatedContainer(
+                  duration: const Duration(seconds: 1),
+                  curve: Curves.easeInOut,
+                  child: _isFormVisible
+                      ? Row(
+                          children: [
+                            Container(
+                              //color: Colors.red,
+                              child: CountryListPick(
+                                onChanged: (CountryCode? code) {
+                                  setState(() {
+                                    selectedCountryCode = code!.dialCode;
+                                  });
+                                },
+                                initialSelection: '+91',
+                                useSafeArea: true,
+                              ),
+                            ),
+                            //  const SizedBox(width: 2),
+                            Expanded(
+                              child: TextField(
+                                controller: mobile,
+                                keyboardType: TextInputType.phone,
+                                decoration: const InputDecoration(
+                                  labelText: 'Phone Number',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : const SizedBox.shrink(),
+                ),
+                const SizedBox(height: 32),
+                Center(
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RegistrationScreen()));
+                      // Navigator.push(context,
+                      //     MaterialPageRoute(builder: (context) => VideoCallScreen()));
+                    },
+                    child: const Text(
+                      'Don\'t Have an account? Register Here!',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
                       ),
-                    )
-                  : LoadingButton(),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                Center(
+                  child: isLoading != true
+                      ? ElevatedButton(
+                          onPressed: () {
+                            if (mobile.text.isEmpty) {
+                              toastMessage(message: 'Enter Phone Number');
+                            } else {
+                              loginUser(context);
+                            }
+                          },
+                          child: const Text('Send Otp'),
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.orange,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 50.0, vertical: 15.0),
+                          ),
+                        )
+                      : LoadingButton(),
+                ),
+                const Spacer(),
+                // Center(
+                //   child: Text(
+                //     'Some other text as footer',
+                //     style: Theme.of(context).textTheme.bodySmall,
+                //   ),
+                // ),
+              ],
             ),
-            const Spacer(),
-            Center(
-              child: Text(
-                'Some other text as footer',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

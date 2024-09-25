@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:maha_kundali_app/apiManager/apiData.dart';
+import 'package:maha_kundali_app/components/headerText.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 
 class HoroscopeDetailsScreen extends StatefulWidget {
@@ -72,17 +73,30 @@ class _HoroscopeDetailsScreenState extends State<HoroscopeDetailsScreen> {
                     children: [
                       Image.network(
                         horoscopeDetails['icon'],
-                        width: 50,
-                        height: 50,
+                        width: 100,
+                        height: 100,
                       ),
                       const SizedBox(width: 10),
-                      Text(
-                        horoscopeDetails['name'],
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                      animatedGradientText(
+                        text: horoscopeDetails['name'],
+                        gradient: const LinearGradient(
+                          colors: [
+                            Colors.orange,
+                            Color.fromARGB(255, 202, 121, 0)
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
+                        fontSize: 28.0,
+                        duration: const Duration(seconds: 3),
                       ),
+                      // Text(
+                      //   horoscopeDetails['name'],
+                      //   style: const TextStyle(
+                      //     fontSize: 24,
+                      //     fontWeight: FontWeight.bold,
+                      //   ),
+                      // ),
                     ],
                   ),
                   const SizedBox(height: 10),

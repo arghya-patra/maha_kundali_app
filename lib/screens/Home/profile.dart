@@ -143,30 +143,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       CircleAvatar(
                         radius: 50,
-                        backgroundImage: AssetImage(_profileImage),
+                        backgroundImage:
+                            NetworkImage(ServiceManager.profileURL),
                       ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: GestureDetector(
-                          onTap: _showImageSourceActionSheet,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.orange,
-                            ),
-                            padding: EdgeInsets.all(8.0),
-                            child: Icon(Icons.edit, color: Colors.white),
-                          ),
-                        ),
-                      ),
+                      // Positioned(
+                      //   bottom: 0,
+                      //   right: 0,
+                      //   child: GestureDetector(
+                      //     onTap: _showImageSourceActionSheet,
+                      //     child: Container(
+                      //       decoration: BoxDecoration(
+                      //         shape: BoxShape.circle,
+                      //         color: Colors.orange,
+                      //       ),
+                      //       padding: EdgeInsets.all(8.0),
+                      //       child: Icon(Icons.edit, color: Colors.white),
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                   SizedBox(height: 16),
-                  Text('John Doe',
+                  Text(ServiceManager.userName,
                       style: Theme.of(context).textTheme.titleLarge),
                   SizedBox(height: 8),
-                  Text('johndoe@example.com',
+                  Text(ServiceManager.userEmail,
                       style: Theme.of(context).textTheme.titleMedium),
                   SizedBox(height: 32),
                   _buildProfileOption('Edit Profile', Icons.edit, () {
@@ -181,15 +182,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         MaterialPageRoute(
                             builder: (context) => SettingsScreen()));
                   }),
-                  _buildProfileOption(
-                      'Buy Membership',
-                      //Billing Details',
-                      Icons.credit_card, () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => BuyMembershipScreen()));
-                  }),
+                  // _buildProfileOption(
+                  //     'Buy Membership',
+                  //     //Billing Details',
+                  //     Icons.credit_card, () {
+                  //   Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //           builder: (context) => BuyMembershipScreen()));
+                  // }),
                   _buildProfileOption(
                       'Call Intake Form',
                       //User Management

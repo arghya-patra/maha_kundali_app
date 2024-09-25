@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
+import 'package:maha_kundali_app/components/util.dart';
 import 'package:maha_kundali_app/screens/Authentication/otpVerification.dart';
+import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -12,11 +15,14 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _placeController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
+  String _gender = 'Male';
 
   bool _isLoading = false;
 
@@ -26,8 +32,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         _isLoading = true;
       });
 
-      String firstName = _firstNameController.text.trim();
-      String lastName = _lastNameController.text.trim();
+      String name = _nameController.text.trim();
       String email = _emailController.text.trim();
       String mobile = _mobileController.text.trim();
       String password = _passwordController.text.trim();
@@ -35,11 +40,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       print(url.toString());
       var response = await http.post(Uri.parse(url), body: {
         'action': 'register',
-        'first_name': firstName,
-        'last_name': lastName,
-        'email': email,
         'mobile': mobile,
-        'password': password
+        'name': name,
+        'email': email,
+        'gender': _gender,
+        'dob': _dateController.text,
+        'tob': _timeController.text,
+        'pob': _placeController.text,
+        'languange': 'en'
       });
       //  var data = jsonDecode(response.body);
       // var response = await http.post(
@@ -59,21 +67,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       setState(() {
         _isLoading = false;
       });
-
+      print(response.body);
       if (response.statusCode == 200) {
         // Assuming a successful response contains a "success" key
         var responseData = json.decode(response.body);
-        if (responseData['isSuccess']) {
+        if (responseData['status'] == 200) {
           print(responseData);
+          ServiceManager().setToken('${responseData['authorizationToken']}');
+          // ServiceManager.userID = '${data['userInfo']['id']}';
+          ServiceManager.tokenID = '${responseData['authorizationToken']}';
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
                   builder: (context) => OtpVerificationScreen(
                         isReg: true,
-                        otp: responseData['userDetails']['otp'].toString(),
+                        otp: responseData['otp'].toString(),
                       )),
               (route) => false);
         } else {
+          toastMessage(
+              message: 'Registration Succesful! Please Login now',
+              colors: Colors.green);
           // Handle errors, e.g., show a snackbar
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(responseData['message']),
@@ -86,6 +100,75 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ));
       }
     }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        _dateController.text = DateFormat('yyyy-MM-dd').format(picked);
+        print(_dateController.text);
+      });
+    }
+  }
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? picked =
+        await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    if (picked != null) {
+      setState(() {
+        final String formattedTime = picked.hour.toString().padLeft(2, '0') +
+            ':' +
+            picked.minute.toString().padLeft(2, '0');
+        _timeController.text = formattedTime;
+        print(formattedTime);
+        // _timeController.text = picked.format(context);
+      });
+    }
+  }
+
+  Widget _buildGenderSelection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Gender',
+          style: TextStyle(fontSize: 16.0),
+        ),
+        SizedBox(height: 8.0),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            _buildRadioOption('Male'),
+            _buildRadioOption('Female'),
+            _buildRadioOption('Other'),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRadioOption(String value) {
+    return Row(
+      children: [
+        Radio<String>(
+          value: value,
+          groupValue: _gender,
+          onChanged: (String? newValue) {
+            setState(() {
+              _gender = newValue!;
+            });
+          },
+        ),
+        Text(value),
+        SizedBox(width: 16), // Add spacing between radio buttons
+      ],
+    );
   }
 
   @override
@@ -127,17 +210,41 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 child: ListView(
                   children: [
                     const SizedBox(height: 16),
-                    _buildTextField(_firstNameController, 'First Name'),
-                    const SizedBox(height: 16),
-                    _buildTextField(_lastNameController, 'Last Name'),
+                    _buildTextField(_nameController, 'Name'),
                     const SizedBox(height: 16),
                     _buildTextField(_emailController, 'Email', isEmail: true),
                     const SizedBox(height: 16),
                     _buildTextField(_mobileController, 'Mobile Number',
                         isNumber: true),
                     const SizedBox(height: 16),
-                    _buildTextField(_passwordController, 'Password',
-                        isPassword: true),
+                    _buildGenderSelection(),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      _placeController,
+                      'Place of Birth',
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _dateController,
+                      readOnly: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Date of Birth',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.calendar_today),
+                      ),
+                      onTap: () => _selectDate(context),
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: _timeController,
+                      readOnly: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Time of Birth',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.access_time),
+                      ),
+                      onTap: () => _selectTime(context),
+                    ),
                     const SizedBox(height: 32),
                     ElevatedButton(
                       onPressed: _register,
@@ -198,29 +305,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       height: 60,
       width: double.infinity,
       color: Colors.white,
-    );
-  }
-}
-
-class OtpScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('OTP Verification'),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.orange, Colors.deepOrange],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
-      ),
-      body: const Center(
-        child: Text('Enter OTP here'),
-      ),
     );
   }
 }

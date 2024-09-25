@@ -444,6 +444,7 @@ class _AstrologerListScreenState extends State<AstrologerListScreen> {
           'authorizationToken': ServiceManager.tokenID
         });
         final data = json.decode(response.body);
+        print(response.body);
 
         if (response.statusCode == 200) {
           final data = json.decode(response.body);
@@ -579,26 +580,26 @@ class _AstrologerListScreenState extends State<AstrologerListScreen> {
             return Column(
               children: [
                 _buildChipSection(allSkills),
-                CarouselSlider(
-                  options: CarouselOptions(height: 150.0, autoPlay: true),
-                  items: _banners.map((banner) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return Container(
-                          width: MediaQuery.of(context).size.width,
-                          margin: EdgeInsets.symmetric(horizontal: 5.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            image: DecorationImage(
-                              image: AssetImage(banner),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  }).toList(),
-                ),
+                // CarouselSlider(
+                //   options: CarouselOptions(height: 150.0, autoPlay: true),
+                //   items: _banners.map((banner) {
+                //     return Builder(
+                //       builder: (BuildContext context) {
+                //         return Container(
+                //           width: MediaQuery.of(context).size.width,
+                //           margin: EdgeInsets.symmetric(horizontal: 5.0),
+                //           decoration: BoxDecoration(
+                //             borderRadius: BorderRadius.circular(10.0),
+                //             image: DecorationImage(
+                //               image: AssetImage(banner),
+                //               fit: BoxFit.cover,
+                //             ),
+                //           ),
+                //         );
+                //       },
+                //     );
+                //   }).toList(),
+                // ),
                 Expanded(child: _buildAstrologerList(filteredAstrologers)),
               ],
             );

@@ -61,6 +61,7 @@ dependencies:
   flutter_svg: ^1.0.0
   flutter_spinkit: ^5.1.0
   video_player: ^2.5.2
+  url_launcher: ^6.1.8
   # google_maps_flutter: ^2.1.0
   # place_picker: ^0.10.0
 

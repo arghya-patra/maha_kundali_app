@@ -198,6 +198,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             },
             onSaved: (value) => _subject = value ?? '',
           ),
+          const SizedBox(height: 20),
           TextFormField(
             controller: msgCon,
             decoration: const InputDecoration(
@@ -216,11 +217,12 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             },
             onSaved: (value) => _message = value ?? '',
           ),
-          const SizedBox(height: 80),
+          const SizedBox(height: 20),
           isLoading == true
               ? LoadingButton()
               : KButton(
                   title: "Submit",
+                  color: Colors.orange,
                   onClick: () {
                     if (_formKey.currentState?.validate() ?? false) {
                       _formKey.currentState?.save();

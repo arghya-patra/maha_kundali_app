@@ -4,6 +4,7 @@ import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'dart:convert';
 import 'package:shimmer/shimmer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class OrderHistoryScreen extends StatefulWidget {
   @override
@@ -136,6 +137,12 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
                       Expanded(
                           child: Text('Report #${item['booking_id']}',
                               style: TextStyle(fontWeight: FontWeight.bold))),
+                      IconButton(
+                        icon: Icon(Icons.download, color: Colors.blue),
+                        onPressed: () {
+                          downloadFile(item['download']);
+                        },
+                      ),
                     ],
                   ),
                 SizedBox(height: 8),
@@ -151,12 +158,33 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
                 if (type == 'report')
                   Text('Report: ${item['report_name'] ?? 'N/A'}',
                       style: TextStyle(color: Colors.grey[600])),
+                SizedBox(height: 4),
+                if (type == 'chat')
+                  Text('Duration: ${item['duration']}',
+                      style: TextStyle(color: Colors.grey[600])),
+                if (type == 'puja')
+                  Text('Astrologer: ${item['astrologer_name']}',
+                      style: TextStyle(color: Colors.grey[600])),
+                if (type == 'report')
+                  Text('Amount: ${item['total'] ?? 'N/A'}',
+                      style: TextStyle(color: Colors.grey[600])),
+                if (type == 'report')
+                  Text('Status: ${item['status'] ?? 'N/A'}',
+                      style: TextStyle(color: Colors.grey[600])),
               ],
             ),
           ),
         );
       },
     );
+  }
+
+  Future<void> downloadFile(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   Widget _buildShimmer() {
@@ -220,7 +248,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
           ),
           Container(),
           SizedBox(
-            height: 120,
+            height: 180,
           ),
           TabBar(
             controller: _tabController,
