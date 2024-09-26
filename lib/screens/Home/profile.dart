@@ -191,15 +191,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   //       MaterialPageRoute(
                   //           builder: (context) => BuyMembershipScreen()));
                   // }),
-                  _buildProfileOption(
-                      'Call Intake Form',
-                      //User Management
-                      Icons.group, () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CallIntakeFormScreen()));
-                  }),
+                  // _buildProfileOption(
+                  //     'Call Intake Form',
+                  //     //User Management
+                  //     Icons.group, () {
+                  //   Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //           builder: (context) => CallIntakeFormScreen()));
+                  // }),
                   _buildProfileOption('Logout', Icons.logout, () {
                     logoutBuilder(context, onClickYes: () {
                       try {

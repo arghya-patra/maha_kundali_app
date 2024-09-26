@@ -99,14 +99,14 @@ class _HoroscopeDetailsScreenState extends State<HoroscopeDetailsScreen> {
                       // ),
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  // const SizedBox(height: 10),
 
-                  // Date Range
-                  Text(
-                    'Date Range: ${horoscopeDetails['date_from']} - ${horoscopeDetails['date_to']}',
-                    style: const TextStyle(
-                        fontSize: 16, fontStyle: FontStyle.italic),
-                  ),
+                  // // Date Range
+                  // Text(
+                  //   'Date Range: ${horoscopeDetails['date_from']} - ${horoscopeDetails['date_to']}',
+                  //   style: const TextStyle(
+                  //       fontSize: 16, fontStyle: FontStyle.italic),
+                  // ),
                   const SizedBox(height: 20),
 
                   // Today's Horoscope Details
@@ -175,36 +175,43 @@ class _HoroscopeDetailsScreenState extends State<HoroscopeDetailsScreen> {
                   const SizedBox(height: 10),
                   Text(
                     horoscopeDetails['profession'],
+                    textAlign: TextAlign.justify,
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     horoscopeDetails['luck'],
+                    textAlign: TextAlign.justify,
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     horoscopeDetails['health'],
+                    textAlign: TextAlign.justify,
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     horoscopeDetails['advice'],
+                    textAlign: TextAlign.justify,
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     horoscopeDetails['business'],
+                    textAlign: TextAlign.justify,
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     horoscopeDetails['money'],
+                    textAlign: TextAlign.justify,
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     horoscopeDetails['love'],
+                    textAlign: TextAlign.justify,
                     style: const TextStyle(fontSize: 16),
                   ),
                 ],
@@ -222,6 +229,7 @@ class _HoroscopeDetailsScreenState extends State<HoroscopeDetailsScreen> {
       children: [
         Text(
           title,
+          textAlign: TextAlign.justify,
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,

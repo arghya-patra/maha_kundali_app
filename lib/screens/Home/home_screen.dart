@@ -60,11 +60,17 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundImage: NetworkImage(ServiceManager
-                      .profileURL), // Replace with the user image asset
-                ),
+                ServiceManager.profileURL == 'https://mahakundali.com/'
+                    ? const CircleAvatar(
+                        radius: 30,
+                        backgroundImage: AssetImage('images/profile.jpeg'),
+                        backgroundColor: Colors.transparent,
+                      )
+                    : CircleAvatar(
+                        radius: 30,
+                        backgroundImage: NetworkImage(ServiceManager
+                            .profileURL), // Replace with the user image asset
+                      ),
                 const SizedBox(width: 10),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -76,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     Text(
                       ServiceManager.userMobile,
-                      style: TextStyle(color: Colors.white, fontSize: 14),
+                      style: const TextStyle(color: Colors.white, fontSize: 14),
                     ),
                   ],
                 ),
@@ -115,8 +121,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 //_buildDrawerItem(Icons.book, 'Astro Book'),
                 _buildDrawerItem(Icons.chat_bubble, 'Chat with Astrologers',
                     route: ChatListScreen()),
-                _buildDrawerItem(Icons.newspaper, 'Blog',
-                    route: AstrologyBlogScreen()),
+                // _buildDrawerItem(Icons.newspaper, 'Blog',
+                //     route: AstrologyBlogScreen()),
                 // _buildDrawerItem(Icons.star, 'Free Services'),
                 //  _buildDrawerItem(Icons.person_add, 'Sign up as Astrologer'),
                 _buildDrawerItem(Icons.settings, 'Settings',

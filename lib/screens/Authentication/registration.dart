@@ -35,7 +35,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       String name = _nameController.text.trim();
       String email = _emailController.text.trim();
       String mobile = _mobileController.text.trim();
-      String password = _passwordController.text.trim();
       String url = APIData.login;
       print(url.toString());
       var response = await http.post(Uri.parse(url), body: {
@@ -49,20 +48,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         'pob': _placeController.text,
         'languange': 'en'
       });
-      //  var data = jsonDecode(response.body);
-      // var response = await http.post(
-      //   Uri.parse('https://yourapi.com/register'),
-      //   body: json.encode({
-      //     'first_name': firstName,
-      //     'last_name': lastName,
-      //     'email': email,
-      //     'mobile': mobile,
-      //     'password': password,
-      //   }),
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      // );
 
       setState(() {
         _isLoading = false;

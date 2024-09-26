@@ -137,6 +137,7 @@ class _NumerologyFormScreenState extends State<NumerologyFormScreen> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => NumerologyDetailsScreen(
+                              name: _nameController.text,
                               futureNumerology: futureNumerology)),
                     );
                     // Handle form submission
@@ -159,7 +160,7 @@ class _NumerologyFormScreenState extends State<NumerologyFormScreen> {
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime(1900),
-      lastDate: DateTime(2101),
+      lastDate: DateTime.now(),
     );
     if (picked != null && picked != selectedDate) {
       setState(() {
