@@ -197,7 +197,7 @@ class _PersonalHoroscopeFormScreenState
               //   ),
               // ),
               const SizedBox(height: 16),
-              _buildLabel('Reporting Language'),
+              _buildLabel('Select Language'),
               _buildFieldContainer(
                 child: DropdownButton<String>(
                   isExpanded: true,

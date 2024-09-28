@@ -118,11 +118,19 @@ class _PujaScreenState extends State<PujaScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            FadeInImage.assetNetwork(
-              placeholder: 'images/placeholder.png',
-              image: puja['icon'],
-              height: 100,
-              fit: BoxFit.cover,
+            SizedBox(
+              height: 6,
+            ),
+            ClipRRect(
+              borderRadius:
+                  BorderRadius.circular(10), // Adjust the radius as needed
+              child: FadeInImage.assetNetwork(
+                placeholder: 'images/placeholder.png',
+                image: puja['icon'], // Replace 'puja' with your data reference
+                height: 120,
+                //   width: double.infinity, // or any width you prefer
+                fit: BoxFit.cover,
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -151,7 +159,7 @@ class _PujaScreenState extends State<PujaScreen> {
                   borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
-              child: const Text('Book Now'),
+              child: const Text('Book'),
             ),
           ],
         ),

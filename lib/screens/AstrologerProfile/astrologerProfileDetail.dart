@@ -53,6 +53,7 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
       'user_id': widget.id
     });
     var data = jsonDecode(response.body);
+    print(response.body);
 
     if (response.statusCode == 200) {
       print(data);

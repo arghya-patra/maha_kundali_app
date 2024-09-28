@@ -1,5 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:maha_kundali_app/apiManager/apiData.dart';
+import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:http/http.dart' as http;
 
 class ShoppingCartScreen extends StatefulWidget {
   @override
@@ -8,55 +12,65 @@ class ShoppingCartScreen extends StatefulWidget {
 
 class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
   bool isLoading = true;
-  List<Map<String, dynamic>> cartItems = [
-    {
-      'name': 'Product 1',
-      'image': 'images/book.png',
-      'price': 50.0,
-      'quantity': 1,
-    },
-    {
-      'name': 'Product 2',
-      'image': 'images/stone.jpeg',
-      'price': 30.0,
-      'quantity': 2,
-    },
-  ];
+  List<Map<String, dynamic>> cartItems = [];
 
   @override
   void initState() {
     super.initState();
-    // Simulate a delay for loading data
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        isLoading = false;
+    _fetchCartData();
+  }
+
+  // Fetch cart data from API
+  Future<void> _fetchCartData() async {
+    String url = APIData.login;
+    print(url.toString());
+
+    try {
+      final response = await http.post(Uri.parse(url), body: {
+        'action': 'cart',
+        'authorizationToken': ServiceManager.tokenID,
       });
-    });
-  }
-
-  double getTotalPrice() {
-    return cartItems.fold(0, (total, item) {
-      return total + (item['price'] * item['quantity']);
-    });
-  }
-
-  void _increaseQuantity(int index) {
-    setState(() {
-      cartItems[index]['quantity']++;
-    });
-  }
-
-  void _decreaseQuantity(int index) {
-    if (cartItems[index]['quantity'] > 1) {
-      setState(() {
-        cartItems[index]['quantity']--;
-      });
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          cartItems = List<Map<String, dynamic>>.from(data['cart_list']);
+          isLoading = false;
+        });
+      } else {
+        // Handle error
+        print('Failed to load cart data');
+      }
+    } catch (e) {
+      print('Error: $e');
     }
   }
 
-  void _removeItem(int index) {
-    setState(() {
-      cartItems.removeAt(index);
+  // Function to remove item from cart
+  Future<void> _removeItemFromCart(String productId) async {
+    final url =
+        'https://yourapiendpoint.com/cart/remove'; // Replace with your API URL
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        body: json.encode({'product_id': productId}),
+      );
+      if (response.statusCode == 200) {
+        // If successful, remove the item locally
+        setState(() {
+          cartItems.removeWhere((item) => item['product_id'] == productId);
+        });
+      } else {
+        print('Failed to remove item from cart');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  // Calculate total price of cart items
+  double getTotalPrice() {
+    return cartItems.fold(0, (total, item) {
+      return total + double.parse(item['total'].replaceAll(',', ''));
     });
   }
 
@@ -104,7 +118,7 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                     itemBuilder: (context, index) {
                       final item = cartItems[index];
                       return Dismissible(
-                        key: Key(item['name']),
+                        key: Key(item['product_id']),
                         background: Container(
                           color: Colors.red,
                           alignment: Alignment.centerRight,
@@ -113,7 +127,7 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                         ),
                         direction: DismissDirection.endToStart,
                         onDismissed: (direction) {
-                          _removeItem(index);
+                          _removeItemFromCart(item['product_id']);
                         },
                         child: Container(
                           height: 100,
@@ -127,8 +141,7 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                                 color: Colors.grey.withOpacity(0.2),
                                 spreadRadius: 2,
                                 blurRadius: 5,
-                                offset: const Offset(
-                                    0, 3), // changes position of shadow
+                                offset: const Offset(0, 3), // Shadow position
                               ),
                             ],
                             border:
@@ -137,58 +150,38 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                           child: ListTile(
                             leading: ClipRRect(
                               borderRadius: BorderRadius.circular(8.0),
-                              child: Image.asset(item['image'], width: 50),
+                              child: Image.network(item['product_photo'],
+                                  width: 50, height: 50, fit: BoxFit.cover),
                             ),
                             title: Text(
-                              item['name'],
+                              item['product_title'],
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16.0,
                                 color: Colors.black87,
                               ),
+                              maxLines:
+                                  2, // Limit to 2 lines to prevent overflow
+                              overflow: TextOverflow
+                                  .ellipsis, // Add ellipsis if the text is too long
                             ),
                             subtitle: Text(
-                              'Price: \$${item['price']}',
+                              'Price: \$${item['sale_price']}',
                               style: TextStyle(
                                 color: Colors.grey[700],
                               ),
+                              maxLines:
+                                  1, // Prevent price text from overflowing
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            trailing: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0, vertical: 4.0),
-                              decoration: BoxDecoration(
-                                color: Colors.blue.shade50,
-                                borderRadius: BorderRadius.circular(12.0),
-                                border: Border.all(color: Colors.blue.shade100),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.remove,
-                                        color: Colors.redAccent),
-                                    onPressed: () => _decreaseQuantity(index),
-                                    constraints: const BoxConstraints(),
-                                    padding: EdgeInsets.zero,
-                                  ),
-                                  Text(
-                                    'Qty: ${item['quantity']}',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14.0,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.add,
-                                        color: Colors.green),
-                                    onPressed: () => _increaseQuantity(index),
-                                    constraints: const BoxConstraints(),
-                                    padding: EdgeInsets.zero,
-                                  ),
-                                ],
-                              ),
-                            ),
+                            trailing: IconButton(
+                                icon: const Icon(Icons.delete,
+                                    color: Colors.redAccent),
+                                onPressed: () {}
+
+                                // => _removeItemFromCart(
+                                //     index), // Adjust this to your API call
+                                ),
                           ),
                         ),
                       );
@@ -210,7 +203,7 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                 // Place order action
               },
               child: Text(
-                'Place Order (\$${getTotalPrice().toStringAsFixed(2)})',
+                'Place Order (Rs.${getTotalPrice().toStringAsFixed(2)})',
                 style: const TextStyle(fontSize: 18, color: Colors.white),
               ),
             ),

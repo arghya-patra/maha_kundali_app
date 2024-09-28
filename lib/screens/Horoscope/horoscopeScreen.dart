@@ -60,31 +60,31 @@ class _HoroscopeScreenState extends State<HoroscopeScreen>
         ),
       ),
       body: _isLoading ? _buildShimmerEffect() : _buildZodiacGrid(),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.orange,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CallIntakeFormScreen(),
-              ),
-            );
+      // bottomNavigationBar: Padding(
+      //   padding: const EdgeInsets.all(16.0),
+      //   child: ElevatedButton(
+      //     style: ElevatedButton.styleFrom(
+      //       foregroundColor: Colors.white,
+      //       backgroundColor: Colors.orange,
+      //       padding: const EdgeInsets.symmetric(vertical: 16),
+      //       shape: RoundedRectangleBorder(
+      //         borderRadius: BorderRadius.circular(8),
+      //       ),
+      //     ),
+      //     onPressed: () {
+      //       Navigator.push(
+      //         context,
+      //         MaterialPageRoute(
+      //           builder: (context) => CallIntakeFormScreen(),
+      //         ),
+      //       );
 
-            // Handle navigation to the "I don't know my Sign" screen
-          },
-          child: const Text("I don't know my Sign",
-              style: TextStyle(fontSize: 16)),
-        ),
-      ),
+      //       // Handle navigation to the "I don't know my Sign" screen
+      //     },
+      //     child: const Text("I don't know my Sign",
+      //         style: TextStyle(fontSize: 16)),
+      //   ),
+      // ),
     );
   }
 

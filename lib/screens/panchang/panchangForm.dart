@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -24,6 +25,18 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
   String birthPlace = "kolkata";
   String formattedDate = "";
   final TextEditingController _timeController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
+  List<dynamic> _cities = [];
+  String? _selectedCity;
+  String? _selectedLat;
+  String? _selectedLon;
+  bool _isLoading = false;
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchChanged);
+  }
 
   submitData() async {
     String url = APIData.login;
@@ -35,10 +48,10 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
       'date': formattedDate,
       'hr': selectedHour,
       'min': selectedMinute,
-      'pob': birthPlace,
+      'pob': _selectedCity,
       'lang': 'en',
-      'lat': '22.54111111',
-      'lon': '88.33777778'
+      'lat': _selectedLat,
+      'lon': _selectedLon
     });
     print(response.body);
 
@@ -48,6 +61,80 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
     } else {
       throw Exception('Failed to load horoscope details');
     }
+  }
+
+  Future<void> _fetchCities(String query) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response = await http.post(Uri.parse(APIData.login), body: {
+        'action': 'get-city-name',
+        'name': query,
+      });
+
+      // Log the response to check if it's valid
+      print('Response: "${response.body}"'); // Log the response content
+      print('Response: "${response.statusCode}"');
+
+      if (response.body.isEmpty) {
+        // Handle empty response
+        print('Error: API returned an empty response');
+        setState(() {
+          _cities = [];
+          _isLoading = false;
+        });
+        return;
+      }
+
+      if (response.statusCode == 200) {
+        // Try decoding the response body
+        try {
+          final data = jsonDecode(response.body);
+
+          if (data != null && data['city'] != null) {
+            setState(() {
+              _cities = data['city'];
+              _isLoading = false;
+            });
+          } else {
+            print('Error: "city" key not found in the response');
+            setState(() {
+              _cities = [];
+              _isLoading = false;
+            });
+          }
+        } catch (e) {
+          print('Error decoding JSON: $e');
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      } else {
+        print(
+            'Error: Failed to fetch cities, status code: ${response.statusCode}');
+        setState(() {
+          _cities = [];
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        _cities = [];
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (_searchController.text.isNotEmpty) {
+        _fetchCities(_searchController.text);
+      }
+    });
   }
 
   Future<void> _selectTime(BuildContext context) async {
@@ -71,6 +158,14 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
         // _timeController.text = picked.format(context);
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    _debounce?.cancel();
+    super.dispose();
   }
 
   @override
@@ -149,7 +244,7 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
               //   ),
               // ),
               const SizedBox(height: 16),
-              _buildLabel('Reporting Language'),
+              _buildLabel('Select Language'),
               _buildFieldContainer(
                 child: DropdownButton<String>(
                   isExpanded: true,
@@ -170,27 +265,71 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
               ),
               const SizedBox(height: 16),
               _buildLabel('Birth Place'),
-              GestureDetector(
-                onTap: () async {
-                  // LocationResult result = await Navigator.of(context).push(
-                  //   MaterialPageRoute(
-                  //     builder: (context) => PlacePicker(
-                  //       "YOUR_GOOGLE_API_KEY",
-                  //     ),
-                  //   ),
-                  // );
 
-                  // setState(() {
-                  //   birthPlace = result.formattedAddress!;
-                  // });
-                },
-                child: _buildFieldContainer(
-                  child: Text(
-                    birthPlace.isEmpty ? "Pick a location" : birthPlace,
-                    style: const TextStyle(fontSize: 16),
-                  ),
+              //----------
+
+              TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  labelText: 'Search City',
+                  border: OutlineInputBorder(),
+                  suffixIcon: _isLoading ? CircularProgressIndicator() : null,
                 ),
               ),
+              const SizedBox(height: 10),
+
+              // Dropdown list for city suggestions
+              if (_cities.isNotEmpty)
+                Container(
+                  height: 200,
+                  child: ListView.builder(
+                    itemCount: _cities.length,
+                    itemBuilder: (context, index) {
+                      final city = _cities[index]['city'];
+                      final lat = _cities[index]['lat'];
+                      final lon = _cities[index]['lon'];
+                      return ListTile(
+                        title: Text(city),
+                        onTap: () {
+                          setState(() {
+                            _selectedCity = city;
+                            _selectedLat = lat;
+                            _selectedLon = lon;
+                            _searchController.text =
+                                city; // Set the selected city
+                            _cities.clear(); // Clear the dropdown
+                          });
+                        },
+                      );
+                    },
+                  ),
+                ),
+
+              // Display selected city's details
+              if (_selectedCity != null)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Selected City: $_selectedCity'),
+                      Text('Latitude: $_selectedLat'),
+                      Text('Longitude: $_selectedLon'),
+                    ],
+                  ),
+                ),
+
+              //---------
+
+              // GestureDetector(
+              //   onTap: () async {},
+              //   child: _buildFieldContainer(
+              //     child: Text(
+              //       birthPlace.isEmpty ? "Pick a location" : birthPlace,
+              //       style: const TextStyle(fontSize: 16),
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 16),
               _buildLabel('Timezone'),
               _buildFieldContainer(

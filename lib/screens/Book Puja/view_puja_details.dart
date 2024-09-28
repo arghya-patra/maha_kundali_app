@@ -81,6 +81,8 @@ class _PujaDetailsScreenState extends State<PujaDetailsScreen>
           } else if (snapshot.hasData) {
             final pujaDetails = snapshot.data!['pujaDetails'];
             final similarPujaList = snapshot.data!['similar_puja_list'];
+            final benefits =
+                pujaDetails['benefits'].toString().split(RegExp(r'\d+\.\s*'));
 
             return FadeTransition(
               opacity: _fadeInAnimation,
@@ -90,8 +92,26 @@ class _PujaDetailsScreenState extends State<PujaDetailsScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Image.network(pujaDetails['icon'],
-                          height: 200, fit: BoxFit.cover),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                                10), // Adjust the radius as needed
+                            child: FadeInImage.assetNetwork(
+                              placeholder: 'images/placeholder.png',
+                              image: pujaDetails[
+                                  'icon'], // Replace 'puja' with your data reference
+                              height: 150,
+                              //  width: double.infinity, // or any width you prefer
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+
+                          // Image.network(pujaDetails['icon'],
+                          //     height: 200, fit: BoxFit.cover),
+                        ],
+                      ),
                       SizedBox(height: 16),
                       Text(
                         pujaDetails['name'],
@@ -119,14 +139,14 @@ class _PujaDetailsScreenState extends State<PujaDetailsScreen>
                         child: Text("Select Astrologer"),
                       ),
                       SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Text(
-                            'Price: ₹${pujaDetails['price']}',
-                            style: TextStyle(fontSize: 18, color: Colors.green),
-                          ),
-                        ],
-                      ),
+                      // Row(
+                      //   children: [
+                      //     Text(
+                      //       'Price: ₹${pujaDetails['price']}',
+                      //       style: TextStyle(fontSize: 18, color: Colors.green),
+                      //     ),
+                      //   ],
+                      // ),
                       SizedBox(height: 16),
                       Text(
                         pujaDetails['short_description'],
@@ -150,10 +170,28 @@ class _PujaDetailsScreenState extends State<PujaDetailsScreen>
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 8),
-                      Text(
-                        pujaDetails['benefits'],
-                        style: TextStyle(fontSize: 16),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: benefits
+                            .where((point) => point
+                                .trim()
+                                .isNotEmpty) // Remove any empty elements
+                            .toList()
+                            .asMap()
+                            .entries
+                            .map((entry) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: Text(
+                                    '${entry.key + 1}. ${entry.value.trim()}', // Adding number and point
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ))
+                            .toList(),
                       ),
+                      // Text(
+                      //   pujaDetails['benefits'],
+                      //   style: TextStyle(fontSize: 16),
+                      // ),
                       SizedBox(height: 24),
                       Text(
                         'Similar Pujas:',

@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:maha_kundali_app/Blog/blog_screen.dart';
+import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/components/headerText.dart';
 import 'package:maha_kundali_app/screens/Astro_Ecom/my_order.dart';
 import 'package:maha_kundali_app/screens/Astro_Ecom/productListScreen.dart';
@@ -16,6 +19,7 @@ import 'package:maha_kundali_app/screens/Horoscope/horoscopeScreen.dart';
 import 'package:maha_kundali_app/screens/Numerology/numerology_form.dart';
 import 'package:maha_kundali_app/screens/Personal%20Horoscope/personal_horoscope_form.dart';
 import 'package:maha_kundali_app/screens/Service-Report/all_service_report.dart';
+import 'package:maha_kundali_app/screens/chats/callHistory.dart';
 import 'package:maha_kundali_app/screens/chats/chatListScreen.dart';
 import 'package:maha_kundali_app/screens/chats/chatMessageScreen.dart';
 import 'package:maha_kundali_app/screens/chats/customerSupportChat.dart';
@@ -25,6 +29,7 @@ import 'package:maha_kundali_app/screens/panchang/panchangForm.dart';
 import 'package:maha_kundali_app/screens/profileContent/buyMembershipScreen.dart';
 import 'package:maha_kundali_app/screens/profileContent/settingsScreen.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -35,6 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   List<String> _banners = [];
   bool showAll = false;
+  List<dynamic> _astrologers = [];
+  bool _isLoading = true;
   @override
   void initState() {
     super.initState();
@@ -43,6 +50,36 @@ class _HomeScreenState extends State<HomeScreen> {
       'images/banner2.jpg',
       'images/banner3.jpeg',
     ];
+    _fetchAstrologers();
+  }
+
+  Future<void> _fetchAstrologers() async {
+    try {
+      String url = APIData.login;
+      print(url.toString());
+      final response = await http.post(Uri.parse(url), body: {
+        'action': 'astrologer-list',
+        'authorizationToken': ServiceManager.tokenID
+      });
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        // If API response contains the "list" key, store it in _astrologers
+        if (data['list'] != null) {
+          setState(() {
+            _astrologers = data['list'];
+            _isLoading = false;
+          });
+        } else {
+          print("Error: Missing 'list' key in API response");
+        }
+      } else {
+        print("Error: Failed to fetch astrologers");
+      }
+    } catch (error) {
+      print("Error: $error");
+    }
   }
 
   Widget _buildDrawer() {
@@ -107,8 +144,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     route: PujaScreen()),
                 _buildDrawerItem(Icons.calendar_today, 'Daily Horoscope',
                     route: HoroscopeScreen()),
-                _buildDrawerItem(Icons.chat, 'Customer Support Chat',
-                    route: CustomerSupportChat()),
+                _buildDrawerItem(Icons.chat, 'Call History',
+                    route: CallListHistory()),
                 _buildDrawerItem(
                     Icons.account_balance_wallet, 'Wallet Transaction',
                     route: WalletScreen()),
@@ -288,6 +325,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 _buildOptionsGrid(),
                 const SizedBox(height: 8),
                 _buildLiveAstrologerSection(context),
+                _isLoading
+                    ? const SizedBox(height: 140)
+                    : const SizedBox(height: 8),
                 // const SizedBox(height: 8),
                 // _buildChatWithAstrologerSection(context),
                 // const SizedBox(height: 8),
@@ -412,32 +452,33 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildLiveAstrologerSection(BuildContext context) {
-    final List<Map<String, String>> astrologers = [
-      {'name': 'Astrologer 1', 'image': 'images/astro1.jpg'},
-      {'name': 'Astrologer 2', 'image': 'images/astro2.jpg'},
-      {'name': 'Astrologer 3', 'image': 'images/astro3.jpg'},
-      {'name': 'Astrologer 4', 'image': 'images/astro1.jpg'},
-    ];
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Live Astrologers',
+        const Text('Our Astrologers',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         SizedBox(
           height: 150,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: astrologers.length,
+            itemCount: _astrologers.length,
             itemBuilder: (context, index) {
+              final astrologer = _astrologers[index];
+              final details = astrologer['Details'];
+              final logoUrl = details['logo'];
+
               return GestureDetector(
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => AstrologerProfileScreen(
-                        id: '583',
+                        id: details['user_id'],
                       ),
                     ),
                   );
@@ -457,28 +498,28 @@ class _HomeScreenState extends State<HomeScreen> {
                             end: Alignment.bottomRight,
                           ),
                           image: DecorationImage(
-                            image: AssetImage(astrologers[index]['image']!),
+                            image: NetworkImage(logoUrl),
                             fit: BoxFit.cover,
                           ),
                         ),
                       ),
-                      Positioned(
-                        top: 8,
-                        left: 8,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 2),
-                          color: Colors.red,
-                          child: const Text('Live',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 12)),
-                        ),
-                      ),
+                      // Positioned(
+                      //   top: 8,
+                      //   left: 8,
+                      //   child: Container(
+                      //     padding: const EdgeInsets.symmetric(
+                      //         horizontal: 8, vertical: 2),
+                      //     color: Colors.red,
+                      //     child: const Text('Live',
+                      //         style:
+                      //             TextStyle(color: Colors.white, fontSize: 12)),
+                      //   ),
+                      // ),
                       Positioned(
                         bottom: 8,
                         left: 8,
                         child: Text(
-                          astrologers[index]['name']!,
+                          details['name'],
                           style: const TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                         ),
@@ -500,7 +541,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (context) => AstrologerListScreen(),
                 ),
               );
-
               // Handle view all navigation
             },
             child:

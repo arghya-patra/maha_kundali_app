@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -22,9 +23,17 @@ class _KundliScreenState extends State<KundliScreen>
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
 
-  bool _isLoading = true;
+  bool _isLoading = false;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+  String selectedLanguage = "English";
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
+  List<dynamic> _cities = [];
+  String? _selectedCity;
+  String? _selectedLat;
+  String? _selectedLon;
+  bool isLoading2 = true;
 
   @override
   void initState() {
@@ -39,10 +48,11 @@ class _KundliScreenState extends State<KundliScreen>
     // Simulating loading time
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
-        _isLoading = false;
+        isLoading2 = false;
       });
       _animationController.forward();
     });
+    _searchController.addListener(_onSearchChanged);
   }
 
   @override
@@ -52,6 +62,9 @@ class _KundliScreenState extends State<KundliScreen>
     _placeController.dispose();
     _dateController.dispose();
     _timeController.dispose();
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -96,9 +109,9 @@ class _KundliScreenState extends State<KundliScreen>
       'tob': _timeController.text,
       'pob': _placeController.text,
       'lang': 'en',
-      'city': '',
-      'lat': '22.54111111',
-      'lon': '8.33777778'
+      'city': _selectedCity,
+      'lat': _selectedLat,
+      'lon': _selectedLon
     });
     print(response.body);
 
@@ -133,11 +146,85 @@ class _KundliScreenState extends State<KundliScreen>
     }
   }
 
+  Future<void> _fetchCities(String query) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response = await http.post(Uri.parse(APIData.login), body: {
+        'action': 'get-city-name',
+        'name': query,
+      });
+
+      // Log the response to check if it's valid
+      print('Response: "${response.body}"'); // Log the response content
+      print('Response: "${response.statusCode}"');
+
+      if (response.body.isEmpty) {
+        // Handle empty response
+        print('Error: API returned an empty response');
+        setState(() {
+          _cities = [];
+          _isLoading = false;
+        });
+        return;
+      }
+
+      if (response.statusCode == 200) {
+        // Try decoding the response body
+        try {
+          final data = jsonDecode(response.body);
+
+          if (data != null && data['city'] != null) {
+            setState(() {
+              _cities = data['city'];
+              _isLoading = false;
+            });
+          } else {
+            print('Error: "city" key not found in the response');
+            setState(() {
+              _cities = [];
+              _isLoading = false;
+            });
+          }
+        } catch (e) {
+          print('Error decoding JSON: $e');
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      } else {
+        print(
+            'Error: Failed to fetch cities, status code: ${response.statusCode}');
+        setState(() {
+          _cities = [];
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        _cities = [];
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (_searchController.text.isNotEmpty) {
+        _fetchCities(_searchController.text);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kundli Details'),
+        title: const Text('Know your Kundli'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -148,7 +235,7 @@ class _KundliScreenState extends State<KundliScreen>
           ),
         ),
       ),
-      body: _isLoading
+      body: isLoading2
           ? Shimmer.fromColors(
               baseColor: Colors.grey[300]!,
               highlightColor: Colors.grey[100]!,
@@ -219,6 +306,59 @@ class _KundliScreenState extends State<KundliScreen>
                     ),
                     const SizedBox(height: 20),
                     TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        labelText: 'Search City',
+                        border: OutlineInputBorder(),
+                        suffixIcon:
+                            _isLoading ? CircularProgressIndicator() : null,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Dropdown list for city suggestions
+                    if (_cities.isNotEmpty)
+                      Container(
+                        height: 200,
+                        child: ListView.builder(
+                          itemCount: _cities.length,
+                          itemBuilder: (context, index) {
+                            final city = _cities[index]['city'];
+                            final lat = _cities[index]['lat'];
+                            final lon = _cities[index]['lon'];
+                            return ListTile(
+                              title: Text(city),
+                              onTap: () {
+                                setState(() {
+                                  _selectedCity = city;
+                                  _selectedLat = lat;
+                                  _selectedLon = lon;
+                                  _searchController.text =
+                                      city; // Set the selected city
+                                  _cities.clear(); // Clear the dropdown
+                                });
+                              },
+                            );
+                          },
+                        ),
+                      ),
+
+                    // Display selected city's details
+                    if (_selectedCity != null)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Selected City: $_selectedCity'),
+                            Text('Latitude: $_selectedLat'),
+                            Text('Longitude: $_selectedLon'),
+                          ],
+                        ),
+                      ),
+
+                    const SizedBox(height: 20),
+                    TextField(
                       controller: _dateController,
                       readOnly: true,
                       decoration: const InputDecoration(
@@ -238,6 +378,26 @@ class _KundliScreenState extends State<KundliScreen>
                         suffixIcon: Icon(Icons.access_time),
                       ),
                       onTap: () => _selectTime(context),
+                    ),
+                    const SizedBox(height: 16),
+                    // _buildLabel('Select Language'),
+                    _buildFieldContainer(
+                      child: DropdownButton<String>(
+                        isExpanded: true,
+                        value: selectedLanguage,
+                        underline: const SizedBox(),
+                        items: ["English", "Hindi"].map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedLanguage = value!;
+                          });
+                        },
+                      ),
                     ),
                     const SizedBox(height: 30),
                     Center(
@@ -260,6 +420,18 @@ class _KundliScreenState extends State<KundliScreen>
                 ),
               ),
             ),
+    );
+  }
+
+  Widget _buildFieldContainer({required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: child,
     );
   }
 }

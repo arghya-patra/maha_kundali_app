@@ -5,12 +5,12 @@ import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'dart:convert';
 import 'package:shimmer/shimmer.dart';
 
-class ChatListScreen extends StatefulWidget {
+class CallListHistory extends StatefulWidget {
   @override
-  _ChatListScreenState createState() => _ChatListScreenState();
+  _CallListHistoryState createState() => _CallListHistoryState();
 }
 
-class _ChatListScreenState extends State<ChatListScreen> {
+class _CallListHistoryState extends State<CallListHistory> {
   List<dynamic> chatHistory = [];
   bool isLoading = true;
 
@@ -24,7 +24,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
     String url = APIData.login;
     print(url.toString());
     final response = await http.post(Uri.parse(url), body: {
-      'action': 'chat-history',
+      'action': 'call-history',
       'authorizationToken': ServiceManager.tokenID,
     });
 
@@ -32,8 +32,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
       print(response.body);
       final data = json.decode(response.body);
       setState(() {
-        if (data['chat_history'] != null) {
-          chatHistory = data['chat_history'];
+        if (data['call'] != null) {
+          chatHistory = data['call_history'];
           isLoading = false;
         } else {
           isLoading = false;
@@ -51,7 +51,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chat History with Astrologers'),
+        title: Text('Call History with Astrologers'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -65,7 +65,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
       body: isLoading
           ? buildShimmerList()
           : chatHistory.isEmpty
-              ? Center(child: Text("No Chat Histrory!"))
+              ? Center(child: Text("No Call Histrory!"))
               : ListView.builder(
                   itemCount: chatHistory.length,
                   itemBuilder: (context, index) {
