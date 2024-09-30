@@ -13,6 +13,7 @@ import 'package:maha_kundali_app/screens/AstrologerProfile/astrologerList.dart';
 import 'package:maha_kundali_app/screens/AstrologerProfile/astrologerProfileDetail.dart';
 import 'package:maha_kundali_app/screens/Birth%20Chart/birthChartForm.dart';
 import 'package:maha_kundali_app/screens/Book%20Puja/all_puja.dart';
+import 'package:maha_kundali_app/screens/Favourite_Astrolgers/favAstro.dart';
 import 'package:maha_kundali_app/screens/Home/walletScreen.dart';
 import 'package:maha_kundali_app/screens/Horoscope/horoscopeDetails.dart';
 import 'package:maha_kundali_app/screens/Horoscope/horoscopeScreen.dart';
@@ -143,22 +144,29 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 _buildDrawerItem(Icons.book_online, 'Book a Puja',
                     route: PujaScreen()),
-                _buildDrawerItem(Icons.calendar_today, 'Daily Horoscope',
-                    route: HoroscopeScreen()),
-                _buildDrawerItem(Icons.chat, 'Call History',
-                    route: CallListHistory()),
                 _buildDrawerItem(
                     Icons.account_balance_wallet, 'Wallet Transaction',
                     route: WalletScreen()),
                 _buildDrawerItem(Icons.history, 'Order History',
                     route: OrderHistoryScreen()),
+                _buildDrawerItem(Icons.chat_bubble, 'Chat with Astrologers',
+                    route: ChatListScreen()),
+                _buildDrawerItem(
+                    Icons.favorite_border_rounded, 'Favourite Astrologers',
+                    route: FavoriteAstrologersScreen()),
+
+                _buildDrawerItem(Icons.calendar_today, 'Daily Horoscope',
+                    route: HoroscopeScreen()),
+
+                _buildDrawerItem(Icons.chat, 'Call History',
+                    route: CallListHistory()),
+
                 // _buildDrawerItem(Icons.card_membership, 'Buy Membership',
                 //     route: BuyMembershipScreen()),
                 _buildDrawerItem(Icons.shopping_bag, 'Astro Products',
                     route: ShoppingScreen()),
                 //_buildDrawerItem(Icons.book, 'Astro Book'),
-                _buildDrawerItem(Icons.chat_bubble, 'Chat with Astrologers',
-                    route: ChatListScreen()),
+
                 // _buildDrawerItem(Icons.newspaper, 'Blog',
                 //     route: AstrologyBlogScreen()),
                 // _buildDrawerItem(Icons.star, 'Free Services'),
