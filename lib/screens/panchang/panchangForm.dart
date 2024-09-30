@@ -288,8 +288,7 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
                       final city = _cities[index]['city'];
                       final lat = _cities[index]['lat'];
                       final lon = _cities[index]['lon'];
-                      return ListTile(
-                        title: Text(city),
+                      return GestureDetector(
                         onTap: () {
                           setState(() {
                             _selectedCity = city;
@@ -300,6 +299,24 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
                             _cities.clear(); // Clear the dropdown
                           });
                         },
+                        child: Container(
+                          height: 50, // Set the desired height
+                          padding: const EdgeInsets.all(
+                              8.0), // Optional: Add padding for the text
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey, // Set the color of the border
+                              width: 1.0, // Set the width of the border
+                            ),
+                            borderRadius: BorderRadius.circular(
+                                5.0), // Optional: Add rounded corners
+                          ),
+                          child: Text(
+                            city,
+                            style: TextStyle(
+                                fontSize: 16), // Customize text style if needed
+                          ),
+                        ),
                       );
                     },
                   ),
@@ -308,7 +325,7 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
               // Display selected city's details
               if (_selectedCity != null)
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(3.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -413,7 +430,7 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
   Widget _buildFieldContainer({required Widget child}) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(5),

@@ -85,7 +85,7 @@ class _NumerologyFormScreenState extends State<NumerologyFormScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              _buildLabel('Select Date'),
+              _buildLabel('Date of Birth'),
               GestureDetector(
                 onTap: () => _selectDate(context),
                 child: _buildFieldContainer(
@@ -98,23 +98,23 @@ class _NumerologyFormScreenState extends State<NumerologyFormScreen> {
               const SizedBox(height: 16),
               _buildLabel('Select Language'),
               _buildFieldContainer(
-                child: DropdownButton<String>(
-                  isExpanded: true,
-                  value: selectedLanguage,
-                  underline: const SizedBox(),
-                  items: ["English", "Hindi"].map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedLanguage = value!;
-                    });
-                  },
-                ),
-              ),
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    value: selectedLanguage,
+                    underline: const SizedBox(),
+                    items: ["English", "Hindi"].map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedLanguage = value!;
+                      });
+                    },
+                  ),
+                  verticalHeight: 8.0),
               const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
@@ -179,10 +179,11 @@ class _NumerologyFormScreenState extends State<NumerologyFormScreen> {
     );
   }
 
-  Widget _buildFieldContainer({required Widget child}) {
+  Widget _buildFieldContainer({required Widget child, verticalHeight}) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+      padding:
+          EdgeInsets.symmetric(vertical: verticalHeight ?? 18, horizontal: 12),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(5),

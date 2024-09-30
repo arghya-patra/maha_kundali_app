@@ -147,16 +147,13 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(
-                    child: FadeTransition(
-                      opacity: _animation,
-                      child: const CircleAvatar(
-                        radius: 75,
-                        backgroundImage: NetworkImage(
-                            'https://mahakundali.hitechmart.in/uploads/supplier/1721132166_0.jpg'
-                            //astrologerDetails['logo']
-                            ),
-                      ),
+                  const Center(
+                    child: CircleAvatar(
+                      radius: 75,
+                      backgroundImage: NetworkImage(
+                          'https://mahakundali.hitechmart.in/uploads/supplier/1721132166_0.jpg'
+                          //astrologerDetails['logo']
+                          ),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -358,7 +355,7 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4.0),
                           child: Text('$day: $time',
-                              style: TextStyle(fontSize: 16)),
+                              style: const TextStyle(fontSize: 16)),
                         );
                       }).toList(),
                     ),

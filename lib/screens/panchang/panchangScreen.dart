@@ -32,75 +32,129 @@ class _PanchangScreenState extends State<PanchangScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Day: ${widget.panchang.dayName}',
-                style: TextStyle(fontSize: 18)),
-            SizedBox(height: 10),
-            _buildSectionTitle('Tithi'),
-            _buildDetailItem('Name', widget.panchang.tithi.name),
-            _buildDetailItem('Start', widget.panchang.tithi.start),
-            _buildDetailItem('End', widget.panchang.tithi.end),
-            _buildDetailItem('Type', widget.panchang.tithi.type),
-            _buildDetailItem('Diety', widget.panchang.tithi.diety),
-            _buildDetailItem('Meaning', widget.panchang.tithi.meaning),
-            _buildDetailItem('Special', widget.panchang.tithi.special),
+            _buildTitleSection('Day: ${widget.panchang.dayName}', Icons.calendar_today),
+            _buildCardSection('Tithi', [
+              _buildDetailItem('Name', widget.panchang.tithi.name),
+              _buildDetailItem('Start', widget.panchang.tithi.start),
+              _buildDetailItem('End', widget.panchang.tithi.end),
+              _buildDetailItem('Type', widget.panchang.tithi.type),
+              _buildDetailItem('Diety', widget.panchang.tithi.diety),
+              _buildDetailItem('Meaning', widget.panchang.tithi.meaning),
+              _buildDetailItem('Special', widget.panchang.tithi.special),
+            ]),
             SizedBox(height: 20),
-            _buildSectionTitle('Nakshatra'),
-            _buildDetailItem('Name', widget.panchang.nakshatra.name),
-            _buildDetailItem('Start', widget.panchang.nakshatra.start),
-            _buildDetailItem('End', widget.panchang.nakshatra.end),
-            _buildDetailItem('Meaning', widget.panchang.nakshatra.meaning),
-            _buildDetailItem('Special', widget.panchang.nakshatra.special),
-            _buildDetailItem('Summary', widget.panchang.nakshatra.summary),
+            _buildCardSection('Nakshatra', [
+              _buildDetailItem('Name', widget.panchang.nakshatra.name),
+              _buildDetailItem('Start', widget.panchang.nakshatra.start),
+              _buildDetailItem('End', widget.panchang.nakshatra.end),
+              _buildDetailItem('Meaning', widget.panchang.nakshatra.meaning),
+              _buildDetailItem('Special', widget.panchang.nakshatra.special),
+              _buildDetailItem('Summary', widget.panchang.nakshatra.summary),
+            ]),
             SizedBox(height: 20),
-            _buildSectionTitle('Karana'),
-            _buildDetailItem('Name', widget.panchang.karana.name),
-            _buildDetailItem('Start', widget.panchang.karana.start),
-            _buildDetailItem('End', widget.panchang.karana.end),
-            _buildDetailItem('Type', widget.panchang.karana.type),
-            _buildDetailItem('Special', widget.panchang.karana.special),
+            _buildCardSection('Karana', [
+              _buildDetailItem('Name', widget.panchang.karana.name),
+              _buildDetailItem('Start', widget.panchang.karana.start),
+              _buildDetailItem('End', widget.panchang.karana.end),
+              _buildDetailItem('Type', widget.panchang.karana.type),
+              _buildDetailItem('Special', widget.panchang.karana.special),
+            ]),
             SizedBox(height: 20),
-            _buildSectionTitle('Yoga'),
-            _buildDetailItem('Name', widget.panchang.yoga.name),
-            _buildDetailItem('Start', widget.panchang.yoga.start),
-            _buildDetailItem('End', widget.panchang.yoga.end),
-            _buildDetailItem('Meaning', widget.panchang.yoga.meaning),
-            _buildDetailItem('Special', widget.panchang.yoga.special),
+            _buildCardSection('Yoga', [
+              _buildDetailItem('Name', widget.panchang.yoga.name),
+              _buildDetailItem('Start', widget.panchang.yoga.start),
+              _buildDetailItem('End', widget.panchang.yoga.end),
+              _buildDetailItem('Meaning', widget.panchang.yoga.meaning),
+              _buildDetailItem('Special', widget.panchang.yoga.special),
+            ]),
             SizedBox(height: 20),
-            _buildSectionTitle('Advanced Details'),
-            _buildDetailItem(
-                'Sunrise', widget.panchang.advancedDetails.sunRise),
-            _buildDetailItem('Sunset', widget.panchang.advancedDetails.sunSet),
-            _buildDetailItem(
-                'Moonrise', widget.panchang.advancedDetails.moonRise),
-            _buildDetailItem(
-                'Moonset', widget.panchang.advancedDetails.moonSet),
+            _buildCardSection('Advanced Details', [
+              _buildDetailItem('Sunrise', widget.panchang.advancedDetails.sunRise),
+              _buildDetailItem('Sunset', widget.panchang.advancedDetails.sunSet),
+              _buildDetailItem('Moonrise', widget.panchang.advancedDetails.moonRise),
+              _buildDetailItem('Moonset', widget.panchang.advancedDetails.moonSet),
+            ]),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+  // Title Section with Icon
+  Widget _buildTitleSection(String title, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.orangeAccent, size: 30),
+        SizedBox(width: 10),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.deepOrange,
+          ),
+        ),
+      ],
     );
   }
 
+  // Section Title
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+        color: Colors.deepOrange,
+      ),
+    );
+  }
+
+  // Detail Item with bold title and regular value text
   Widget _buildDetailItem(String title, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('$title: ', style: TextStyle(fontWeight: FontWeight.bold)),
-          Expanded(child: Text(value)),
+          Text(
+            '$title: ',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(color: Colors.black87),
+            ),
+          ),
         ],
       ),
     );
   }
+
+  // Card Section for grouping details with a Card style
+  Widget _buildCardSection(String title, List<Widget> children) {
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSectionTitle(title),
+            Divider(color: Colors.orange),
+            SizedBox(height: 10),
+            ...children, // Unpack children widgets for details
+          ],
+        ),
+      ),
+    );
+  }
 }
-
-
 
 
 // import 'package:flutter/material.dart';
