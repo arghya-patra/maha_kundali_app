@@ -46,6 +46,9 @@ class _DashboardScreenState extends State<DashboardScreen>
       'action': 'dashboard-overview',
       'authorizationToken': ServiceManager.tokenID, //8100007581
     });
+    print("______________________________________");
+    print(res.body);
+    print("______________________________________");
     var data = jsonDecode(res.body);
     if (data['status'] == 200) {
       print("______________________________________");
@@ -56,12 +59,14 @@ class _DashboardScreenState extends State<DashboardScreen>
         setState(() {
           isLoading = false;
         });
+        print("catch");
         toastMessage(message: 'Something went wrong');
       }
     } else {
       setState(() {
         isLoading = false;
       });
+      print("ELse part");
       toastMessage(message: 'Something Went wrong!');
     }
     setState(() {
