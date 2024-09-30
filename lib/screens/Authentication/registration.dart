@@ -23,6 +23,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   String _gender = 'Male';
+  String selectedLanguage = "English";
 
   bool _isLoading = false;
 
@@ -46,7 +47,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         'dob': _dateController.text,
         'tob': _timeController.text,
         'pob': _placeController.text,
-        'languange': 'en'
+        'languange': selectedLanguage == 'English' ? 'en' : 'hn'
       });
 
       setState(() {
@@ -54,12 +55,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       });
       print(response.body);
       if (response.statusCode == 200) {
-        // Assuming a successful response contains a "success" key
         var responseData = json.decode(response.body);
         if (responseData['status'] == 200) {
-          print(responseData);
           ServiceManager().setToken('${responseData['authorizationToken']}');
-          // ServiceManager.userID = '${data['userInfo']['id']}';
           ServiceManager.tokenID = '${responseData['authorizationToken']}';
           Navigator.pushAndRemoveUntil(
               context,
@@ -70,16 +68,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       )),
               (route) => false);
         } else {
-          toastMessage(
-              message: 'Registration Succesful! Please Login now',
-              colors: Colors.green);
-          // Handle errors, e.g., show a snackbar
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(responseData['message']),
           ));
         }
       } else {
-        // Handle errors, e.g., show a snackbar
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Registration failed. Please try again.'),
         ));
@@ -97,7 +90,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if (picked != null) {
       setState(() {
         _dateController.text = DateFormat('yyyy-MM-dd').format(picked);
-        print(_dateController.text);
       });
     }
   }
@@ -107,12 +99,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         await showTimePicker(context: context, initialTime: TimeOfDay.now());
     if (picked != null) {
       setState(() {
-        final String formattedTime = picked.hour.toString().padLeft(2, '0') +
-            ':' +
-            picked.minute.toString().padLeft(2, '0');
-        _timeController.text = formattedTime;
-        print(formattedTime);
-        // _timeController.text = picked.format(context);
+        _timeController.text =
+            "${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}";
       });
     }
   }
@@ -123,7 +111,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       children: [
         Text(
           'Gender',
-          style: TextStyle(fontSize: 16.0),
+          style: TextStyle(fontSize: 16.0, color: Colors.grey[700]),
         ),
         SizedBox(height: 8.0),
         Row(
@@ -151,7 +139,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           },
         ),
         Text(value),
-        SizedBox(width: 16), // Add spacing between radio buttons
+        SizedBox(width: 16),
       ],
     );
   }
@@ -209,26 +197,39 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       'Place of Birth',
                     ),
                     const SizedBox(height: 16),
-                    TextField(
-                      controller: _dateController,
-                      readOnly: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Date of Birth',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.calendar_today),
-                      ),
-                      onTap: () => _selectDate(context),
-                    ),
+                    _buildDateField(_dateController, 'Date of Birth',
+                        Icons.calendar_today, () => _selectDate(context)),
                     const SizedBox(height: 20),
-                    TextField(
-                      controller: _timeController,
-                      readOnly: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Time of Birth',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.access_time),
+                    _buildDateField(_timeController, 'Time of Birth',
+                        Icons.access_time, () => _selectTime(context)),
+                    const SizedBox(height: 20),
+                    _buildFieldContainer(
+                      child: DropdownButton<String>(
+                        isExpanded: true,
+                        value: selectedLanguage,
+                        underline:
+                            const SizedBox(), // Remove default underline for a cleaner look
+                        dropdownColor: Colors.white, // Dropdown menu color
+                        icon: Icon(Icons.arrow_drop_down,
+                            color: Colors.deepOrange), // Custom dropdown icon
+                        items: ["English", "Hindi"].map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(
+                              value,
+                              style: TextStyle(
+                                color: Colors.grey[800], // Custom text color
+                                fontSize: 16,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedLanguage = value!;
+                          });
+                        },
                       ),
-                      onTap: () => _selectTime(context),
                     ),
                     const SizedBox(height: 32),
                     ElevatedButton(
@@ -251,6 +252,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
+  Widget _buildFieldContainer({required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.grey[100], // Background color similar to the text fields
+        border: Border.all(color: Colors.orange), // Matching border color
+        borderRadius: BorderRadius.circular(12), // Matching rounded corners
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5), // Subtle shadow
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 3), // Shadow position
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+
   Widget _buildTextField(TextEditingController controller, String labelText,
       {bool isEmail = false, bool isPassword = false, bool isNumber = false}) {
     return TextFormField(
@@ -263,9 +285,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       obscureText: isPassword,
       decoration: InputDecoration(
         labelText: labelText,
+        filled: true,
+        fillColor: Colors.grey[100],
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: BorderSide(color: Colors.orange),
         ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: BorderSide(color: Colors.orange),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: BorderSide(color: Colors.deepOrange, width: 2),
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        suffixIcon: isEmail ? Icon(Icons.email) : null,
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -285,11 +321,49 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
+  Widget _buildDateField(TextEditingController controller, String labelText,
+      IconData icon, VoidCallback onTap) {
+    return TextFormField(
+      controller: controller,
+      readOnly: true,
+      onTap: onTap,
+      decoration: InputDecoration(
+        labelText: labelText,
+        filled: true,
+        fillColor: Colors.grey[100],
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: BorderSide(color: Colors.orange),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: BorderSide(color: Colors.orange),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: BorderSide(color: Colors.deepOrange, width: 2),
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        suffixIcon: Icon(icon),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please select your $labelText';
+        }
+        return null;
+      },
+    );
+  }
+
   Widget _buildShimmerBox() {
     return Container(
-      height: 60,
       width: double.infinity,
-      color: Colors.white,
+      height: 50,
+      decoration: BoxDecoration(
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(12.0),
+      ),
     );
   }
 }

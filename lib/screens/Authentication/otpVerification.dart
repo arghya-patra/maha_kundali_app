@@ -255,6 +255,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
               MaterialPageRoute(builder: (context) => DashboardScreen()),
               (route) => false);
         } else {
+          toastMessage(
+              message: 'Registration Succesful! Please Login now',
+              colors: Colors.green);
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => LoginScreen()),
