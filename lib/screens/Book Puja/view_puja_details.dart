@@ -95,16 +95,19 @@ class _PujaDetailsScreenState extends State<PujaDetailsScreen>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(
-                                10), // Adjust the radius as needed
-                            child: FadeInImage.assetNetwork(
-                              placeholder: 'images/placeholder.png',
-                              image: pujaDetails[
-                                  'icon'], // Replace 'puja' with your data reference
-                              height: 150,
-                              //  width: double.infinity, // or any width you prefer
-                              fit: BoxFit.cover,
+                          Container(
+                            width: MediaQuery.of(context).size.width - 50,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(
+                                  10), // Adjust the radius as needed
+                              child: FadeInImage.assetNetwork(
+                                placeholder: 'images/placeholder.png',
+                                image: pujaDetails[
+                                    'icon'], // Replace 'puja' with your data reference
+                                height: 350,
+                                //  width: double.infinity, // or any width you prefer
+                                fit: BoxFit.fill,
+                              ),
                             ),
                           ),
 
@@ -280,6 +283,12 @@ class _PujaDetailsScreenState extends State<PujaDetailsScreen>
             SizedBox(height: 2),
             ElevatedButton(
               onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PujaDetailsScreen(name: puja['name']),
+                  ),
+                );
                 // Navigate to Puja Booking Screen
               },
               style: ElevatedButton.styleFrom(

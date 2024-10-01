@@ -119,6 +119,7 @@ class _PersonalHoroscopeFormScreenState
               _buildLabel('Enter Email'),
               TextField(
                 controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
                   labelText: 'Email',
                   border: OutlineInputBorder(),
@@ -128,6 +129,7 @@ class _PersonalHoroscopeFormScreenState
               _buildLabel('Enter Mobile'),
               TextField(
                 controller: _phoneController,
+                keyboardType: TextInputType.phone,
                 decoration: const InputDecoration(
                   labelText: 'Mobile',
                   border: OutlineInputBorder(),

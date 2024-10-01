@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
@@ -21,20 +22,31 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
   final TextEditingController _boyDobController = TextEditingController();
   final TextEditingController _boyTimeController = TextEditingController();
   String boyFormattedDate = '';
-  final TextEditingController _boyPlaceController = TextEditingController();
+  //final TextEditingController _boyPlaceController = TextEditingController();
+  final TextEditingController _boysearchController = TextEditingController();
 
   final TextEditingController _girlNameController = TextEditingController();
   final TextEditingController _girlDobController = TextEditingController();
   String girlFormattedDate = '';
   final TextEditingController _girlTimeController = TextEditingController();
-  final TextEditingController _girlPlaceController = TextEditingController();
+  final TextEditingController _girlsearchController = TextEditingController();
 
-  bool _isLoading = true;
+  bool _isLoading = false;
+  bool _isLoading2 = true;
   late AnimationController _animationController;
   late Animation<double> _blinkAnimation;
   String selectedTimezone = "IST";
   int hour = 0;
   int minute = 0;
+
+  Timer? _debounce;
+  List<dynamic> _cities = [];
+  String? _selectedBoyCity;
+  String? _selectedBoyLat;
+  String? _selectedBoyLon;
+  String? _selectedGirlCity;
+  String? _selectedGirlLat;
+  String? _selectedGirlLon;
   @override
   void initState() {
     super.initState();
@@ -49,9 +61,11 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
     // Simulate loading
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
-        _isLoading = false;
+        _isLoading2 = false;
       });
     });
+    _boysearchController.addListener(_onBoySearchChanged);
+    _girlsearchController.addListener(_onGirlSearchChanged);
   }
 
   @override
@@ -60,11 +74,13 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
     _boyNameController.dispose();
     _boyDobController.dispose();
     _boyTimeController.dispose();
-    _boyPlaceController.dispose();
+    _boysearchController.removeListener(_onBoySearchChanged);
+    _boysearchController.dispose();
     _girlNameController.dispose();
     _girlDobController.dispose();
     _girlTimeController.dispose();
-    _girlPlaceController.dispose();
+    _girlsearchController.removeListener(_onGirlSearchChanged);
+    _girlsearchController.dispose();
     super.dispose();
   }
 
@@ -103,6 +119,89 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
     }
   }
 
+  void _onGirlSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (_girlsearchController.text.isNotEmpty) {
+        _fetchCities(_girlsearchController.text);
+      }
+    });
+  }
+
+  void _onBoySearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (_boysearchController.text.isNotEmpty) {
+        _fetchCities(_girlsearchController.text);
+      }
+    });
+  }
+
+  Future<void> _fetchCities(String query) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response = await http.post(Uri.parse(APIData.login), body: {
+        'action': 'get-city-name',
+        'name': query,
+      });
+
+      // Log the response to check if it's valid
+      print('Response: "${response.body}"'); // Log the response content
+      print('Response: "${response.statusCode}"');
+
+      if (response.body.isEmpty) {
+        // Handle empty response
+        print('Error: API returned an empty response');
+        setState(() {
+          _cities = [];
+          _isLoading = false;
+        });
+        return;
+      }
+
+      if (response.statusCode == 200) {
+        // Try decoding the response body
+        try {
+          final data = jsonDecode(response.body);
+
+          if (data != null && data['city'] != null) {
+            setState(() {
+              _cities = data['city'];
+              _isLoading = false;
+            });
+          } else {
+            print('Error: "city" key not found in the response');
+            setState(() {
+              _cities = [];
+              _isLoading = false;
+            });
+          }
+        } catch (e) {
+          print('Error decoding JSON: $e');
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      } else {
+        print(
+            'Error: Failed to fetch cities, status code: ${response.statusCode}');
+        setState(() {
+          _cities = [];
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        _cities = [];
+        _isLoading = false;
+      });
+    }
+  }
+
   submitData() async {
     String url = APIData.login;
     print(url.toString());
@@ -113,11 +212,11 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
       'boy_name': _boyNameController.text,
       'boy_dob': _boyDobController.text,
       'boy_tob': _boyTimeController.text,
-      'boy_pob': _boyPlaceController.text,
+      'boy_pob': _selectedBoyCity,
       'girl_name': _girlNameController.text,
       'girl_dob': _girlDobController.text,
       'girl_tob': _girlTimeController.text,
-      'girl_pob': _girlPlaceController.text,
+      'girl_pob': _selectedGirlCity,
       'lang': 'en',
       'boy_lat': '22.54111111',
       'boy_lon': '88.33777778',
@@ -148,7 +247,7 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
           ),
         ),
       ),
-      body: _isLoading
+      body: _isLoading2
           ? Shimmer.fromColors(
               baseColor: Colors.grey[300]!,
               highlightColor: Colors.grey[100]!,
@@ -190,7 +289,10 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
                       nameController: _boyNameController,
                       dobController: _boyDobController,
                       timeController: _boyTimeController,
-                      placeController: _boyPlaceController),
+                      placeController: _boysearchController,
+                      selectedCity: _selectedBoyCity,
+                      selectedlat: _selectedBoyLat,
+                      selectedlon: _selectedBoyLon),
                   const SizedBox(height: 20),
                   Center(
                     child: FadeTransition(
@@ -208,7 +310,10 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
                       nameController: _girlNameController,
                       dobController: _girlDobController,
                       timeController: _girlTimeController,
-                      placeController: _girlPlaceController),
+                      placeController: _girlsearchController,
+                      selectedCity: _selectedGirlCity,
+                      selectedlat: _selectedGirlLat,
+                      selectedlon: _selectedGirlLon),
                   const SizedBox(height: 30),
                   _buildLabel('Timezone'),
                   _buildFieldContainer(
@@ -228,6 +333,9 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
                         });
                       },
                     ),
+                  ),
+                  SizedBox(
+                    height: 20,
                   ),
                   Center(
                     child: ElevatedButton(
@@ -284,12 +392,16 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
     );
   }
 
-  Widget _buildFormSection(
-      {required String title,
-      required TextEditingController nameController,
-      required TextEditingController dobController,
-      required TextEditingController timeController,
-      required TextEditingController placeController}) {
+  Widget _buildFormSection({
+    required String title,
+    required TextEditingController nameController,
+    required TextEditingController dobController,
+    required TextEditingController timeController,
+    required TextEditingController placeController,
+    selectedCity,
+    selectedlat,
+    selectedlon,
+  }) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
@@ -350,13 +462,62 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
                 onTap: () => _selectTime(context, timeController),
               ),
               const SizedBox(height: 20),
+
               TextField(
                 controller: placeController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Place of Birth',
                   border: OutlineInputBorder(),
+                  suffixIcon: _isLoading ? CircularProgressIndicator() : null,
                 ),
               ),
+              if (_cities.isNotEmpty)
+                Container(
+                  height: 200,
+                  child: ListView.builder(
+                    itemCount: _cities.length,
+                    itemBuilder: (context, index) {
+                      final city = _cities[index]['city'];
+                      final lat = _cities[index]['lat'];
+                      final lon = _cities[index]['lon'];
+                      return ListTile(
+                        title: Text(city),
+                        onTap: () {
+                          setState(() {
+                            selectedCity = city;
+                            selectedlat = lat;
+                            selectedlon = lon;
+                            placeController.text =
+                                city; // Set the selected city
+                            _cities.clear(); // Clear the dropdown
+                          });
+                        },
+                      );
+                    },
+                  ),
+                ),
+
+              // Display selected city's details
+              if (selectedCity != null)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Selected City: $selectedCity'),
+                      Text('Latitude: $selectedlat'),
+                      Text('Longitude: $selectedlon'),
+                    ],
+                  ),
+                ),
+
+              // TextField(
+              //   controller: placeController,
+              //   decoration: const InputDecoration(
+              //     labelText: 'Place of Birth',
+              //     border: OutlineInputBorder(),
+              //   ),
+              // ),
             ],
           ),
         ),

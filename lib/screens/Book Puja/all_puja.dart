@@ -87,8 +87,8 @@ class _PujaScreenState extends State<PujaScreen> {
       padding: const EdgeInsets.all(8.0),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        mainAxisSpacing: 8.0,
-        crossAxisSpacing: 8.0,
+        mainAxisSpacing: 5.0,
+        crossAxisSpacing: 5.0,
         childAspectRatio: 0.8,
       ),
       itemCount: pujaList.length,
@@ -108,41 +108,57 @@ class _PujaScreenState extends State<PujaScreen> {
             builder: (context) => PujaDetailsScreen(name: puja['name']),
           ),
         );
-        // Handle item tap if needed
       },
       child: Card(
-        elevation: 4.0,
+        elevation: 6.0, // Increased for a more prominent shadow effect
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
+          borderRadius:
+              BorderRadius.circular(16.0), // Softer, larger corner radius
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment:
+              CrossAxisAlignment.center, // Ensures central alignment
           children: [
-            SizedBox(
-              height: 6,
-            ),
+            const SizedBox(height: 2), // Added some padding for better spacing
+
+            // Puja Image
             ClipRRect(
               borderRadius:
-                  BorderRadius.circular(10), // Adjust the radius as needed
+                  BorderRadius.circular(12.0), // More rounded for a softer look
               child: FadeInImage.assetNetwork(
                 placeholder: 'images/placeholder.png',
-                image: puja['icon'], // Replace 'puja' with your data reference
-                height: 120,
-                //   width: double.infinity, // or any width you prefer
+                image: puja['icon'],
+                height: 130, // Slightly increased height for a better visual
+                width: double.infinity,
                 fit: BoxFit.cover,
               ),
             ),
+
+            // Spacing between image and text
+            const SizedBox(height: 2),
+
+            // Puja Name
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Text(
                 puja['name'],
+                maxLines: 1, // Limits the text to 1 line
+                overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.0,
+                  fontWeight:
+                      FontWeight.w600, // Medium weight for better readability
+                  fontSize: 14.0, // Larger font size for better emphasis
+                  color: Colors.black87, // Darker color for more visibility
                 ),
               ),
             ),
+
+            // Spacing between text and button
+            const SizedBox(height: 2),
+
+            // "Book Now" Button
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -151,16 +167,27 @@ class _PujaScreenState extends State<PujaScreen> {
                     builder: (context) => PujaDetailsScreen(name: puja['name']),
                   ),
                 );
-                // Handle "Book Now" button press
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
+                backgroundColor: Colors.deepOrangeAccent, // More vibrant color
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 24.0, vertical: 12.0),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius:
+                      BorderRadius.circular(10.0), // Softer button edges
+                ),
+                elevation: 4.0, // Slight elevation for a floating button effect
+              ),
+              child: const Text(
+                'Book Now',
+                style: TextStyle(
+                  fontSize: 14.0, // Increased font size for better readability
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500, // Slightly bold for emphasis
                 ),
               ),
-              child: const Text('Book'),
             ),
+            const SizedBox(height: 8), // Bottom padding for a balanced layout
           ],
         ),
       ),

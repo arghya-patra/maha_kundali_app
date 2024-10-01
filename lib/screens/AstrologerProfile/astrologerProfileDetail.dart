@@ -147,37 +147,91 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Center(
-                    child: CircleAvatar(
-                      radius: 75,
-                      backgroundImage: NetworkImage(
-                          'https://mahakundali.hitechmart.in/uploads/supplier/1721132166_0.jpg'
-                          //astrologerDetails['logo']
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Profile image on the left
+                        CircleAvatar(
+                          radius: 50, // Reduced size for better alignment
+                          backgroundImage: NetworkImage(
+                            'https://mahakundali.hitechmart.in/uploads/supplier/1721132166_0.jpg',
                           ),
+                        ),
+                        const SizedBox(width: 16),
+
+                        // Name and Specialization on the right
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                astrologerDetails['name'],
+                                style: const TextStyle(
+                                  fontSize: 22, // Adjusted font size
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                astrologerDetails['specialization'],
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  Center(
-                    child: Text(
-                      astrologerDetails['name'],
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+
+                  const Divider(
+                    color: Colors.deepOrange,
+                    thickness:
+                        1.5, // Slightly thinner divider for a cleaner look
+                    indent: 16,
+                    endIndent: 16,
+                  ),
+
+                  // Chat button with padding
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepOrange, // Background color
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Center(
-                    child: Text(
-                      astrologerDetails['specialization'],
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[700],
+                      icon: const Icon(Icons.chat_bubble, color: Colors.white),
+                      label: const Text(
+                        'Chat Now',
+                        style: TextStyle(fontSize: 16, color: Colors.white),
                       ),
-                      textAlign: TextAlign.center,
+                      onPressed: () {
+                        // Handle chat action here
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => ChatScreen(
+                        //       astrologerId: astrologerDetails['id'], // Pass necessary data
+                        //     ),
+                        //   ),
+                        // );
+                      },
                     ),
                   ),
+
+                  // Padding to add spacing between sections
                   const SizedBox(height: 16),
+
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Text(
@@ -185,7 +239,10 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
                       style: const TextStyle(fontSize: 16),
                     ),
                   ),
+
                   const Divider(color: Colors.deepOrange, thickness: 2),
+
+                  // Continue with other sections like products, gallery, availability, etc.
                   const Padding(
                     padding: EdgeInsets.all(16.0),
                     child: Text(
@@ -426,6 +483,320 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
     );
   }
 }
+
+
+
+
+//--------bofre modify chat buutton
+//SingleChildScrollView(
+            //   child: Column(
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     children: [
+            //       Center(
+            //         child: CircleAvatar(
+            //           radius: 75,
+            //           backgroundImage: NetworkImage(
+            //               'https://mahakundali.hitechmart.in/uploads/supplier/1721132166_0.jpg'
+            //               //astrologerDetails['logo']
+
+            //               ),
+            //         ),
+            //       ),
+            //       const SizedBox(height: 16),
+            //       Center(
+            //         child: Text(
+            //           astrologerDetails['name'],
+            //           style: const TextStyle(
+            //             fontSize: 24,
+            //             fontWeight: FontWeight.bold,
+            //           ),
+            //         ),
+            //       ),
+            //       const SizedBox(height: 8),
+            //       Center(
+            //         child: Text(
+            //           astrologerDetails['specialization'],
+            //           style: TextStyle(
+            //             fontSize: 16,
+            //             color: Colors.grey[700],
+            //           ),
+            //           textAlign: TextAlign.center,
+            //         ),
+            //       ),
+            //       const SizedBox(height: 16),
+            //       Center(
+            //         child: ElevatedButton.icon(
+            //           style: ElevatedButton.styleFrom(
+            //             backgroundColor: Colors.deepOrange, // Background color
+            //             padding: const EdgeInsets.symmetric(
+            //                 horizontal: 24, vertical: 12),
+            //             shape: RoundedRectangleBorder(
+            //               borderRadius: BorderRadius.circular(8),
+            //             ),
+            //           ),
+            //           icon: const Icon(Icons.chat_bubble, color: Colors.white),
+            //           label: const Text(
+            //             'Chat Now',
+            //             style: TextStyle(fontSize: 16, color: Colors.white),
+            //           ),
+            //           onPressed: () {
+            //             // Handle chat action here
+            //             // Navigator.push(
+            //             //   context,
+            //             //   MaterialPageRoute(
+            //             //     builder: (context) => ChatScreen(
+            //             //       astrologerId: astrologerDetails['id'], // Pass necessary data
+            //             //     ),
+            //             //   ),
+            //             // );
+            //           },
+            //         ),
+            //       ),
+            //       Padding(
+            //         padding: const EdgeInsets.all(16.0),
+            //         child: Text(
+            //           astrologerDetails['company_desc'],
+            //           style: const TextStyle(fontSize: 16),
+            //         ),
+            //       ),
+            //       const Divider(color: Colors.deepOrange, thickness: 2),
+            //       const Padding(
+            //         padding: EdgeInsets.all(16.0),
+            //         child: Text(
+            //           'Products',
+            //           style:
+            //               TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            //         ),
+            //       ),
+            //       Container(
+            //         height: 250,
+            //         child: ListView.builder(
+            //           scrollDirection: Axis.horizontal,
+            //           itemCount: productList.length,
+            //           itemBuilder: (context, index) {
+            //             return Padding(
+            //               padding: const EdgeInsets.all(8.0),
+            //               child: Column(
+            //                 children: [
+            //                   ClipRRect(
+            //                     borderRadius: BorderRadius.circular(10),
+            //                     child: CachedNetworkImage(
+            //                       imageUrl: productList[index]['product_photo'],
+            //                       placeholder: (context, url) =>
+            //                           const SpinKitFadingCircle(
+            //                         color: Colors.deepOrange,
+            //                         size: 50.0,
+            //                       ),
+            //                       errorWidget: (context, url, error) =>
+            //                           const Icon(Icons.error),
+            //                       height: 150,
+            //                       width: 150,
+            //                       fit: BoxFit.cover,
+            //                     ),
+            //                   ),
+            //                   const SizedBox(height: 8),
+            //                   Text(
+            //                     productList[index]['product_title'],
+            //                     style: const TextStyle(
+            //                         fontWeight: FontWeight.bold),
+            //                     textAlign: TextAlign.center,
+            //                   ),
+            //                   const SizedBox(height: 4),
+            //                   Text(
+            //                     productList[index]['product_price'],
+            //                     style: TextStyle(color: Colors.grey[700]),
+            //                   ),
+            //                 ],
+            //               ),
+            //             );
+            //           },
+            //         ),
+            //       ),
+            //       const Divider(color: Colors.deepOrange, thickness: 2),
+            //       const Padding(
+            //         padding: EdgeInsets.all(16.0),
+            //         child: Text(
+            //           'Photo Gallery',
+            //           style:
+            //               TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            //         ),
+            //       ),
+            //       Container(
+            //         height: 150,
+            //         child: ListView.builder(
+            //           scrollDirection: Axis.horizontal,
+            //           itemCount: photoGalleryList.length,
+            //           itemBuilder: (context, index) {
+            //             return Padding(
+            //               padding: const EdgeInsets.all(8.0),
+            //               child: ClipRRect(
+            //                 borderRadius: BorderRadius.circular(10),
+            //                 child: CachedNetworkImage(
+            //                   imageUrl: photoGalleryList[index]['file'],
+            //                   placeholder: (context, url) =>
+            //                       const SpinKitFadingCircle(
+            //                     color: Colors.deepOrange,
+            //                     size: 50.0,
+            //                   ),
+            //                   errorWidget: (context, url, error) =>
+            //                       const Icon(Icons.error),
+            //                   height: 150,
+            //                   width: 150,
+            //                   fit: BoxFit.cover,
+            //                 ),
+            //               ),
+            //             );
+            //           },
+            //         ),
+            //       ),
+            //       const Divider(color: Colors.deepOrange, thickness: 2),
+            //       // const Padding(
+            //       //   padding: EdgeInsets.all(16.0),
+            //       //   child: Text(
+            //       //     'Video Gallery',
+            //       //     style:
+            //       //         TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            //       //   ),
+            //       // ),
+            //       // Container(
+            //       //   height: 150,
+            //       //   child: ListView.builder(
+            //       //     scrollDirection: Axis.horizontal,
+            //       //     itemCount: videoGalleryList.length,
+            //       //     itemBuilder: (context, index) {
+            //       //       return Padding(
+            //       //         padding: const EdgeInsets.all(8.0),
+            //       //         child: GestureDetector(
+            //       //           onTap: () {
+            //       //             playVideo(videoGalleryList[index]['file']);
+            //       //             showModalBottomSheet(
+            //       //               context: context,
+            //       //               builder: (context) {
+            //       //                 return buildVideoPlayer();
+            //       //               },
+            //       //             );
+            //       //           },
+            //       //           child: Container(
+            //       //             height: 150,
+            //       //             width: 150,
+            //       //             color: Colors.grey[200],
+            //       //             child: Stack(
+            //       //               children: [
+            //       //                 const Center(
+            //       //                   child: Icon(
+            //       //                     Icons.play_circle_fill,
+            //       //                     color: Colors.deepOrange,
+            //       //                     size: 50,
+            //       //                   ),
+            //       //                 ),
+            //       //                 CachedNetworkImage(
+            //       //                   imageUrl: videoGalleryList[index]['file'],
+            //       //                   placeholder: (context, url) =>
+            //       //                       const SpinKitFadingCircle(
+            //       //                     color: Colors.deepOrange,
+            //       //                     size: 50.0,
+            //       //                   ),
+            //       //                   errorWidget: (context, url, error) =>
+            //       //                       const Icon(Icons.error),
+            //       //                   height: 150,
+            //       //                   width: 150,
+            //       //                   fit: BoxFit.cover,
+            //       //                 ),
+            //       //               ],
+            //       //             ),
+            //       //           ),
+            //       //         ),
+            //       //       );
+            //       //     },
+            //       //   ),
+            //       // ),
+            //       const Divider(color: Colors.deepOrange, thickness: 2),
+            //       const Padding(
+            //         padding: EdgeInsets.all(16.0),
+            //         child: Text(
+            //           'Availability',
+            //           style:
+            //               TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            //         ),
+            //       ),
+            //       Padding(
+            //         padding: const EdgeInsets.all(16.0),
+            //         child: Column(
+            //           crossAxisAlignment: CrossAxisAlignment.start,
+            //           children: availabilityList.map<Widget>((availability) {
+            //             String day = availability.keys.first;
+            //             String time = availability[day];
+            //             return Padding(
+            //               padding: const EdgeInsets.symmetric(vertical: 4.0),
+            //               child: Text('$day: $time',
+            //                   style: const TextStyle(fontSize: 16)),
+            //             );
+            //           }).toList(),
+            //         ),
+            //       ),
+            //       // Container(
+            //       //   height: 100,
+            //       //   child: ListView.builder(
+            //       //     scrollDirection: Axis.horizontal,
+            //       //     itemCount: availabilityList.length,
+            //       //     itemBuilder: (context, index) {
+            //       //       return Padding(
+            //       //         padding: const EdgeInsets.all(8.0),
+            //       //         child: Container(
+            //       //           width: 100,
+            //       //           decoration: BoxDecoration(
+            //       //             color: Colors.deepOrangeAccent,
+            //       //             borderRadius: BorderRadius.circular(10),
+            //       //           ),
+            //       //           child: Center(
+            //       //             child: Text(
+            //       //               availabilityList[index]['availability_time'],
+            //       //               style: const TextStyle(
+            //       //                   color: Colors.white,
+            //       //                   fontWeight: FontWeight.bold),
+            //       //               textAlign: TextAlign.center,
+            //       //             ),
+            //       //           ),
+            //       //         ),
+            //       //       );
+            //       //     },
+            //       //   ),
+            //       // ),
+            //       const Divider(color: Colors.deepOrange, thickness: 2),
+            //       const Padding(
+            //         padding: EdgeInsets.all(16.0),
+            //         child: Text(
+            //           'Reviews',
+            //           style:
+            //               TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            //         ),
+            //       ),
+            //       ListView.builder(
+            //         shrinkWrap: true,
+            //         physics: const NeverScrollableScrollPhysics(),
+            //         itemCount: reviewList.length,
+            //         itemBuilder: (context, index) {
+            //           return Padding(
+            //             padding: const EdgeInsets.all(8.0),
+            //             child: ListTile(
+            //               leading: CircleAvatar(
+            //                 backgroundImage:
+            //                     NetworkImage(reviewList[index]['logo']),
+            //               ),
+            //               title: Text(reviewList[index]['date'],
+            //                   style:
+            //                       const TextStyle(fontWeight: FontWeight.bold)),
+            //               subtitle: Text(reviewList[index]['rate']),
+            //             ),
+            //           );
+            //         },
+            //       ),
+            //     ],
+            //   ),
+            // );
+
+
+
 
 
 

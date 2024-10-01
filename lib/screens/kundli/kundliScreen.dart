@@ -107,9 +107,8 @@ class _KundliScreenState extends State<KundliScreen>
       'name': _nameController.text,
       'dob': _dateController.text,
       'tob': _timeController.text,
-      'pob': _placeController.text,
+      'pob': _selectedCity,
       'lang': 'en',
-      'city': _selectedCity,
       'lat': _selectedLat,
       'lon': _selectedLon
     });
@@ -224,7 +223,7 @@ class _KundliScreenState extends State<KundliScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Know your Kundli'),
+        title: const Text('Know your Kundali'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -269,7 +268,7 @@ class _KundliScreenState extends State<KundliScreen>
                       ),
                     ),
                     const Text(
-                      "What is Kundli?",
+                      "What is Kundali?",
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -277,12 +276,12 @@ class _KundliScreenState extends State<KundliScreen>
                     ),
                     const SizedBox(height: 10),
                     const Text(
-                      "Kundli is a detailed chart that represents the positioning of stars and planets at the time of a person's birth.",
+                      "Kundali is a detailed chart that represents the positioning of stars and planets at the time of a person's birth.",
                       style: TextStyle(fontSize: 16),
                     ),
                     const SizedBox(height: 30),
                     const Text(
-                      "Get Your Kundli?",
+                      "Get Your Kundali?",
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -298,17 +297,39 @@ class _KundliScreenState extends State<KundliScreen>
                     ),
                     const SizedBox(height: 20),
                     TextField(
-                      controller: _placeController,
+                      controller: _dateController,
+                      readOnly: true,
                       decoration: const InputDecoration(
-                        labelText: 'Place of Birth',
+                        labelText: 'Date of Birth',
                         border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.calendar_today),
                       ),
+                      onTap: () => _selectDate(context),
                     ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: _timeController,
+                      readOnly: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Time of Birth',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.access_time),
+                      ),
+                      onTap: () => _selectTime(context),
+                    ),
+                    // const SizedBox(height: 20),
+                    // TextField(
+                    //   controller: _placeController,
+                    //   decoration: const InputDecoration(
+                    //     labelText: 'Place of Birth',
+                    //     border: OutlineInputBorder(),
+                    //   ),
+                    // ),
                     const SizedBox(height: 20),
                     TextField(
                       controller: _searchController,
                       decoration: InputDecoration(
-                        labelText: 'Search City',
+                        labelText: 'Place of Birth',
                         border: OutlineInputBorder(),
                         suffixIcon:
                             _isLoading ? CircularProgressIndicator() : null,
@@ -357,29 +378,8 @@ class _KundliScreenState extends State<KundliScreen>
                         ),
                       ),
 
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: _dateController,
-                      readOnly: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Date of Birth',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.calendar_today),
-                      ),
-                      onTap: () => _selectDate(context),
-                    ),
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: _timeController,
-                      readOnly: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Time of Birth',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.access_time),
-                      ),
-                      onTap: () => _selectTime(context),
-                    ),
                     const SizedBox(height: 16),
+
                     // _buildLabel('Select Language'),
                     _buildFieldContainer(
                       child: DropdownButton<String>(
@@ -426,7 +426,7 @@ class _KundliScreenState extends State<KundliScreen>
   Widget _buildFieldContainer({required Widget child}) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(5),

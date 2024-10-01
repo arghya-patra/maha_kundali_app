@@ -17,6 +17,7 @@ import 'package:maha_kundali_app/screens/Favourite_Astrolgers/favAstro.dart';
 import 'package:maha_kundali_app/screens/Home/walletScreen.dart';
 import 'package:maha_kundali_app/screens/Horoscope/horoscopeDetails.dart';
 import 'package:maha_kundali_app/screens/Horoscope/horoscopeScreen.dart';
+import 'package:maha_kundali_app/screens/LiveAstrologers/liveastrologerScreen.dart';
 import 'package:maha_kundali_app/screens/Numerology/numerology_form.dart';
 import 'package:maha_kundali_app/screens/Personal%20Horoscope/personal_horoscope_form.dart';
 import 'package:maha_kundali_app/screens/Service-Report/all_service_report.dart';
@@ -137,6 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Expanded(
             child: ListView(
+              padding: EdgeInsets.zero,
               children: [
                 _buildDrawerItem(
                   Icons.home,
@@ -144,13 +146,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 _buildDrawerItem(Icons.book_online, 'Book a Puja',
                     route: PujaScreen()),
+                _buildDrawerItem(Icons.report_rounded, 'Book a Report',
+                    route: AllServiceReportScreen()),
                 _buildDrawerItem(
                     Icons.account_balance_wallet, 'Wallet Transaction',
                     route: WalletScreen()),
                 _buildDrawerItem(Icons.history, 'Order History',
                     route: OrderHistoryScreen()),
                 _buildDrawerItem(Icons.chat_bubble, 'Chat with Astrologers',
-                    route: ChatListScreen()),
+                    route: LiveAstrologerListScreen()),
                 _buildDrawerItem(
                     Icons.favorite_border_rounded, 'Favourite Astrologers',
                     route: FavoriteAstrologersScreen()),
@@ -204,23 +208,25 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildDrawerItem(IconData icon, String title, {route}) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      onTap: () {
-        if (title == 'Home') {
-          Navigator.of(context).pop();
-        } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => route,
-            ),
-          );
-        }
+    return Container(
+      child: ListTile(
+        leading: Icon(icon),
+        title: Text(title),
+        onTap: () {
+          if (title == 'Home') {
+            Navigator.of(context).pop();
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => route,
+              ),
+            );
+          }
 
-        // Handle navigation here
-      },
+          // Handle navigation here
+        },
+      ),
     );
   }
 
@@ -351,11 +357,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildOptionsGrid() {
     final List<Map<String, dynamic>> options = [
-      {
-        'title': '2024 \nSpecial',
-        'image': 'images/year.jpeg',
-        'route': AllServiceReportScreen()
-      },
+      // {
+      //   'title': '2024 \nSpecial',
+      //   'image': 'images/year.jpeg',
+      //   'route': AllServiceReportScreen()
+      // },
       {
         'title': 'Panchang',
         'image': 'images/panchang_icon.webp',
@@ -377,7 +383,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'route': KundliScreen()
       },
       {
-        'title': 'Love \nCompatibility',
+        'title': 'Kundali \nMatching',
         'image': 'images/love_compatibility.png',
         'route': KundliMatchingScreen()
       },
@@ -468,8 +474,29 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Our Astrologers',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Our Astrologers',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AstrologerListScreen(),
+                    ),
+                  );
+                  // Handle view all navigation
+                },
+                child: const Text('View All',
+                    style: TextStyle(color: Colors.orange)),
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: 8),
         SizedBox(
           height: 150,
@@ -538,22 +565,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             },
-          ),
-        ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AstrologerListScreen(),
-                ),
-              );
-              // Handle view all navigation
-            },
-            child:
-                const Text('View All', style: TextStyle(color: Colors.orange)),
           ),
         ),
       ],

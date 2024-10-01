@@ -113,7 +113,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           'Gender',
           style: TextStyle(fontSize: 16.0, color: Colors.grey[700]),
         ),
-        SizedBox(height: 8.0),
+        const SizedBox(height: 8.0),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -139,7 +139,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           },
         ),
         Text(value),
-        SizedBox(width: 16),
+        const SizedBox(width: 16),
       ],
     );
   }
@@ -210,7 +210,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         underline:
                             const SizedBox(), // Remove default underline for a cleaner look
                         dropdownColor: Colors.white, // Dropdown menu color
-                        icon: Icon(Icons.arrow_drop_down,
+                        icon: const Icon(Icons.arrow_drop_down,
                             color: Colors.deepOrange), // Custom dropdown icon
                         items: ["English", "Hindi"].map((String value) {
                           return DropdownMenuItem<String>(
@@ -289,19 +289,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         fillColor: Colors.grey[100],
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
-          borderSide: BorderSide(color: Colors.orange),
+          borderSide: const BorderSide(color: Colors.orange),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
-          borderSide: BorderSide(color: Colors.orange),
+          borderSide: const BorderSide(color: Colors.orange),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
-          borderSide: BorderSide(color: Colors.deepOrange, width: 2),
+          borderSide: const BorderSide(color: Colors.deepOrange, width: 2),
         ),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        suffixIcon: isEmail ? Icon(Icons.email) : null,
+        suffixIcon: isEmail ? const Icon(Icons.email) : null,
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -333,15 +333,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         fillColor: Colors.grey[100],
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
-          borderSide: BorderSide(color: Colors.orange),
+          borderSide: const BorderSide(color: Colors.orange),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
-          borderSide: BorderSide(color: Colors.orange),
+          borderSide: const BorderSide(color: Colors.orange),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
-          borderSide: BorderSide(color: Colors.deepOrange, width: 2),
+          borderSide: const BorderSide(color: Colors.deepOrange, width: 2),
         ),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 20, vertical: 16),

@@ -20,7 +20,7 @@ class KundliDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Kundli Details'),
+        title: Text('Kundali Details'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
