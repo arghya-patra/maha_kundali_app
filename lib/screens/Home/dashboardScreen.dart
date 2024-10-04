@@ -5,6 +5,7 @@ import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/components/util.dart';
 import 'package:maha_kundali_app/screens/Astro_Ecom/cartScreen.dart';
 import 'package:maha_kundali_app/screens/Astro_Ecom/productListScreen.dart';
+import 'package:maha_kundali_app/screens/Home/astro_home.dart';
 import 'package:maha_kundali_app/screens/Home/home_screen.dart';
 import 'package:maha_kundali_app/screens/Home/profile.dart';
 import 'package:maha_kundali_app/screens/chats/chatListScreen.dart';
@@ -83,7 +84,7 @@ class _DashboardScreenState extends State<DashboardScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          HomeScreen(),
+          AstrologerDashboard(), //  HomeScreen(),
           ShoppingScreen(),
           ChatListScreen(),
           ShoppingCartScreen(),

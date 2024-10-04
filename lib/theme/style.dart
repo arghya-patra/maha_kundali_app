@@ -146,8 +146,8 @@ BoxDecoration kBackgroundDesign(BuildContext context) {
       fit: BoxFit.cover,
       colorFilter: ColorFilter.mode(
         Theme.of(context).scaffoldBackgroundColor != Colors.black
-            ? Colors.white.withOpacity(0.5)
-            : Colors.black.withOpacity(0.3),
+            ? Colors.white.withOpacity(0.7)
+            : Colors.black.withOpacity(0.7),
         BlendMode.srcATop,
       ),
     ),

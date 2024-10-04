@@ -26,7 +26,7 @@ class _LiveAstrologerListScreenState extends State<LiveAstrologerListScreen> {
     final response = await http.post(Uri.parse(url), body: {
       'action': 'astrologer-list',
       'authorizationToken': ServiceManager.tokenID,
-      'sortby': 'live'
+      // 'sortby': 'live'
     });
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -40,7 +40,7 @@ class _LiveAstrologerListScreenState extends State<LiveAstrologerListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Astrologers'),
+        title: const Text('Astrologers'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -55,14 +55,14 @@ class _LiveAstrologerListScreenState extends State<LiveAstrologerListScreen> {
         future: astrologers,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No astrologers available.'));
+            return const Center(child: Text('No astrologers available.'));
           } else {
             return ListView.builder(
-              padding: EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(10.0),
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 final astrologer = snapshot.data![index];
@@ -76,94 +76,118 @@ class _LiveAstrologerListScreenState extends State<LiveAstrologerListScreen> {
   }
 
   Widget _buildAstrologerCard(Map astrologer) {
-    return Card(
-      shape: RoundedRectangleBorder(
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black, width: 1.0), // Card border
         borderRadius: BorderRadius.circular(12.0),
       ),
-      elevation: 4.0,
-      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Padding(
-        padding: EdgeInsets.all(10.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.all(10.0),
+        child: Stack(
           children: [
-            // Astrologer Image with Verified and Online icons
-            Stack(
+            // Astrologer details (Name, Experience, etc.)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
-                  child: Image.network(
-                    astrologer['Details']['logo'],
-                    height: 80,
-                    width: 80,
-                    fit: BoxFit.cover,
-                  ),
+                // Astrologer Image with Verified and Online icons
+                Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                            color: Colors.black, width: 2.0), // Image border
+                        borderRadius: BorderRadius.circular(50.0),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: Image.network(
+                          astrologer['Details']['logo'],
+                          height: 80,
+                          width: 80,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    const Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Icon(
+                        Icons.verified,
+                        color: Colors.blue,
+                        size: 20,
+                      ),
+                    ),
+                    const Positioned(
+                      top: 0,
+                      left: 0,
+                      child: CircleAvatar(
+                        radius: 8,
+                        backgroundColor: Colors.green, // Online indicator
+                      ),
+                    ),
+                  ],
                 ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: Icon(
-                    Icons.verified,
-                    color: Colors.blue,
-                    size: 20,
-                  ),
-                ),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  child: CircleAvatar(
-                    radius: 8,
-                    backgroundColor: Colors.green, // Online indicator
+                const SizedBox(width: 10.0),
+                // Astrologer Details
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        astrologer['Details']['name'],
+                        style: const TextStyle(
+                          fontSize: 17.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.deepPurple,
+                        ),
+                      ),
+                      const SizedBox(height: 4.0),
+                      Text(
+                        'Exp: ${astrologer['Details']['experience']}',
+                        style:
+                            TextStyle(fontSize: 14.0, color: Colors.grey[600]),
+                      ),
+                      Text(
+                        'Specialization: ${_getSkills(astrologer['skills'])}',
+                        style:
+                            TextStyle(fontSize: 14.0, color: Colors.grey[600]),
+                      ),
+                      Text(
+                        'Languages: ${_getLanguages(astrologer['langs'])}',
+                        style:
+                            TextStyle(fontSize: 14.0, color: Colors.grey[600]),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-            SizedBox(width: 10.0),
-            // Astrologer Details
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    astrologer['Details']['name'],
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple,
-                    ),
+            // Chat Button positioned in the top right corner
+            Positioned(
+              top: 0,
+              right: 0,
+              child: OutlinedButton.icon(
+                onPressed: () {
+                  // Handle chat action
+                },
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Colors.black), // Black border
+                  backgroundColor: Colors.transparent, // Transparent background
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
-                  SizedBox(height: 4.0),
-                  Text(
-                    'Experience: ${astrologer['Details']['experience']}',
-                    style: TextStyle(fontSize: 14.0, color: Colors.grey[600]),
+                ),
+                icon: const Icon(
+                  Icons.chat,
+                  color: Colors.black, // Icon color
+                ),
+                label: const Text(
+                  'Chat',
+                  style: TextStyle(
+                    color: Colors.black, // Text color
                   ),
-                  Text(
-                    'Specialization: ${_getSkills(astrologer['skills'])}',
-                    style: TextStyle(fontSize: 14.0, color: Colors.grey[600]),
-                  ),
-                  Text(
-                    'Languages: ${_getLanguages(astrologer['langs'])}',
-                    style: TextStyle(fontSize: 14.0, color: Colors.grey[600]),
-                  ),
-                  SizedBox(height: 8.0),
-                  // Chat Button
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Handle chat action
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(
-                            255, 186, 158, 236), // Chat button color
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      child: Text('Chat'),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ],
