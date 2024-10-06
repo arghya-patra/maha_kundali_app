@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -35,6 +36,95 @@ class _PersonalHoroscopeFormScreenState
   final TextEditingController _timeController = TextEditingController();
 
   String formattedDate = "";
+
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
+  List<dynamic> _cities = [];
+  String? _selectedCity;
+  String? _selectedLat;
+  String? _selectedLon;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (_searchController.text.isNotEmpty) {
+        _fetchCities(_searchController.text);
+      }
+    });
+  }
+
+  Future<void> _fetchCities(String query) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response = await http.post(Uri.parse(APIData.login), body: {
+        'action': 'get-city-name',
+        'name': query,
+      });
+
+      // Log the response to check if it's valid
+      print('Response: "${response.body}"'); // Log the response content
+      print('Response: "${response.statusCode}"');
+
+      if (response.body.isEmpty) {
+        // Handle empty response
+        print('Error: API returned an empty response');
+        setState(() {
+          _cities = [];
+          _isLoading = false;
+        });
+        return;
+      }
+
+      if (response.statusCode == 200) {
+        // Try decoding the response body
+        try {
+          final data = jsonDecode(response.body);
+
+          if (data != null && data['city'] != null) {
+            setState(() {
+              _cities = data['city'];
+              _isLoading = false;
+            });
+          } else {
+            print('Error: "city" key not found in the response');
+            setState(() {
+              _cities = [];
+              _isLoading = false;
+            });
+          }
+        } catch (e) {
+          print('Error decoding JSON: $e');
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      } else {
+        print(
+            'Error: Failed to fetch cities, status code: ${response.statusCode}');
+        setState(() {
+          _cities = [];
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        _cities = [];
+        _isLoading = false;
+      });
+    }
+  }
+
   submitData() async {
     String url = APIData.login;
     print(url.toString());
@@ -136,7 +226,7 @@ class _PersonalHoroscopeFormScreenState
                 ),
               ),
               const SizedBox(height: 16),
-              _buildLabel('Select Date'),
+              _buildLabel('Select Date of Birth'),
               GestureDetector(
                 onTap: () => _selectDate(context),
                 child: _buildFieldContainer(
@@ -147,7 +237,7 @@ class _PersonalHoroscopeFormScreenState
                 ),
               ),
               const SizedBox(height: 16),
-              _buildLabel('Select Hour'),
+              _buildLabel('Select Time of Birth'),
               TextField(
                 controller: _timeController,
                 readOnly: true,
@@ -220,27 +310,97 @@ class _PersonalHoroscopeFormScreenState
               ),
               const SizedBox(height: 16),
               _buildLabel('Birth Place'),
-              GestureDetector(
-                onTap: () async {
-                  // LocationResult result = await Navigator.of(context).push(
-                  //   MaterialPageRoute(
-                  //     builder: (context) => PlacePicker(
-                  //       "YOUR_GOOGLE_API_KEY",
-                  //     ),
-                  //   ),
-                  // );
-
-                  // setState(() {
-                  //   birthPlace = result.formattedAddress!;
-                  // });
-                },
-                child: _buildFieldContainer(
-                  child: Text(
-                    birthPlace.isEmpty ? "Pick a location" : birthPlace,
-                    style: const TextStyle(fontSize: 16),
-                  ),
+              TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  labelText: 'Search City',
+                  border: OutlineInputBorder(),
+                  suffixIcon: _isLoading ? CircularProgressIndicator() : null,
                 ),
               ),
+              const SizedBox(height: 10),
+
+              // Dropdown list for city suggestions
+              if (_cities.isNotEmpty)
+                Container(
+                  height: 200,
+                  child: ListView.builder(
+                    itemCount: _cities.length,
+                    itemBuilder: (context, index) {
+                      final city = _cities[index]['city'];
+                      final lat = _cities[index]['lat'];
+                      final lon = _cities[index]['lon'];
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedCity = city;
+                            _selectedLat = lat;
+                            _selectedLon = lon;
+                            _searchController.text =
+                                city; // Set the selected city
+                            _cities.clear(); // Clear the dropdown
+                          });
+                        },
+                        child: Container(
+                          height: 50, // Set the desired height
+                          padding: const EdgeInsets.all(
+                              8.0), // Optional: Add padding for the text
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey, // Set the color of the border
+                              width: 1.0, // Set the width of the border
+                            ),
+                            borderRadius: BorderRadius.circular(
+                                5.0), // Optional: Add rounded corners
+                          ),
+                          child: Text(
+                            city,
+                            style: TextStyle(
+                                fontSize: 16), // Customize text style if needed
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+              // Display selected city's details
+              if (_selectedCity != null)
+                Padding(
+                  padding: const EdgeInsets.all(3.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Selected City: $_selectedCity'),
+                      Text('Latitude: $_selectedLat'),
+                      Text('Longitude: $_selectedLon'),
+                    ],
+                  ),
+                ),
+
+              //----------------------------------------------------------------
+
+              // GestureDetector(
+              //   onTap: () async {
+              //     // LocationResult result = await Navigator.of(context).push(
+              //     //   MaterialPageRoute(
+              //     //     builder: (context) => PlacePicker(
+              //     //       "YOUR_GOOGLE_API_KEY",
+              //     //     ),
+              //     //   ),
+              //     // );
+
+              //     // setState(() {
+              //     //   birthPlace = result.formattedAddress!;
+              //     // });
+              //   },
+              //   child: _buildFieldContainer(
+              //     child: Text(
+              //       birthPlace.isEmpty ? "Pick a location" : birthPlace,
+              //       style: const TextStyle(fontSize: 16),
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 16),
               _buildLabel('Timezone'),
               _buildFieldContainer(
