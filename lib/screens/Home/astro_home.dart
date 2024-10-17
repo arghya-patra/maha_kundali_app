@@ -168,8 +168,8 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    IconButton(
-                        icon: const Icon(Icons.facebook), onPressed: () {}),
+                    // IconButton(
+                    //     icon: const Icon(Icons.facebook), onPressed: () {}),
                     IconButton(
                         icon: const Icon(Icons.facebook), onPressed: () {}),
                     IconButton(
@@ -209,6 +209,7 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
   }
 
   void _playVideo(String videoUrl) {
+    print(videoUrl);
     final videoId = YoutubePlayer.convertUrlToId(videoUrl);
 
     if (videoId != null) {

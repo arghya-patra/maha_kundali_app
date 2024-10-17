@@ -120,6 +120,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
                   animationDuration: const Duration(milliseconds: 900),
                   enableActiveFill: true,
                   onCompleted: (v) {
+                    sendOtp(context);
                     print("Completed");
                   },
                   onChanged: (value) {
@@ -148,30 +149,30 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
               ),
             ),
             const SizedBox(height: 32),
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  sendOtp(context);
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => SelectLanguageScreen(),
-                  //   ),
-                  // );
-                  // Submit OTP action
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.orange,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 50.0, vertical: 15.0),
-                ),
-                child: const Text('Submit'),
-              ),
-            ),
+            // Center(
+            //   child: ElevatedButton(
+            //     onPressed: () {
+            //       sendOtp(context);
+            //       // Navigator.push(
+            //       //   context,
+            //       //   MaterialPageRoute(
+            //       //     builder: (context) => SelectLanguageScreen(),
+            //       //   ),
+            //       // );
+            //       // Submit OTP action
+            //     },
+            //     style: ElevatedButton.styleFrom(
+            //       foregroundColor: Colors.white,
+            //       backgroundColor: Colors.orange,
+            //       shape: RoundedRectangleBorder(
+            //         borderRadius: BorderRadius.circular(30.0),
+            //       ),
+            //       padding: const EdgeInsets.symmetric(
+            //           horizontal: 50.0, vertical: 15.0),
+            //     ),
+            //     child: const Text('Submit'),
+            //   ),
+            // ),
             const Spacer(),
             Center(
               child: GestureDetector(
@@ -223,6 +224,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
         body: widget.isReg ? bodyReg : bodyLogin);
     var data = jsonDecode(res.body);
     print(data['status']);
+    print(res.body);
     if (data['status'] == 200) {
       print("______________________________________");
       print(res.body);
@@ -268,13 +270,13 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
         setState(() {
           isLoading = false;
         });
-        toastMessage(message: 'Something went wrong');
+        // toastMessage(message: 'Something went wrong');
       }
     } else {
       setState(() {
         isLoading = false;
       });
-      toastMessage(message: 'Something Went wrong!');
+      toastMessage(message: data['message']);
     }
     setState(() {
       isLoading = false;

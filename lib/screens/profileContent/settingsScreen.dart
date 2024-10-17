@@ -26,7 +26,7 @@ class _SettingsScreenState extends State<SettingsScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
 
     // Fetch data on initialization
     _fetchTransactionDetails();
@@ -87,7 +87,7 @@ class _SettingsScreenState extends State<SettingsScreen>
           tabs: [
             const Tab(text: 'Settings'),
             const Tab(text: 'Transaction'),
-            const Tab(text: 'Notifications'),
+            // const Tab(text: 'Notifications'),
           ],
           indicatorColor: Colors.white,
           labelStyle:
@@ -101,7 +101,7 @@ class _SettingsScreenState extends State<SettingsScreen>
               children: [
                 _buildSettingsTab(),
                 _buildPaymentTab(),
-                _buildNotificationsTab(),
+                //  _buildNotificationsTab(),
               ],
             ),
     );

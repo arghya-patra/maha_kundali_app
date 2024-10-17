@@ -30,6 +30,7 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
         'action': 'cart',
         'authorizationToken': ServiceManager.tokenID,
       });
+      print(response.body);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         setState(() {
@@ -113,101 +114,109 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                       );
                     },
                   )
-                : ListView.builder(
-                    itemCount: cartItems.length,
-                    itemBuilder: (context, index) {
-                      final item = cartItems[index];
-                      return Dismissible(
-                        key: Key(item['product_id']),
-                        background: Container(
-                          color: Colors.red,
-                          alignment: Alignment.centerRight,
-                          padding: const EdgeInsets.only(right: 20),
-                          child: const Icon(Icons.delete, color: Colors.white),
-                        ),
-                        direction: DismissDirection.endToStart,
-                        onDismissed: (direction) {
-                          _removeItemFromCart(item['product_id']);
-                        },
-                        child: Container(
-                          height: 100,
-                          margin: const EdgeInsets.symmetric(
-                              vertical: 8.0, horizontal: 16.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 2,
-                                blurRadius: 5,
-                                offset: const Offset(0, 3), // Shadow position
-                              ),
-                            ],
-                            border:
-                                Border.all(color: Colors.grey.withOpacity(0.3)),
-                          ),
-                          child: ListTile(
-                            leading: ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
-                              child: Image.network(item['product_photo'],
-                                  width: 50, height: 50, fit: BoxFit.cover),
+                : cartItems.length <= 0
+                    ? Center(
+                        child: Text("Cart is Empty!"),
+                      )
+                    : ListView.builder(
+                        itemCount: cartItems.length,
+                        itemBuilder: (context, index) {
+                          final item = cartItems[index];
+                          return Dismissible(
+                            key: Key(item['product_id']),
+                            background: Container(
+                              color: Colors.red,
+                              alignment: Alignment.centerRight,
+                              padding: const EdgeInsets.only(right: 20),
+                              child:
+                                  const Icon(Icons.delete, color: Colors.white),
                             ),
-                            title: Text(
-                              item['product_title'],
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16.0,
-                                color: Colors.black87,
+                            direction: DismissDirection.endToStart,
+                            onDismissed: (direction) {
+                              _removeItemFromCart(item['product_id']);
+                            },
+                            child: Container(
+                              height: 100,
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 8.0, horizontal: 16.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.2),
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset:
+                                        const Offset(0, 3), // Shadow position
+                                  ),
+                                ],
+                                border: Border.all(
+                                    color: Colors.grey.withOpacity(0.3)),
                               ),
-                              maxLines:
-                                  2, // Limit to 2 lines to prevent overflow
-                              overflow: TextOverflow
-                                  .ellipsis, // Add ellipsis if the text is too long
-                            ),
-                            subtitle: Text(
-                              'Price: \$${item['sale_price']}',
-                              style: TextStyle(
-                                color: Colors.grey[700],
-                              ),
-                              maxLines:
-                                  1, // Prevent price text from overflowing
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            trailing: IconButton(
-                                icon: const Icon(Icons.delete,
-                                    color: Colors.redAccent),
-                                onPressed: () {}
-
-                                // => _removeItemFromCart(
-                                //     index), // Adjust this to your API call
+                              child: ListTile(
+                                leading: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  child: Image.network(item['product_photo'],
+                                      width: 50, height: 50, fit: BoxFit.cover),
                                 ),
-                          ),
-                        ),
-                      );
+                                title: Text(
+                                  item['product_title'],
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16.0,
+                                    color: Colors.black87,
+                                  ),
+                                  maxLines:
+                                      2, // Limit to 2 lines to prevent overflow
+                                  overflow: TextOverflow
+                                      .ellipsis, // Add ellipsis if the text is too long
+                                ),
+                                subtitle: Text(
+                                  'Price: \$${item['sale_price']}',
+                                  style: TextStyle(
+                                    color: Colors.grey[700],
+                                  ),
+                                  maxLines:
+                                      1, // Prevent price text from overflowing
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                trailing: IconButton(
+                                    icon: const Icon(Icons.delete,
+                                        color: Colors.redAccent),
+                                    onPressed: () {}
+
+                                    // => _removeItemFromCart(
+                                    //     index), // Adjust this to your API call
+                                    ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+          ),
+          cartItems.isEmpty
+              ? Container()
+              : Container(
+                  padding: const EdgeInsets.all(20),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      backgroundColor: Colors.orange,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      minimumSize: const Size(double.infinity, 50),
+                    ),
+                    onPressed: () {
+                      // Place order action
                     },
+                    child: Text(
+                      'Place Order (Rs.${getTotalPrice().toStringAsFixed(2)})',
+                      style: const TextStyle(fontSize: 18, color: Colors.white),
+                    ),
                   ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(20),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                backgroundColor: Colors.orange,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
                 ),
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              onPressed: () {
-                // Place order action
-              },
-              child: Text(
-                'Place Order (Rs.${getTotalPrice().toStringAsFixed(2)})',
-                style: const TextStyle(fontSize: 18, color: Colors.white),
-              ),
-            ),
-          ),
         ],
       ),
     );

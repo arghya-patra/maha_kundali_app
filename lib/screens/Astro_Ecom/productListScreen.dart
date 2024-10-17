@@ -105,17 +105,17 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
                 ),
             ],
           ),
-          IconButton(
-            icon: const Icon(Icons.favorite),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => WishlistScreen(),
-                ),
-              );
-            },
-          ),
+          // IconButton(
+          //   icon: const Icon(Icons.favorite),
+          //   onPressed: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) => WishlistScreen(),
+          //       ),
+          //     );
+          //   },
+          // ),
         ],
         backgroundColor: Colors.orange,
       ),

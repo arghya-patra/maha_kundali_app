@@ -236,7 +236,7 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kundli Matching'),
+        title: const Text('Love & Marriage'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
