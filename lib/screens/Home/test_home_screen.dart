@@ -4,7 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:maha_kundali_app/Blog/blog_screen.dart';
+import 'package:maha_kundali_app/screens/Blog/blog_screen.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/components/headerText.dart';
 import 'package:maha_kundali_app/screens/Astro_Ecom/my_order.dart';

@@ -3,6 +3,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:maha_kundali_app/screens/Astro_remedies/astroRemediesList.dart';
+import 'package:maha_kundali_app/screens/Blog/blog_screen.dart';
 import 'dart:convert';
 
 import 'package:maha_kundali_app/apiManager/apiData.dart';
@@ -330,10 +332,17 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
 
                   // Top Astrologers
                   buildSectionTitle('Top Astrologers', _showAllAstrologers, () {
-                    setState(() {
-                      _showAllAstrologers =
-                          !_showAllAstrologers; // Toggle astrologer visibility
-                    });
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LiveAstrologerListScreen(),
+                      ),
+                    );
+
+                    // setState(() {
+                    //   _showAllAstrologers =
+                    //       !_showAllAstrologers; // Toggle astrologer visibility
+                    // });
                   }),
                   buildTopAstrologers(),
                   const SizedBox(height: 10),
@@ -349,18 +358,31 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
 
                   // Blogs
                   buildSectionTitle('Our Blog', _showAllBlogs, () {
-                    setState(() {
-                      _showAllBlogs = !_showAllBlogs;
-                    });
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BlogListScreen(),
+                      ),
+                    );
+
+                    // setState(() {
+                    //   _showAllBlogs = !_showAllBlogs;
+                    // });
                   }),
                   buildBlogs(context),
                   const SizedBox(height: 10),
 
                   // Astro Remedies
                   buildSectionTitle('Astro Remedies', _showAllRemidies, () {
-                    setState(() {
-                      _showAllRemidies = !_showAllRemidies;
-                    });
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RemediesScreen(),
+                      ),
+                    );
+                    // setState(() {
+                    //   _showAllRemidies = !_showAllRemidies;
+                    // });
                   }),
                   buildAstroRemedies(),
                   const SizedBox(height: 10),
@@ -379,6 +401,12 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
           // const SizedBox(width: 8),
           FloatingActionButton.extended(
             onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LiveAstrologerListScreen(),
+                ),
+              );
               // Handle chat action
             },
             label: const Row(
@@ -397,6 +425,12 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
           // Call Button
           FloatingActionButton.extended(
             onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LiveAstrologerListScreen(),
+                ),
+              );
               // Handle call action
             },
             label: const Row(
@@ -906,7 +940,7 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
   }
 
   Widget buildCustomerStories(BuildContext context) {
-    // Determine how many customer stories to show (4 initially, or all if View All is clicked)
+    // Determine how many customer stories to show (4 initially, or all if "View All" is clicked)
     int storiesCount = _showAllStories ? apiData['customer_stories'].length : 4;
 
     return apiData['customer_stories'] != null
@@ -991,31 +1025,184 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                                             borderRadius:
                                                 BorderRadius.circular(20.0),
                                           ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(20.0),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                const Text(
-                                                  "Customer Feedback",
-                                                  style: TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black87,
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              // Header Section
+                                              Container(
+                                                width: double.infinity,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.orange,
+                                                  borderRadius:
+                                                      const BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(20.0),
+                                                    topRight:
+                                                        Radius.circular(20.0),
                                                   ),
                                                 ),
-                                                Text(
-                                                  story['feedback'],
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    height: 1.5,
-                                                    color: Colors.black54,
+                                                padding:
+                                                    const EdgeInsets.all(16.0),
+                                                child: Center(
+                                                  child: Text(
+                                                    "Customer Feedback",
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
                                                   ),
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+
+                                              // Body Section
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(20.0),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    // Circular Image, Name, and Rating
+                                                    Row(
+                                                      children: [
+                                                        ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(50),
+                                                          child: Image.network(
+                                                            story['pic'],
+                                                            height: 60,
+                                                            width: 60,
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 10),
+                                                        Expanded(
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Text(
+                                                                story['name'],
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 18,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .black87,
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 4),
+                                                              Row(
+                                                                children: [
+                                                                  const Icon(
+                                                                    Icons.star,
+                                                                    color: Colors
+                                                                        .orangeAccent,
+                                                                    size: 16,
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      width: 4),
+                                                                  Text(
+                                                                    story['rating']
+                                                                        .toString(),
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          16,
+                                                                      color: Colors
+                                                                          .black87,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    const SizedBox(height: 16),
+
+                                                    // Feedback Text
+                                                    Text(
+                                                      "Feedback:",
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.black87,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 8),
+                                                    Text(
+                                                      story['feedback'],
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        color: Colors.black54,
+                                                        height: 1.5,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+
+                                              // Close Button Section
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 20.0,
+                                                    right: 20.0,
+                                                    bottom: 16.0,
+                                                    top: 8.0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop(); // Close dialog
+                                                      },
+                                                      style:
+                                                          TextButton.styleFrom(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                          horizontal: 20.0,
+                                                          vertical: 10.0,
+                                                        ),
+                                                        backgroundColor:
+                                                            Colors.orangeAccent,
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      10.0),
+                                                        ),
+                                                      ),
+                                                      child: const Text(
+                                                        "Close",
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         );
                                       },
@@ -1216,7 +1403,7 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
   }
 
   Widget buildAstroRemedies() {
-    int remidiesCount = _showAllRemidies ? apiData['astro_remedy'].length : 4;
+    int remidiesCount = _showAllRemidies ? apiData['astro_remedy'].length : 3;
     return apiData['astro_remedy'] != null
         ? Container(
             height: 120,
@@ -1228,7 +1415,7 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Container(
-                    width: 100, // Width for each remedy card
+                    width: 150, // Width for each remedy card
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [

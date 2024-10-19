@@ -84,7 +84,8 @@ class _LiveAstrologerListScreenState extends State<LiveAstrologerListScreen> {
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: Stack(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Astrologer details (Name, Experience, etc.)
             Row(
@@ -110,8 +111,8 @@ class _LiveAstrologerListScreenState extends State<LiveAstrologerListScreen> {
                       ),
                     ),
                     const Positioned(
-                      bottom: 0,
-                      right: 0,
+                      top: 0,
+                      left: 0,
                       child: Icon(
                         Icons.verified,
                         color: Colors.blue,
@@ -119,8 +120,8 @@ class _LiveAstrologerListScreenState extends State<LiveAstrologerListScreen> {
                       ),
                     ),
                     const Positioned(
-                      top: 0,
-                      left: 0,
+                      bottom: 0,
+                      right: 0,
                       child: CircleAvatar(
                         radius: 8,
                         backgroundColor: Colors.green, // Online indicator
@@ -163,32 +164,60 @@ class _LiveAstrologerListScreenState extends State<LiveAstrologerListScreen> {
                 ),
               ],
             ),
-            // Chat Button positioned in the top right corner
-            Positioned(
-              top: 0,
-              right: 0,
-              child: OutlinedButton.icon(
-                onPressed: () {
-                  // Handle chat action
-                },
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Colors.black), // Black border
-                  backgroundColor: Colors.transparent, // Transparent background
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
+            const SizedBox(height: 10.0),
+            const Divider(), // Divider to separate the footer
+
+            // Footer section with Chat and Call buttons
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                // Chat Button
+                OutlinedButton.icon(
+                  onPressed: () {
+                    // Handle chat action
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(
+                        width: 2.0, color: Color.fromARGB(255, 5, 209, 12)),
+                    backgroundColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  icon: const Icon(
+                    Icons.chat,
+                    color: Color.fromARGB(255, 14, 182, 19),
+                  ),
+                  label: const Text(
+                    'Chat',
+                    style: TextStyle(color: Colors.black),
                   ),
                 ),
-                icon: const Icon(
-                  Icons.chat,
-                  color: Colors.black, // Icon color
-                ),
-                label: const Text(
-                  'Chat',
-                  style: TextStyle(
-                    color: Colors.black, // Text color
+                const SizedBox(width: 8.0), // Space between buttons
+
+                // Call Button
+                OutlinedButton.icon(
+                  onPressed: () {
+                    // Handle call action
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(
+                        width: 2.0, color: Color.fromARGB(255, 5, 209, 12)),
+                    backgroundColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  icon: const Icon(
+                    Icons.phone,
+                    color: Color.fromARGB(255, 14, 182, 19),
+                  ),
+                  label: const Text(
+                    'Call',
+                    style: TextStyle(color: Colors.black),
                   ),
                 ),
-              ),
+              ],
             ),
           ],
         ),
