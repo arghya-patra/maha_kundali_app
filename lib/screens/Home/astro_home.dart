@@ -24,7 +24,7 @@ import 'package:maha_kundali_app/screens/match_Making/kundliMatching.dart';
 import 'package:maha_kundali_app/screens/panchang/panchangForm.dart';
 import 'package:maha_kundali_app/screens/profileContent/settingsScreen.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+// import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class AstrologerDashboard extends StatefulWidget {
   @override
@@ -221,40 +221,40 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
     );
   }
 
-  void _playVideo(String videoUrl) {
-    print(videoUrl);
-    final videoId = YoutubePlayer.convertUrlToId(videoUrl);
+  // void _playVideo(String videoUrl) {
+  //   print(videoUrl);
+  //   final videoId = YoutubePlayer.convertUrlToId(videoUrl);
 
-    if (videoId != null) {
-      YoutubePlayerController _controller = YoutubePlayerController(
-        initialVideoId: videoId,
-        flags: const YoutubePlayerFlags(
-          autoPlay: true,
-          mute: false,
-        ),
-      );
+  //   if (videoId != null) {
+  //     YoutubePlayerController _controller = YoutubePlayerController(
+  //       initialVideoId: videoId,
+  //       flags: const YoutubePlayerFlags(
+  //         autoPlay: true,
+  //         mute: false,
+  //       ),
+  //     );
 
-      // Show YouTube player in a dialog
-      showDialog(
-        context: context,
-        builder: (context) {
-          print("dialog");
-          return AlertDialog(
-            contentPadding: EdgeInsets.zero,
-            content: YoutubePlayer(
-              controller: _controller,
-              showVideoProgressIndicator: true,
-            ),
-          );
-        },
-      );
-    } else {
-      // Handle the case when the video URL is invalid
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invalid video URL')),
-      );
-    }
-  }
+  //     // Show YouTube player in a dialog
+  //     showDialog(
+  //       context: context,
+  //       builder: (context) {
+  //         print("dialog");
+  //         return AlertDialog(
+  //           contentPadding: EdgeInsets.zero,
+  //           content: YoutubePlayer(
+  //             controller: _controller,
+  //             showVideoProgressIndicator: true,
+  //           ),
+  //         );
+  //       },
+  //     );
+  //   } else {
+  //     // Handle the case when the video URL is invalid
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Invalid video URL')),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -366,7 +366,8 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                   const SizedBox(height: 10),
                   buildSectionTitle('Watch Videos', false, () {}),
                   buildWatchVideos(),
-                  buildWhyMahaKundali()
+                  buildWhyMahaKundali(),
+                  // const SizedBox(height: 20),
                   //buildWhyMahakundaliSection()
                 ],
               ),
@@ -388,7 +389,7 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                     style: TextStyle(fontSize: 12)), // Reduced text size
               ],
             ),
-            backgroundColor: Color.fromARGB(255, 255, 242, 129),
+            backgroundColor: const Color.fromARGB(255, 255, 242, 129),
             // Optional: Adjust the background color or shape here if needed
             heroTag: null, // Add a unique hero tag if you have multiple buttons
           ),
@@ -407,7 +408,7 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
               ],
             ),
             backgroundColor:
-                Color.fromARGB(255, 255, 242, 129), // Change color here
+                const Color.fromARGB(255, 255, 242, 129), // Change color here
 
             heroTag: null, // Add a unique hero tag if you have multiple buttons
           ),
@@ -594,7 +595,7 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
             itemBuilder: (context, index) {
               final video = watchVideos[index];
               return GestureDetector(
-                onTap: () => _playVideo(video['file'] ?? ''),
+                onTap: () {}, //=> _playVideo(video['file'] ?? ''),
                 child: Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -608,14 +609,14 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                       // Thumbnail with reduced height
                       Container(
                         height: 180, // Adjusted height for the image container
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.only(
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(10),
                             topRight: Radius.circular(10),
                           ),
                           image: DecorationImage(
                             image: NetworkImage(
-                              'https://img.youtube.com/vi/${YoutubePlayer.convertUrlToId(video['file'] ?? '')}/0.jpg',
+                              'https://mahakundali.com/uploads/site_background/1721502023_0.png', //  'https://img.youtube.com/vi/${YoutubePlayer.convertUrlToId(video['file'] ?? '')}/0.jpg',
                             ),
                             fit: BoxFit
                                 .cover, // Changed to cover for better fitting
