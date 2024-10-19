@@ -35,14 +35,18 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
   Map<String, dynamic> apiData = {};
   List<String> _banners = [];
   bool showAllVideos = false;
+  bool _showAllAstrologers = false;
+  bool _showAllStories = false;
+  bool _showAllBlogs = false;
+  bool _showAllRemidies = false;
 
   @override
   void initState() {
-    _banners = [
-      'images/banner1.png',
-      'images/banner2.jpg',
-      'images/banner3.jpeg',
-    ];
+    // _banners = [
+    //   'images/banner1.png',
+    //   'images/banner2.jpg',
+    //   'images/banner3.jpeg',
+    // ];
     super.initState();
     fetchData();
   }
@@ -58,6 +62,15 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
       setState(() {
         apiData = json.decode(response.body);
       });
+      print("********************");
+      print(apiData);
+      print("********************");
+      _banners = apiData['home_sliders']
+          .map<String>((slider) => slider['background'].toString())
+          .toList();
+
+      print(_banners);
+      print("&&&&&&&&&&&&&&&&");
     } else {
       throw Exception('Failed to load data');
     }
@@ -225,6 +238,7 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
       showDialog(
         context: context,
         builder: (context) {
+          print("dialog");
           return AlertDialog(
             contentPadding: EdgeInsets.zero,
             content: YoutubePlayer(
@@ -246,8 +260,27 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
+        title: const Text('Mahakundali'),
         centerTitle: true,
+        actions: [
+          const SizedBox(width: 10),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => WalletScreen(),
+                ),
+              );
+            },
+            child: const CircleAvatar(
+              radius: 18,
+              backgroundImage: AssetImage(
+                  'images/wallet.png'), // replace with your wallet image
+            ),
+          ),
+          const SizedBox(width: 10),
+        ],
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -266,7 +299,7 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Home Slider
-                  const SizedBox(height: 10),
+                  //const SizedBox(height: 10),
                   CarouselSlider(
                     options: CarouselOptions(
                         height: 150.0, autoPlay: true, viewportFraction: 1.0),
@@ -279,8 +312,8 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10.0),
                               image: DecorationImage(
-                                image: AssetImage(banner),
-                                fit: BoxFit.cover,
+                                image: NetworkImage(banner),
+                                fit: BoxFit.contain,
                               ),
                             ),
                           );
@@ -292,44 +325,127 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                   const SizedBox(height: 10),
 
                   // Free Services
-                  buildSectionTitle('Free Services'),
+                  buildSectionTitle('Free Services', false, () {}),
                   buildFreeServices(),
 
                   // Top Astrologers
-                  buildSectionTitle('Top Astrologers'),
+                  buildSectionTitle('Top Astrologers', _showAllAstrologers, () {
+                    setState(() {
+                      _showAllAstrologers =
+                          !_showAllAstrologers; // Toggle astrologer visibility
+                    });
+                  }),
                   buildTopAstrologers(),
                   const SizedBox(height: 10),
 
                   // Customer Stories
-                  buildSectionTitle('Customer Stories'),
+                  buildSectionTitle('Customer Stories', _showAllStories, () {
+                    setState(() {
+                      _showAllStories = !_showAllStories;
+                    });
+                  }),
                   buildCustomerStories(context),
                   const SizedBox(height: 10),
 
                   // Blogs
-                  buildSectionTitle('Our Blog'),
+                  buildSectionTitle('Our Blog', _showAllBlogs, () {
+                    setState(() {
+                      _showAllBlogs = !_showAllBlogs;
+                    });
+                  }),
                   buildBlogs(context),
                   const SizedBox(height: 10),
 
                   // Astro Remedies
-                  buildSectionTitle('Astro Remedies'),
+                  buildSectionTitle('Astro Remedies', _showAllRemidies, () {
+                    setState(() {
+                      _showAllRemidies = !_showAllRemidies;
+                    });
+                  }),
                   buildAstroRemedies(),
                   const SizedBox(height: 10),
-                  buildSectionTitle('Watch Videos'),
+                  buildSectionTitle('Watch Videos', false, () {}),
                   buildWatchVideos(),
                   buildWhyMahaKundali()
                   //buildWhyMahakundaliSection()
                 ],
               ),
             ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          // Chat Button
+          // const SizedBox(width: 8),
+          FloatingActionButton.extended(
+            onPressed: () {
+              // Handle chat action
+            },
+            label: const Row(
+              children: [
+                Icon(Icons.chat, size: 20), // Adjust icon size
+                SizedBox(width: 4), // Reduced space between icon and text
+                Text('Chat with Astrologers',
+                    style: TextStyle(fontSize: 12)), // Reduced text size
+              ],
+            ),
+            backgroundColor: Color.fromARGB(255, 255, 242, 129),
+            // Optional: Adjust the background color or shape here if needed
+            heroTag: null, // Add a unique hero tag if you have multiple buttons
+          ),
+          const SizedBox(width: 8), // Reduced space between buttons
+          // Call Button
+          FloatingActionButton.extended(
+            onPressed: () {
+              // Handle call action
+            },
+            label: const Row(
+              children: [
+                Icon(Icons.phone, size: 20), // Adjust icon size
+                SizedBox(width: 4), // Reduced space between icon and text
+                Text('Call with Astrologers',
+                    style: TextStyle(fontSize: 12)), // Reduced text size
+              ],
+            ),
+            backgroundColor:
+                Color.fromARGB(255, 255, 242, 129), // Change color here
+
+            heroTag: null, // Add a unique hero tag if you have multiple buttons
+          ),
+        ],
+      ),
     );
   }
 
-  Widget buildSectionTitle(String title) {
+  Widget buildSectionTitle(String title, bool showAll, VoidCallback onViewAll) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Text(
-        title,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          title == "Watch Videos" || title == "Free Services"
+              ? Container()
+              : GestureDetector(
+                  onTap: onViewAll,
+                  child: Text(
+                    showAll
+                        ? 'View Less'
+                        : 'View All', // Change text based on the state
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+        ],
       ),
     );
   }
@@ -382,7 +498,7 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                     ? '${words[0]}\n${words.sublist(1).join(' ')}'
                     : serviceName;
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  padding: const EdgeInsets.only(left: 10, right: 4),
                   child: GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -456,13 +572,13 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
     }
 
     // Determine how many videos to display based on whether "View More" is clicked
-    int visibleItemCount = showAllVideos ? watchVideos.length : 4;
+    int visibleItemCount = showAllVideos ? watchVideos.length : 2;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Container(
-          padding: const EdgeInsets.only(left: 8.0, right: 8),
+          padding: const EdgeInsets.only(left: 10.0, right: 8),
           child: GridView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
@@ -471,7 +587,7 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
               childAspectRatio:
-                  1.6, // Adjusted aspect ratio for a more compact card
+                  1.55, // Adjusted aspect ratio for a more compact card
             ),
             itemCount:
                 visibleItemCount, // Show limited videos or all based on toggle
@@ -515,21 +631,11 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                             children: [
                               // Astrologer ID
                               Text(
-                                'Astrologer ID: ${video['astrologer_id']}',
+                                'Astrologer Name: ${video['astrologer_name']}',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 14.0,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              const SizedBox(
-                                  height: 2), // Reduced space between texts
-                              // Video ID
-                              Text(
-                                'Video ID: ${video['id']}',
-                                style: TextStyle(
                                   fontSize: 12.0,
-                                  color: Colors.grey[700],
+                                  color: Colors.black87,
                                 ),
                               ),
                             ],
@@ -568,29 +674,30 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
   }
 
   Widget buildTopAstrologers() {
+    // Determine how many astrologers to display
+    int displayedAstrologersCount = _showAllAstrologers
+        ? apiData['home_top_astrologer'].length
+        : 4; // Show 4 astrologers initially
+
     return apiData['home_top_astrologer'] != null
         ? Container(
-            height: 250, // Adjust the height to fit two astrologers vertically
+            height: 270, // Adjust the height to fit two astrologers vertically
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: (apiData['home_top_astrologer'].length / 2).ceil(),
+              itemCount: (displayedAstrologersCount / 2)
+                  .ceil(), // Show only the required number
               itemBuilder: (context, index) {
-                // We will take two astrologers per column (index * 2 and index * 2 + 1)
                 final astrologer1 = apiData['home_top_astrologer'][index * 2];
-                final astrologer2 =
-                    index * 2 + 1 < apiData['home_top_astrologer'].length
-                        ? apiData['home_top_astrologer'][index * 2 + 1]
-                        : null;
+                final astrologer2 = index * 2 + 1 < displayedAstrologersCount
+                    ? apiData['home_top_astrologer'][index * 2 + 1]
+                    : null;
 
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Column(
                     children: [
-                      // First Astrologer in the Column
                       buildAstrologerCard(astrologer1),
-                      const SizedBox(
-                          height: 20), // Spacing between the two astrologers
-                      // Second Astrologer in the Column (if available)
+                      const SizedBox(height: 20),
                       if (astrologer2 != null) buildAstrologerCard(astrologer2),
                     ],
                   ),
@@ -604,7 +711,7 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
 // Function to build each astrologer card
   Widget buildAstrologerCard(Map astrologer) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 0.0),
       child: GestureDetector(
         onTap: () {
           Navigator.push(
@@ -624,29 +731,45 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
               color: const Color.fromARGB(255, 8, 52, 87), // Border color
               width: 2, // Border width
             ),
-            color:
-                Colors.transparent, // const Color.fromARGB(255, 255, 252, 233),
+            color: Colors.transparent,
             borderRadius: BorderRadius.circular(15),
-            // boxShadow: const [
-            //   BoxShadow(
-            //     color: Colors.black12,
-            //     blurRadius: 6,
-            //     offset: Offset(0, 4),
-            //   ),
-            // ],
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Astrologer Image
-              ClipRRect(
-                borderRadius: BorderRadius.circular(50),
-                child: Image.network(
-                  astrologer['Details']['logo'],
-                  height: 80,
-                  width: 80,
-                  fit: BoxFit.cover,
-                ),
+              // Astrologer Image with Green Dot
+              Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(50),
+                    child: Image.network(
+                      astrologer['Details']['logo'],
+                      height: 80,
+                      width: 80,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  // Green Dot Positioned in the Bottom Right Corner
+                  astrologer['Details']['is_live'] == "Yes"
+                      ? Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            height: 15,
+                            width: 15,
+                            decoration: BoxDecoration(
+                              color: Colors.green, // Green dot color
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors
+                                    .white, // Optional border for contrast
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                        )
+                      : Container(),
+                ],
               ),
               const SizedBox(width: 10), // Space between image and details
 
@@ -675,20 +798,53 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                     const SizedBox(height: 5),
                     Row(
                       children: [
-                        const Icon(Icons.star, color: Colors.amber, size: 16),
-                        const SizedBox(width: 5),
-                        Text(
-                          '${astrologer['Details']['rating']}',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.black87,
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(Icons.star,
+                                    color: Colors.amber, size: 16),
+                                const SizedBox(width: 5),
+                                Text(
+                                  '${astrologer['Details']['rating']}',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  const TextSpan(
+                                    text: 'Reviews: ', // Static text 'Reviews:'
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors
+                                          .black87, // Black color for 'Reviews'
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text:
+                                        '${astrologer['Details']['total_review']}', // Dynamic review count
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors
+                                          .red, // Red color for review count
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
                         ),
                         const Spacer(), // Spacer to push chat button to the right
                         // Circular button with icon and text
                         Material(
-                          color: const Color.fromARGB(255, 186, 244,
-                              143), // Background color of the button
+                          color: const Color.fromARGB(255, 87, 232,
+                              92), // Background color of the button
                           borderRadius: BorderRadius.circular(
                               20), // Adjusted radius for a rounded rectangle
                           child: InkWell(
@@ -716,9 +872,10 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                                   Text(
                                     'Chat',
                                     style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Color.fromARGB(
-                                            255, 1, 33, 60)), // Text color
+                                      fontWeight: FontWeight.bold,
+                                      color: Color.fromARGB(
+                                          255, 1, 33, 60), // Text color
+                                    ),
                                   ),
                                 ],
                               ),
@@ -727,7 +884,16 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                         ),
                       ],
                     ),
-                    //  const SizedBox(height: 10),
+                    // const SizedBox(height: 5),
+                    // Online Status Text
+                    // Text(
+                    //   'Online',
+                    //   style: TextStyle(
+                    //     color: Colors.green[700],
+                    //     fontWeight: FontWeight.bold,
+                    //     fontSize: 12,
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -739,25 +905,25 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
   }
 
   Widget buildCustomerStories(BuildContext context) {
+    // Determine how many customer stories to show (4 initially, or all if View All is clicked)
+    int storiesCount = _showAllStories ? apiData['customer_stories'].length : 4;
+
     return apiData['customer_stories'] != null
         ? Container(
             height: 160,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: apiData['customer_stories'].length,
+              itemCount: storiesCount,
               itemBuilder: (context, index) {
                 final story = apiData['customer_stories'][index];
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: Container(
-                    width: 280, // Adjust width for card size
+                    width: 280,
                     decoration: BoxDecoration(
                       color: const Color.fromARGB(255, 236, 253, 255),
                       borderRadius: BorderRadius.circular(15),
-                      border: Border.all(
-                        color: Colors.blue, // Set the border color
-                        width: 2, // Set the border width
-                      ),
+                      border: Border.all(color: Colors.blue, width: 2),
                       boxShadow: const [
                         BoxShadow(
                           color: Colors.black12,
@@ -769,7 +935,6 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Customer Image
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0, left: 8),
                           child: ClipRRect(
@@ -782,16 +947,13 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                             ),
                           ),
                         ),
-                        const SizedBox(
-                            width: 2), // Space between image and text
+                        const SizedBox(width: 2),
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                // Customer Name
                                 Text(
                                   story['name'],
                                   style: const TextStyle(
@@ -800,8 +962,6 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                                     color: Colors.black87,
                                   ),
                                 ),
-                                const SizedBox(height: 0),
-                                // Customer City
                                 Text(
                                   story['city'],
                                   style: TextStyle(
@@ -810,7 +970,6 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                                   ),
                                 ),
                                 const SizedBox(height: 4),
-                                // Feedback with ellipsis
                                 Text(
                                   story['feedback'],
                                   maxLines: 3,
@@ -821,56 +980,42 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                                   ),
                                 ),
                                 const SizedBox(height: 5),
-                                // Read More button (opens popup)
                                 GestureDetector(
                                   onTap: () {
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
-                                        bool showFullFeedback = false;
-                                        return StatefulBuilder(
-                                          builder: (context, setState) {
-                                            return Dialog(
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(
-                                                    20.0), // More rounded corners
-                                              ),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(20.0),
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .start, // Align content to the start
-                                                  children: [
-                                                    // Close button at the top-right corner
-
-                                                    const Text(
-                                                      "Customer Feedback", // Title to make it more contextual
-                                                      style: TextStyle(
-                                                        fontSize: 20,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.black87,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      story['feedback'],
-                                                      style: const TextStyle(
-                                                        fontSize: 16,
-                                                        height:
-                                                            1.5, // Increased line height for readability
-                                                        color: Colors
-                                                            .black54, // Softer color for text
-                                                      ),
-                                                    ), // Spacing before the bottom action
-                                                  ],
+                                        return Dialog(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20.0),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(20.0),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                const Text(
+                                                  "Customer Feedback",
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black87,
+                                                  ),
                                                 ),
-                                              ),
-                                            );
-                                          },
+                                                Text(
+                                                  story['feedback'],
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    height: 1.5,
+                                                    color: Colors.black54,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
                                         );
                                       },
                                     );
@@ -904,16 +1049,17 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
   }
 
   Widget buildBlogs(BuildContext context) {
+    int blogsCount = _showAllBlogs ? apiData['our_blog'].length : 3;
     return apiData['our_blog'] != null
         ? Container(
             height: 175, // Adjust height to accommodate the "More" button
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: apiData['our_blog'].length,
+              itemCount: blogsCount, // apiData['our_blog'].length,
               itemBuilder: (context, index) {
                 final blog = apiData['our_blog'][index];
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Container(
                     width: 180, // Increase the width for more content space
                     decoration: BoxDecoration(
@@ -1025,8 +1171,8 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                     onTap: () {
                       Navigator.of(context).pop();
                     },
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
+                    child: const Padding(
+                      padding: EdgeInsets.only(bottom: 8.0),
                       child: Icon(Icons.close),
                     ),
                   ),
@@ -1069,16 +1215,17 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
   }
 
   Widget buildAstroRemedies() {
+    int remidiesCount = _showAllRemidies ? apiData['astro_remedy'].length : 4;
     return apiData['astro_remedy'] != null
         ? Container(
             height: 120,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: apiData['astro_remedy'].length,
+              itemCount: remidiesCount, // apiData['astro_remedy'].length,
               itemBuilder: (context, index) {
                 final remedy = apiData['astro_remedy'][index];
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Container(
                     width: 100, // Width for each remedy card
                     decoration: BoxDecoration(
@@ -1229,7 +1376,7 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                 itemCount: apiData['why_mahakundali'].length,
                 itemBuilder: (context, index) {
                   final whyMahakundaliData = apiData['why_mahakundali'][index];
-                  print(whyMahakundaliData);
+                  //    print(whyMahakundaliData);
                   return Card(
                     child: ListTile(
                       leading: Image.network(whyMahakundaliData[index]['img'],

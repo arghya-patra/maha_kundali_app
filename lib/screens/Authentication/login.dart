@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/components/buttons.dart';
@@ -9,7 +10,8 @@ import 'package:maha_kundali_app/screens/Authentication/registration.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:http/http.dart' as http;
 import 'package:maha_kundali_app/theme/style.dart';
-import 'package:country_list_pick/country_list_pick.dart'; // Make sure to import the country_list_pick package
+import 'package:country_list_pick/country_list_pick.dart';
+import 'package:webview_flutter/webview_flutter.dart'; // Make sure to import the country_list_pick package
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -83,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen>
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             const Text(
-                              'Login with your registered phone number',
+                              'Login with your Mobile Number',
                               style: TextStyle(
                                 fontSize: 19,
                                 fontWeight: FontWeight.bold,
@@ -143,12 +145,12 @@ class _LoginScreenState extends State<LoginScreen>
                                         contentPadding:
                                             const EdgeInsets.symmetric(
                                                 vertical: 16, horizontal: 20),
-                                        labelText: 'Phone Number',
+                                        labelText: 'Enter Mobile Number',
                                         labelStyle: const TextStyle(
                                           color: Colors.orange,
                                           fontWeight: FontWeight.w600,
                                         ),
-                                        hintText: 'Enter your phone number',
+                                        hintText: 'Enter Mobile Number',
                                         hintStyle: TextStyle(
                                           color: Colors.grey.shade400,
                                           fontSize: 14,
@@ -221,31 +223,41 @@ class _LoginScreenState extends State<LoginScreen>
                                   : LoadingButton(),
                             ),
                             const SizedBox(height: 20),
-                            const Text.rich(
+                            Text.rich(
                               TextSpan(
                                 text: 'By signing up, you agree to our ',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 14, color: Colors.black54),
                                 children: [
                                   TextSpan(
                                     text: 'Terms of Use',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       color: Colors.black54,
                                       decoration: TextDecoration.underline,
                                     ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        _openWebView(context,
+                                            'https://mahakundali.com/info/terms-of-service');
+                                      },
                                   ),
-                                  TextSpan(
+                                  const TextSpan(
                                     text: ' and ',
                                     style: TextStyle(
                                         fontSize: 14, color: Colors.black54),
                                   ),
                                   TextSpan(
                                     text: 'Privacy Policy',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: Colors.black54,
                                       decoration: TextDecoration.underline,
                                     ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        _openWebView(context,
+                                            'https://mahakundali.com/info/privacy-policy');
+                                      },
                                   ),
                                 ],
                               ),
@@ -266,7 +278,7 @@ class _LoginScreenState extends State<LoginScreen>
                                 style: TextStyle(
                                   color: Colors.blue,
                                   fontSize: 16,
-                                  decoration: TextDecoration.underline,
+                                  //decoration: TextDecoration.underline,
                                 ),
                               ),
                             ),
@@ -280,7 +292,7 @@ class _LoginScreenState extends State<LoginScreen>
             ),
             // Footer Section
             Container(
-              color: Color.fromARGB(179, 255, 247, 239),
+              color: const Color.fromARGB(179, 255, 247, 239),
               child: const Column(
                 children: [
                   Divider(color: Colors.grey, thickness: 2),
@@ -366,6 +378,15 @@ class _LoginScreenState extends State<LoginScreen>
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _openWebView(BuildContext context, String url) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WebViewScreen(url: url),
       ),
     );
   }
@@ -467,6 +488,33 @@ class _LoginScreenState extends State<LoginScreen>
   }
 }
 
+class WebViewScreen extends StatefulWidget {
+  final String url;
+
+  WebViewScreen({required this.url});
+
+  @override
+  State<WebViewScreen> createState() => _WebViewScreenState();
+}
+
+class _WebViewScreenState extends State<WebViewScreen> {
+  late final WebViewController controller;
+  @override
+  void initState() {
+    controller = WebViewController()..loadRequest(Uri.parse(widget.url));
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+          // title: const Text(),
+          ),
+      body: WebViewWidget(controller: controller),
+    );
+  }
+}
 
 // import 'dart:convert';
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
@@ -25,12 +27,98 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   String _gender = 'Male';
   String selectedLanguage = "English";
 
+  bool _isLoading2 = false;
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
+  List<dynamic> _cities = [];
+  String? _selectedCity;
+  String? _selectedLat;
+  String? _selectedLon;
   bool _isLoading = false;
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (_searchController.text.isNotEmpty) {
+        _fetchCities(_searchController.text);
+      }
+    });
+  }
+
+  Future<void> _fetchCities(String query) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response = await http.post(Uri.parse(APIData.login), body: {
+        'action': 'get-city-name',
+        'name': query,
+      });
+
+      // Log the response to check if it's valid
+      print('Response: "${response.body}"'); // Log the response content
+      print('Response: "${response.statusCode}"');
+
+      if (response.body.isEmpty) {
+        // Handle empty response
+        print('Error: API returned an empty response');
+        setState(() {
+          _cities = [];
+          _isLoading = false;
+        });
+        return;
+      }
+
+      if (response.statusCode == 200) {
+        // Try decoding the response body
+        try {
+          final data = jsonDecode(response.body);
+
+          if (data != null && data['city'] != null) {
+            setState(() {
+              _cities = data['city'];
+              _isLoading = false;
+            });
+          } else {
+            print('Error: "city" key not found in the response');
+            setState(() {
+              _cities = [];
+              _isLoading = false;
+            });
+          }
+        } catch (e) {
+          print('Error decoding JSON: $e');
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      } else {
+        print(
+            'Error: Failed to fetch cities, status code: ${response.statusCode}');
+        setState(() {
+          _cities = [];
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        _cities = [];
+        _isLoading = false;
+      });
+    }
+  }
 
   Future<void> _register() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
-        _isLoading = true;
+        _isLoading2 = true;
       });
 
       String name = _nameController.text.trim();
@@ -46,12 +134,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         'gender': _gender,
         'dob': _dateController.text,
         'tob': _timeController.text,
-        'pob': _placeController.text,
+        'pob': _selectedCity, //_placeController.text,
         'languange': selectedLanguage == 'English' ? 'en' : 'hn'
       });
 
       setState(() {
-        _isLoading = false;
+        _isLoading2 = false;
       });
       print(response.body);
       if (response.statusCode == 200) {
@@ -159,7 +247,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ),
         ),
       ),
-      body: _isLoading
+      body: _isLoading2
           ? Center(
               child: Shimmer.fromColors(
                 baseColor: Colors.grey[300]!,
@@ -192,11 +280,100 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     const SizedBox(height: 16),
                     _buildGenderSelection(),
                     const SizedBox(height: 16),
-                    _buildTextField(
-                      _placeController,
-                      'Place of Birth',
+                    //-----------------------------------------------------------------------------------
+
+                    TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        labelText: "Place of Birth",
+                        filled: true,
+                        fillColor: Colors.grey[100],
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(color: Colors.orange),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(color: Colors.orange),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                              color: Colors.deepOrange, width: 2),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 16),
+                        suffixIcon:
+                            _isLoading ? CircularProgressIndicator() : null,
+                      ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 10),
+
+                    // Dropdown list for city suggestions
+                    if (_cities.isNotEmpty)
+                      Container(
+                        height: 200,
+                        child: ListView.builder(
+                          itemCount: _cities.length,
+                          itemBuilder: (context, index) {
+                            final city = _cities[index]['city'];
+                            final lat = _cities[index]['lat'];
+                            final lon = _cities[index]['lon'];
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _selectedCity = city;
+                                  _selectedLat = lat;
+                                  _selectedLon = lon;
+                                  _searchController.text =
+                                      city; // Set the selected city
+                                  _cities.clear(); // Clear the dropdown
+                                });
+                              },
+                              child: Container(
+                                height: 50, // Set the desired height
+                                padding: const EdgeInsets.all(
+                                    8.0), // Optional: Add padding for the text
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors
+                                        .grey, // Set the color of the border
+                                    width: 1.0, // Set the width of the border
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                      5.0), // Optional: Add rounded corners
+                                ),
+                                child: Text(
+                                  city,
+                                  style: TextStyle(
+                                      fontSize:
+                                          16), // Customize text style if needed
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+
+                    // Display selected city's details
+                    // if (_selectedCity != null)
+                    //   Padding(
+                    //     padding: const EdgeInsets.all(3.0),
+                    //     child: Column(
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       children: [
+                    //         Text('Selected City: $_selectedCity'),
+                    //         Text('Latitude: $_selectedLat'),
+                    //         Text('Longitude: $_selectedLon'),
+                    //       ],
+                    //     ),
+                    //   ),
+//-----------------------------------------------------------------------------------
+                    // _buildTextField(
+                    //   _placeController,
+                    //   'Place of Birth',
+                    // ),
+                    //  const SizedBox(height: 16),
                     _buildDateField(_dateController, 'Date of Birth',
                         Icons.calendar_today, () => _selectDate(context)),
                     const SizedBox(height: 20),

@@ -264,14 +264,14 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              _buildLabel('Birth Place'),
+              _buildLabel('Place of Birth'),
 
               //----------
 
               TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
-                  labelText: 'Search City',
+                  labelText: 'Place of Birth',
                   border: OutlineInputBorder(),
                   suffixIcon: _isLoading ? CircularProgressIndicator() : null,
                 ),

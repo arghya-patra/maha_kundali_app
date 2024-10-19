@@ -135,10 +135,10 @@ class _PersonalHoroscopeFormScreenState
       'name': _nameController.text,
       'dob': formattedDate,
       'tob': "$selectedHour:$selectedMinute",
-      'pob': birthPlace,
+      'pob': _selectedCity,
       'lang': 'en',
-      'lat': '22.54111111',
-      'lon': '8.33777778'
+      'lat': _selectedLat,
+      'lon': _selectedLon
     });
     print(response.body);
 
@@ -309,11 +309,11 @@ class _PersonalHoroscopeFormScreenState
                 ),
               ),
               const SizedBox(height: 16),
-              _buildLabel('Birth Place'),
+              _buildLabel('Place of Birth'),
               TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
-                  labelText: 'Search City',
+                  labelText: 'Place of Birth',
                   border: OutlineInputBorder(),
                   suffixIcon: _isLoading ? CircularProgressIndicator() : null,
                 ),
