@@ -29,7 +29,7 @@ import 'package:maha_kundali_app/screens/panchang/panchangForm.dart';
 import 'package:maha_kundali_app/screens/profileContent/settingsScreen.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:video_player/video_player.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+// import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class AstrologerDashboard extends StatefulWidget {
@@ -268,40 +268,40 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
   }
 
 //youtube player
-  void _playVideo1(String videoUrl) {
-    print(videoUrl);
-    final videoId = YoutubePlayer.convertUrlToId(videoUrl);
+  // void _playVideo1(String videoUrl) {
+  //   print(videoUrl);
+  //   final videoId = YoutubePlayer.convertUrlToId(videoUrl);
 
-    if (videoId != null) {
-      YoutubePlayerController _controller = YoutubePlayerController(
-        initialVideoId: videoId,
-        flags: const YoutubePlayerFlags(
-          autoPlay: true,
-          mute: false,
-        ),
-      );
+  //   if (videoId != null) {
+  //     YoutubePlayerController _controller = YoutubePlayerController(
+  //       initialVideoId: videoId,
+  //       flags: const YoutubePlayerFlags(
+  //         autoPlay: true,
+  //         mute: false,
+  //       ),
+  //     );
 
-      // Show YouTube player in a dialog
-      showDialog(
-        context: context,
-        builder: (context) {
-          print("dialog");
-          return AlertDialog(
-            contentPadding: EdgeInsets.zero,
-            content: YoutubePlayer(
-              controller: _controller,
-              showVideoProgressIndicator: true,
-            ),
-          );
-        },
-      );
-    } else {
-      // Handle the case when the video URL is invalid
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invalid video URL')),
-      );
-    }
-  }
+  //     // Show YouTube player in a dialog
+  //     showDialog(
+  //       context: context,
+  //       builder: (context) {
+  //         print("dialog");
+  //         return AlertDialog(
+  //           contentPadding: EdgeInsets.zero,
+  //           content: YoutubePlayer(
+  //             controller: _controller,
+  //             showVideoProgressIndicator: true,
+  //           ),
+  //         );
+  //       },
+  //     );
+  //   } else {
+  //     // Handle the case when the video URL is invalid
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Invalid video URL')),
+  //     );
+  //   }
+  // }
 
 //video player
   void _playVideo2(String videoUrl) {
