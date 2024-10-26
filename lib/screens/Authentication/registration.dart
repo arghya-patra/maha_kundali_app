@@ -157,11 +157,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               (route) => false);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.red,
             content: Text(responseData['message']),
           ));
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          backgroundColor: Colors.red,
           content: Text('Registration failed. Please try again.'),
         ));
       }

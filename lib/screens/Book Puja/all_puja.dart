@@ -159,7 +159,7 @@ class _PujaScreenState extends State<PujaScreen> {
             const SizedBox(height: 2),
 
             // "Book Now" Button
-            ElevatedButton(
+            OutlinedButton(
               onPressed: () {
                 Navigator.push(
                   context,
@@ -168,25 +168,34 @@ class _PujaScreenState extends State<PujaScreen> {
                   ),
                 );
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepOrangeAccent, // More vibrant color
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(
+                  color:
+                      Colors.deepOrangeAccent, // Border color for the outline
+                  width: 2.0, // Border width for the outline
+                ),
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 24.0, vertical: 12.0),
+                  horizontal:
+                      10.0, // Reduced horizontal padding for a smaller button
+                  vertical:
+                      1.0, // Reduced vertical padding for a more compact button
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius:
                       BorderRadius.circular(10.0), // Softer button edges
                 ),
-                elevation: 4.0, // Slight elevation for a floating button effect
               ),
               child: const Text(
                 'Book Now',
                 style: TextStyle(
-                  fontSize: 14.0, // Increased font size for better readability
-                  color: Colors.white,
+                  fontSize: 12.0, // Smaller font size for a more compact look
+                  color:
+                      Colors.deepOrangeAccent, // Text color to match the border
                   fontWeight: FontWeight.w500, // Slightly bold for emphasis
                 ),
               ),
             ),
+
             const SizedBox(height: 8), // Bottom padding for a balanced layout
           ],
         ),

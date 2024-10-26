@@ -345,7 +345,9 @@ class _AllServiceReportScreenState extends State<AllServiceReportScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '₹${report.price}',
+                          report.price != null
+                              ? '₹${report.price}'
+                              : 'Price: N/A',
                           style: const TextStyle(
                             fontWeight: FontWeight.w500,
                             color: Color(0xFFEF6C00),

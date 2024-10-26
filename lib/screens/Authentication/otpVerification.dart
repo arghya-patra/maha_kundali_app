@@ -26,10 +26,12 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
   bool _resendVisible = false;
   bool isLoading = false;
   TextEditingController _otpController = TextEditingController();
+  String? otpText;
 
   @override
   void initState() {
     super.initState();
+    otpText = widget.otp;
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 30),
@@ -76,10 +78,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              'Enter the code we have sent to your number otp: ${widget.otp}',
+              textAlign: TextAlign.center,
+              'Enter the code we have sent to ${widget.mobile}\n otp: ${otpText}',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 32),
@@ -303,29 +306,32 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
       try {
         print(data['status']);
         print(data['authorizationToken']);
+        print(data['otp']);
         toastMessage(message: 'Please check your mobile for OTP!');
+        print("***&***");
+        setState(() {
+          otpText = data['otp'].toString();
+        });
+        print(otpText);
         // print('${data['userInfo']['id']}');
         // ServiceManager().setUser('${data['userInfo']['id']}');
         ServiceManager().setToken('${data['authorizationToken']}');
         // ServiceManager.userID = '${data['userInfo']['id']}';
         ServiceManager.tokenID = '${data['authorizationToken']}';
-        // print(ServiceManager.roleAs);
-        // ServiceManager().getUserData();
-        // toastMessage(message: 'Logged In');
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => OtpVerificationScreen(
-                      isReg: false,
-                      otp: data['otp'].toString(),
-                    )),
-            (route) => false);
+        // Navigator.pushAndRemoveUntil(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) => OtpVerificationScreen(
+        //               isReg: false,
+        //               otp: data['otp'].toString(),
+        //             )),
+        //     (route) => false);
       } catch (e) {
         toastMessage(message: e.toString());
         setState(() {
           isLoading = false;
         });
-        toastMessage(message: 'Something went wrong');
+        // toastMessage(message: 'Something went wrong');
       }
     } else {
       setState(() {

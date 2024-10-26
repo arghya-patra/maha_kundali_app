@@ -76,7 +76,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                   //     ? Image.network(terms['img'],
                   //         height: 200, fit: BoxFit.contain)
                   //     : Container(),
-                  SizedBox(height: 16),
+                  SizedBox(height: 0),
                   Html(data: terms['contents']),
                 ],
               ),

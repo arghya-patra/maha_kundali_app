@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/components/util.dart';
+import 'package:maha_kundali_app/screens/Book%20Puja/astrologers_model.dart';
 import 'package:maha_kundali_app/screens/Home/dashboardScreen.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:shimmer/shimmer.dart';
@@ -11,6 +12,9 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
 class BookingPujaScreen extends StatefulWidget {
+  String? pujaName;
+  String? astrologerId;
+  BookingPujaScreen({required this.pujaName, required this.astrologerId});
   @override
   _BookingPujaScreenState createState() => _BookingPujaScreenState();
 }
@@ -18,6 +22,8 @@ class BookingPujaScreen extends StatefulWidget {
 class _BookingPujaScreenState extends State<BookingPujaScreen> {
   TextEditingController pujaNameController = TextEditingController();
   TextEditingController addressController = TextEditingController();
+  TextEditingController pincodeController = TextEditingController();
+  TextEditingController commentController = TextEditingController();
   DateTime? pujaStartDate;
   DateTime? pujaEndDate;
   TimeOfDay? pujaStartTime;
@@ -27,6 +33,7 @@ class _BookingPujaScreenState extends State<BookingPujaScreen> {
   Map<String, String> astrologerMap = {};
   String? selectedAstrologer;
   String? selectedAstrologerId;
+  String samagri = "Yes";
   List<String> states = [
     "Andhra Pradesh",
     "Arunachal Pradesh",
@@ -72,58 +79,13 @@ class _BookingPujaScreenState extends State<BookingPujaScreen> {
   void initState() {
     super.initState();
     // Simulate data loading
+    pujaNameController.text = widget.pujaName!;
     Future.delayed(Duration(seconds: 2), () {
       setState(() {
         _isLoading = false; // Set to false when loading finishes
       });
     });
-    fetchAstrologers();
-  }
-
-  Future<void> fetchAstrologers() async {
-    print(ServiceManager.tokenID);
-    setState(() {
-      isLoading = true;
-    });
-    String url = APIData.login;
-    print(url.toString());
-    try {
-      var res = await http.post(Uri.parse(url), body: {
-        'action': 'astrologer-list',
-        'authorizationToken': ServiceManager.tokenID,
-      });
-      print(res.body);
-      print(res.statusCode);
-      var data = jsonDecode(res.body);
-      if (res.statusCode == 200) {
-        print(res.body);
-        List<dynamic> astrologerList = data["list"];
-
-        for (var astrologer in astrologerList) {
-          String name = astrologer["Details"]["name"];
-          String id = astrologer["Details"]["user_id"];
-          astrologerNames.add(name);
-          astrologerMap[name] = id;
-        }
-
-        setState(() {
-          isLoading = false;
-        });
-        print(data['status']);
-        print(data['authorizationToken']);
-        //  toastMessage(message: 'Booking Successful!');
-      } else {
-        toastMessage(message: 'Something went wrong');
-      }
-    } catch (e) {
-      toastMessage(message: e.toString());
-      setState(() {
-        isLoading = false;
-      });
-    }
-    setState(() {
-      isLoading = false;
-    });
+    // fetchAstrologers();
   }
 
   @override
@@ -147,20 +109,12 @@ class _BookingPujaScreenState extends State<BookingPujaScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(
+                height: 10,
+              ),
               if (_isLoading) ...[
-                _buildShimmerTextField(pujaNameController, "Puja Name"),
-                const SizedBox(height: 16),
-                _buildShimmerDropdownSearch<String>(
-                  label: "Select Astrologer",
-                  items: astrologerNames,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedAstrologer = value;
-                      selectedAstrologerId = astrologerMap[value!];
-                    });
-                    print('Selected Astrologer ID: $selectedAstrologerId');
-                  },
-                ),
+                // _buildShimmerTextField(pujaNameController, "Puja Name",
+                //     enable: false),
                 const SizedBox(height: 16),
                 _buildShimmerDropdownSearch<String>(
                   label: "Select State",
@@ -204,19 +158,19 @@ class _BookingPujaScreenState extends State<BookingPujaScreen> {
                   onTimeSelected: (time) {},
                 ),
               ] else ...[
-                _buildTextField(pujaNameController, "Puja Name"),
-                const SizedBox(height: 16),
-                _buildDropdownSearch<String>(
-                  label: "Select Astrologer",
-                  items: astrologerNames,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedAstrologer = value;
-                      selectedAstrologerId = astrologerMap[value!];
-                    });
-                    print('Selected Astrologer ID: $selectedAstrologerId');
-                  },
-                ),
+                _buildTextField(pujaNameController, "Puja Name", enable: false),
+
+                // _buildDropdownSearch<String>(
+                //   label: "Select Astrologer",
+                //   items: astrologerNames,
+                //   onChanged: (value) {
+                //     setState(() {
+                //       selectedAstrologer = value;
+                //       selectedAstrologerId = astrologerMap[value!];
+                //     });
+                //     print('Selected Astrologer ID: $selectedAstrologerId');
+                //   },
+                // ),
                 const SizedBox(height: 16),
                 _buildDropdownSearch<String>(
                   label: "Select State",
@@ -235,6 +189,8 @@ class _BookingPujaScreenState extends State<BookingPujaScreen> {
                 ),
                 const SizedBox(height: 16),
                 _buildTextField(addressController, "Address"),
+                const SizedBox(height: 16),
+                _buildTextField(pincodeController, "Pin Code"),
                 const SizedBox(height: 16),
                 _buildDatePicker(
                   context: context,
@@ -271,12 +227,71 @@ class _BookingPujaScreenState extends State<BookingPujaScreen> {
                     pujaEndTime = time;
                   }),
                 ),
+                SizedBox(
+                  height: 16,
+                ),
+                _buildDropdown(
+                  context,
+                  "Extra Samagri(Chargeble)",
+                  ["Yes", "No"],
+                  samagri,
+                  (value) {
+                    setState(() {
+                      samagri = value!;
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                // Container(
+                //   height: 60,
+                //   decoration: BoxDecoration(
+                //     border:
+                //         Border.all(color: Colors.black), // Outline border color
+                //     borderRadius: BorderRadius.circular(
+                //         5.0), // Border radius for rounded corners
+                //   ),
+                //   child: DropdownButton<String>(
+                //     isExpanded: true,
+                //     value: samagri,
+                //     underline:
+                //         const SizedBox(), // Remove default underline for a cleaner look
+                //     dropdownColor: Colors.white, // Dropdown menu color
+                //     icon: const Icon(Icons.arrow_drop_down,
+                //         color: Colors.deepOrange), // Custom dropdown icon
+                //     items: ["Yes", "No"].map((String value) {
+                //       return DropdownMenuItem<String>(
+                //         value: value,
+                //         child: Text(
+                //           value,
+                //           style: TextStyle(
+                //             color: Colors.grey[800], // Custom text color
+                //             fontSize: 16,
+                //           ),
+                //         ),
+                //       );
+                //     }).toList(),
+                //     onChanged: (value) {
+                //       setState(() {
+                //         samagri = value!;
+                //       });
+                //     },
+                //   ),
+                // ),
+                // SizedBox(
+                //   height: 16,
+                // ),
+                _buildTextField(commentController,
+                    "Special Instrcution for Pooja [optional]",
+                    maxlines: 4),
+                const SizedBox(height: 16),
               ],
               const SizedBox(height: 32),
               Center(
                 child: ElevatedButton(
                   onPressed: () {
-                    bookPuja(context);
+                    //   bookPuja(context);
                     // Handle form submission
                   },
                   child: const Text('Submit'),
@@ -294,12 +309,13 @@ class _BookingPujaScreenState extends State<BookingPujaScreen> {
     );
   }
 
-  Widget _buildShimmerTextField(
-      TextEditingController controller, String label) {
+  Widget _buildShimmerTextField(TextEditingController controller, String label,
+      {enable}) {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
       highlightColor: Colors.grey[100]!,
       child: TextFormField(
+        enabled: enable,
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
@@ -311,9 +327,12 @@ class _BookingPujaScreenState extends State<BookingPujaScreen> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label) {
+  Widget _buildTextField(TextEditingController controller, String label,
+      {enable, maxlines}) {
     return TextFormField(
       controller: controller,
+      enabled: enable,
+      maxLines: maxlines,
       decoration: InputDecoration(
         labelText: label,
         border: const OutlineInputBorder(),
@@ -392,7 +411,7 @@ class _BookingPujaScreenState extends State<BookingPujaScreen> {
             ),
             controller: TextEditingController(
               text: selectedDate != null
-                  ? DateFormat('yyyy-MM-dd').format(selectedDate)
+                  ? DateFormat('dd-MM-YYYY').format(selectedDate)
                   : '',
             ),
           ),
@@ -429,7 +448,7 @@ class _BookingPujaScreenState extends State<BookingPujaScreen> {
           ),
           controller: TextEditingController(
             text: selectedDate != null
-                ? DateFormat('yyyy-MM-dd').format(selectedDate)
+                ? DateFormat('dd-MM-yyyy').format(selectedDate)
                 : '',
           ),
         ),
@@ -497,7 +516,38 @@ class _BookingPujaScreenState extends State<BookingPujaScreen> {
     );
   }
 
+  Widget _buildDropdown(BuildContext context, String label, List<String> items,
+      String? selectedValue, ValueChanged<String?> onChanged) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black54),
+        borderRadius: BorderRadius.circular(4.0),
+        color: Colors.white,
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          hint: Text(label),
+          value: selectedValue,
+          isExpanded: true,
+          onChanged: onChanged,
+          items: items.map((item) {
+            return DropdownMenuItem<String>(
+              value: item,
+              child: Text(item),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
   bookPuja(context) async {
+    print(pujaStartDate);
+    print(pujaEndDate);
+    print(pujaStartTime);
+    print(pujaEndTime);
+
     setState(() {
       isLoading = true;
     });
@@ -507,19 +557,19 @@ class _BookingPujaScreenState extends State<BookingPujaScreen> {
       var res = await http.post(Uri.parse(url), body: {
         'action': 'booking-puja',
         'authorizationToken': ServiceManager.tokenID,
-        'service': 'Asht Lakshmi Pooja',
-        'astrologer_id': '605',
+        'service': widget.pujaName,
+        'astrologer_id': widget.astrologerId,
         'state_id': '1998',
         'city_id': '79974',
-        'address': 'Ab 97 sealdah',
-        'pincode': '700100',
+        'address': addressController.text,
+        'pincode': pincodeController.text,
         'map_url': 'map',
-        'puja_from_date': '10-08-2024',
-        'puja_to_date': '15-08-2024',
-        'puja_from_time': '06:47',
-        'puja_to_time': '09:43',
-        'comment': 'message for book puja from app',
-        'samagri': 'yes'
+        'puja_from_date': pujaStartDate,
+        'puja_to_date': pujaEndDate,
+        'puja_from_time': pujaStartTime,
+        'puja_to_time': pujaEndDate,
+        'comment': commentController.text,
+        'samagri': samagri
       });
       var data = jsonDecode(res.body);
       if (data['status'] == 200) {

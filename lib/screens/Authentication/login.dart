@@ -7,6 +7,7 @@ import 'package:maha_kundali_app/components/util.dart';
 import 'package:maha_kundali_app/screens/Authentication/login.dart';
 import 'package:maha_kundali_app/screens/Authentication/otpVerification.dart';
 import 'package:maha_kundali_app/screens/Authentication/registration.dart';
+import 'package:maha_kundali_app/screens/profileContent/settingsSection/terms.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:http/http.dart' as http;
 import 'package:maha_kundali_app/theme/style.dart';
@@ -238,8 +239,16 @@ class _LoginScreenState extends State<LoginScreen>
                                     ),
                                     recognizer: TapGestureRecognizer()
                                       ..onTap = () {
-                                        _openWebView(context,
-                                            'https://mahakundali.com/info/terms-of-service');
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TermsAndConditionsScreen(
+                                                    action: 'terms-of-service',
+                                                  )),
+                                        );
+                                        // _openWebView(context,
+                                        //     'https://mahakundali.com/info/terms-of-service');
                                       },
                                   ),
                                   const TextSpan(
@@ -255,8 +264,17 @@ class _LoginScreenState extends State<LoginScreen>
                                     ),
                                     recognizer: TapGestureRecognizer()
                                       ..onTap = () {
-                                        _openWebView(context,
-                                            'https://mahakundali.com/info/privacy-policy');
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TermsAndConditionsScreen(
+                                                    action: 'privacy-policy',
+                                                  )),
+                                        );
+
+                                        // _openWebView(context,
+                                        //     'https://mahakundali.com/info/privacy-policy');
                                       },
                                   ),
                                 ],
@@ -410,7 +428,11 @@ class _LoginScreenState extends State<LoginScreen>
       try {
         print(data['status']);
         print(data['authorizationToken']);
-        toastMessage(message: 'Please check your mobile for OTP!');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Please check your mobile for OTP!'),
+          backgroundColor: Colors.green,
+        ));
+        //toastMessage(message: 'Please check your mobile for OTP!');
         // print('${data['userInfo']['id']}');
         // ServiceManager().setUser('${data['userInfo']['id']}');
         ServiceManager().setToken('${data['authorizationToken']}');
@@ -419,17 +441,21 @@ class _LoginScreenState extends State<LoginScreen>
         // print(ServiceManager.roleAs);
         // ServiceManager().getUserData();
         // toastMessage(message: 'Logged In');
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => OtpVerificationScreen(
-                      mobile: mobile.text,
-                      isReg: false,
-                      otp: data['otp'].toString(),
-                    )),
-            (route) => false);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => OtpVerificationScreen(
+                    mobile: mobile.text,
+                    isReg: false,
+                    otp: data['otp'].toString(),
+                  )),
+        );
       } catch (e) {
-        toastMessage(message: e.toString());
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: Colors.red,
+        ));
+        //toastMessage(message: e.toString());
         setState(() {
           isLoading = false;
         });
@@ -439,7 +465,11 @@ class _LoginScreenState extends State<LoginScreen>
       setState(() {
         isLoading = false;
       });
-      toastMessage(message: data['message']);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.red,
+        content: Text(data['message']),
+      ));
+      // toastMessage(message: data['message']);
     }
     setState(() {
       isLoading = false;

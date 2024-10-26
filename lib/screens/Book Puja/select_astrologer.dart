@@ -279,6 +279,7 @@ class SelectAstrologerListScreen extends StatefulWidget {
 class _SelectAstrologerListScreenState
     extends State<SelectAstrologerListScreen> {
   late Future<List<Astrologer>> _futureAstrologers;
+  String? astroId;
 
   @override
   void initState() {
@@ -306,6 +307,9 @@ class _SelectAstrologerListScreenState
       return astrologerList.map((astrologerJson) {
         final details = astrologerJson['Details'];
         final astrologerId = details['astrologer_id'];
+        setState(() {
+          astroId = astrologerId;
+        });
 
         // Extract skills and languages from the astrologer JSON
         final astrologerSkills = (astrologerJson['skills'] as List)
@@ -494,11 +498,15 @@ class _SelectAstrologerListScreenState
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
+                      print(astrologer.id);
                       // Handle the select action
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => BookingPujaScreen()),
+                            builder: (context) => BookingPujaScreen(
+                                  pujaName: widget.pujaName,
+                                  astrologerId: astrologer.id,
+                                )),
                       );
                     },
                     style: ElevatedButton.styleFrom(

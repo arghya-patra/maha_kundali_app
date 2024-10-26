@@ -48,6 +48,7 @@
 
 class Astrologer {
   final String name;
+  final String id;
   final String price;
   final String experience;
   final String logo;
@@ -56,6 +57,7 @@ class Astrologer {
 
   Astrologer({
     required this.name,
+    required this.id,
     required this.price,
     required this.experience,
     required this.logo,
@@ -67,6 +69,7 @@ class Astrologer {
       Map<String, dynamic> json, List<String> skills, List<String> languages) {
     return Astrologer(
       name: json['astrologer_name'],
+      id: json['astrologer_id'],
       price: json['price'],
       experience: json['experience'],
       logo: json['logo'],

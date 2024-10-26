@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:maha_kundali_app/screens/Astro_remedies/astroRemediesList.dart';
+import 'package:maha_kundali_app/screens/Astro_remedies/remidies_details.dart';
 import 'package:maha_kundali_app/screens/Blog/blog_screen.dart';
 import 'dart:convert';
 
@@ -14,6 +15,7 @@ import 'package:maha_kundali_app/screens/AstrologerProfile/astrologerProfileDeta
 import 'package:maha_kundali_app/screens/Birth%20Chart/birthChartForm.dart';
 import 'package:maha_kundali_app/screens/Book%20Puja/all_puja.dart';
 import 'package:maha_kundali_app/screens/Favourite_Astrolgers/favAstro.dart';
+import 'package:maha_kundali_app/screens/Home/vdo_pl.dart';
 import 'package:maha_kundali_app/screens/Home/walletScreen.dart';
 import 'package:maha_kundali_app/screens/Horoscope/horoscopeScreen.dart';
 import 'package:maha_kundali_app/screens/Kundli/kundliScreen.dart';
@@ -26,7 +28,9 @@ import 'package:maha_kundali_app/screens/match_Making/kundliMatching.dart';
 import 'package:maha_kundali_app/screens/panchang/panchangForm.dart';
 import 'package:maha_kundali_app/screens/profileContent/settingsScreen.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
-// import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:video_player/video_player.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class AstrologerDashboard extends StatefulWidget {
   @override
@@ -82,52 +86,101 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
     return Drawer(
       child: Column(
         children: [
-          DrawerHeader(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.orange, Colors.deepOrange],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ServiceManager.profileURL == 'https://mahakundali.com/'
-                    ? const CircleAvatar(
-                        radius: 30,
-                        backgroundImage: AssetImage('images/profile.jpeg'),
-                        backgroundColor: Colors.transparent,
-                      )
-                    : CircleAvatar(
-                        radius: 30,
-                        backgroundImage: NetworkImage(ServiceManager
-                            .profileURL), // Replace with the user image asset
+          Stack(
+            children: [
+              Container(
+                height: 150.0, // Adjust the height as needed
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.orange, Colors.deepOrange],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 16.0, right: 16.0, top: 40.0, bottom: 25),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ServiceManager.profileURL == 'https://mahakundali.com/'
+                          ? const CircleAvatar(
+                              radius: 30,
+                              backgroundImage:
+                                  AssetImage('images/profile.jpeg'),
+                              backgroundColor: Colors.transparent,
+                            )
+                          : CircleAvatar(
+                              radius: 30,
+                              backgroundImage:
+                                  NetworkImage(ServiceManager.profileURL),
+                            ),
+                      const SizedBox(width: 10),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            ServiceManager.userName,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            ServiceManager.userMobile,
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 14),
+                          ),
+                        ],
                       ),
-                const SizedBox(width: 10),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                      const Spacer(),
+                      // IconButton(
+                      //   icon: const Icon(Icons.close, color: Colors.white),
+                      //   onPressed: () {
+                      //     Navigator.of(context).pop();
+                      //   },
+                      // ),
+                    ],
+                  ),
+                ),
+              ),
+              const Positioned(
+                bottom: 5, // Position the wallet section at the bottom left
+                right: 12,
+                child: Row(
                   children: [
-                    Text(
-                      ServiceManager.userName,
-                      style: const TextStyle(color: Colors.white, fontSize: 18),
+                    Icon(
+                      Icons.account_balance_wallet_outlined,
+                      color: Colors.white,
+                      size: 29,
                     ),
-                    Text(
-                      ServiceManager.userMobile,
-                      style: const TextStyle(color: Colors.white, fontSize: 14),
+                    SizedBox(width: 8),
+                    Column(
+                      children: [
+                        Text(
+                          "Balance",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          '₹ 10.00', // Replace with the wallet balance variable
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            ),
+              ),
+            ],
           ),
           Expanded(
             child: ListView(
@@ -151,23 +204,12 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                 _buildDrawerItem(
                     Icons.favorite_border_rounded, 'Favourite Astrologers',
                     route: FavoriteAstrologersScreen()),
-
                 _buildDrawerItem(Icons.calendar_today, 'Daily Horoscope',
                     route: HoroscopeScreen()),
-
                 _buildDrawerItem(Icons.chat, 'Call History',
                     route: CallListHistory()),
-
-                // _buildDrawerItem(Icons.card_membership, 'Buy Membership',
-                //     route: BuyMembershipScreen()),
                 _buildDrawerItem(Icons.shopping_bag, 'Astro Products',
                     route: ShoppingScreen()),
-                //_buildDrawerItem(Icons.book, 'Astro Book'),
-
-                // _buildDrawerItem(Icons.newspaper, 'Blog',
-                //     route: AstrologyBlogScreen()),
-                // _buildDrawerItem(Icons.star, 'Free Services'),
-                //  _buildDrawerItem(Icons.person_add, 'Sign up as Astrologer'),
                 _buildDrawerItem(Icons.settings, 'Settings',
                     route: SettingsScreen()),
               ],
@@ -183,8 +225,6 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // IconButton(
-                    //     icon: const Icon(Icons.facebook), onPressed: () {}),
                     IconButton(
                         icon: const Icon(Icons.facebook), onPressed: () {}),
                     IconButton(
@@ -201,62 +241,159 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
   }
 
   Widget _buildDrawerItem(IconData icon, String title, {route}) {
-    return Container(
-      child: ListTile(
-        leading: Icon(icon),
-        title: Text(title),
-        onTap: () {
-          if (title == 'Home') {
-            Navigator.of(context).pop();
-          } else {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => route,
-              ),
-            );
-          }
-
-          // Handle navigation here
-        },
+    return ListTile(
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 14.0, vertical: 0.0),
+      dense: true,
+      leading: Icon(icon),
+      title: Text(
+        title,
+        style: const TextStyle(fontSize: 16),
       ),
+      onTap: () {
+        if (title == 'Home') {
+          Navigator.of(context).pop();
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => route,
+            ),
+          );
+        }
+
+        // Handle navigation here
+      },
     );
   }
 
-  // void _playVideo(String videoUrl) {
-  //   print(videoUrl);
-  //   final videoId = YoutubePlayer.convertUrlToId(videoUrl);
+//youtube player
+  void _playVideo1(String videoUrl) {
+    print(videoUrl);
+    final videoId = YoutubePlayer.convertUrlToId(videoUrl);
 
-  //   if (videoId != null) {
-  //     YoutubePlayerController _controller = YoutubePlayerController(
-  //       initialVideoId: videoId,
-  //       flags: const YoutubePlayerFlags(
-  //         autoPlay: true,
-  //         mute: false,
-  //       ),
-  //     );
+    if (videoId != null) {
+      YoutubePlayerController _controller = YoutubePlayerController(
+        initialVideoId: videoId,
+        flags: const YoutubePlayerFlags(
+          autoPlay: true,
+          mute: false,
+        ),
+      );
 
-  //     // Show YouTube player in a dialog
-  //     showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         print("dialog");
-  //         return AlertDialog(
-  //           contentPadding: EdgeInsets.zero,
-  //           content: YoutubePlayer(
-  //             controller: _controller,
-  //             showVideoProgressIndicator: true,
-  //           ),
-  //         );
-  //       },
-  //     );
-  //   } else {
-  //     // Handle the case when the video URL is invalid
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('Invalid video URL')),
-  //     );
-  //   }
-  // }
+      // Show YouTube player in a dialog
+      showDialog(
+        context: context,
+        builder: (context) {
+          print("dialog");
+          return AlertDialog(
+            contentPadding: EdgeInsets.zero,
+            content: YoutubePlayer(
+              controller: _controller,
+              showVideoProgressIndicator: true,
+            ),
+          );
+        },
+      );
+    } else {
+      // Handle the case when the video URL is invalid
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid video URL')),
+      );
+    }
+  }
+
+//video player
+  void _playVideo2(String videoUrl) {
+    print(videoUrl);
+
+    // Declare the controller first
+    VideoPlayerController controller = VideoPlayerController.network(
+        "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4");
+
+    // Initialize the controller and handle the video player in the dialog
+    controller.initialize().then((_) {
+      // Ensure the first frame is shown after the video is initialized
+      controller.play();
+
+      // Show video player in a dialog
+      showDialog(
+        context: context,
+        builder: (context) {
+          print("dialog");
+          return AlertDialog(
+            contentPadding: EdgeInsets.zero,
+            content: AspectRatio(
+              aspectRatio: controller.value.aspectRatio,
+              child: VideoPlayer(controller),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  // Stop the video when closing the dialog
+                  controller.pause();
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Close'),
+              ),
+            ],
+          );
+        },
+      );
+    }).catchError((error) {
+      print("***************");
+      print(error.toString());
+      print("***************");
+      // Handle any errors in video initialization
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error loading video')),
+      );
+    });
+  }
+
+//webview player
+  void _playVideo3(BuildContext context, String videoUrl) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => YouTubeVideoPlayer(videoUrl: videoUrl)),
+    );
+
+    // final videoId = Uri.parse(videoUrl).queryParameters['v'];
+
+    // if (videoId != null) {
+    //   // Show the video in a dialog with WebView
+    //   showDialog(
+    //     context: context,
+    //     builder: (context) {
+    //       return AlertDialog(
+    //         contentPadding: EdgeInsets.zero,
+    //         content: SizedBox(
+    //           width: double.maxFinite,
+    //           height: 300, // You can set your desired height
+    //           child: WebView(
+    //             initialUrl: 'https://www.youtube.com/embed/$videoId',
+    //             javascriptMode: JavascriptMode.unrestricted,
+    //           ),
+    //         ),
+    //         actions: [
+    //           TextButton(
+    //             onPressed: () {
+    //               Navigator.of(context).pop();
+    //             },
+    //             child: const Text('Close'),
+    //           ),
+    //         ],
+    //       );
+    //     },
+    //   );
+    // } else {
+    //   // Handle invalid YouTube URL case
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(content: Text('Invalid YouTube URL')),
+    //   );
+    // }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -629,7 +766,7 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
             itemBuilder: (context, index) {
               final video = watchVideos[index];
               return GestureDetector(
-                onTap: () {}, //=> _playVideo(video['file'] ?? ''),
+                onTap: () => _playVideo2(video['file'] ?? ''),
                 child: Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -1031,10 +1168,10 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                                               // Header Section
                                               Container(
                                                 width: double.infinity,
-                                                decoration: BoxDecoration(
+                                                decoration: const BoxDecoration(
                                                   color: Colors.orange,
                                                   borderRadius:
-                                                      const BorderRadius.only(
+                                                      BorderRadius.only(
                                                     topLeft:
                                                         Radius.circular(20.0),
                                                     topRight:
@@ -1043,7 +1180,7 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                                                 ),
                                                 padding:
                                                     const EdgeInsets.all(16.0),
-                                                child: Center(
+                                                child: const Center(
                                                   child: Text(
                                                     "Customer Feedback",
                                                     style: TextStyle(
@@ -1089,7 +1226,7 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                                                               Text(
                                                                 story['name'],
                                                                 style:
-                                                                    TextStyle(
+                                                                    const TextStyle(
                                                                   fontSize: 18,
                                                                   fontWeight:
                                                                       FontWeight
@@ -1114,7 +1251,7 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                                                                     story['rating']
                                                                         .toString(),
                                                                     style:
-                                                                        TextStyle(
+                                                                        const TextStyle(
                                                                       fontSize:
                                                                           16,
                                                                       color: Colors
@@ -1134,7 +1271,7 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                                                     const SizedBox(height: 16),
 
                                                     // Feedback Text
-                                                    Text(
+                                                    const Text(
                                                       "Feedback:",
                                                       style: TextStyle(
                                                         fontSize: 16,
@@ -1146,7 +1283,7 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                                                     const SizedBox(height: 8),
                                                     Text(
                                                       story['feedback'],
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                         fontSize: 16,
                                                         color: Colors.black54,
                                                         height: 1.5,
@@ -1414,52 +1551,64 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
                 final remedy = apiData['astro_remedy'][index];
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Container(
-                    width: 150, // Width for each remedy card
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.tealAccent.shade100,
-                          Colors.blueAccent.shade100,
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 8,
-                          offset: Offset(0, 4),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              RemedyDetailsScreen(remedyId: remedy['name']),
                         ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Display the remedy icon
-                        ClipOval(
-                          child: Image.network(
-                            remedy['icon'],
-                            height: 60,
-                            width: 60,
-                            fit: BoxFit.cover,
+                      );
+                    },
+                    child: Container(
+                      width: 150, // Width for each remedy card
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.tealAccent.shade100,
+                            Colors.blueAccent.shade100,
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 8,
+                            offset: Offset(0, 4),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        // Display the remedy name with styling
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                          child: Text(
-                            remedy['name'],
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.black,
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Display the remedy icon
+                          ClipOval(
+                            child: Image.network(
+                              remedy['icon'],
+                              height: 60,
+                              width: 60,
+                              fit: BoxFit.cover,
                             ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 8),
+                          // Display the remedy name with styling
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                            child: Text(
+                              remedy['name'],
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
