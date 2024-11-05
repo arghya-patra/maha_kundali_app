@@ -185,11 +185,11 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
               GestureDetector(
                 onTap: () => _selectDate(context),
                 child: _buildFieldContainer(
-                  child: Text(
-                    "${selectedDate.toLocal()}".split(' ')[0],
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ),
+                    child: Text(
+                      "${selectedDate.toLocal()}".split(' ')[0],
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    verticalHeight: 10.0),
               ),
               const SizedBox(height: 16),
               _buildLabel('Select Time'),
@@ -197,6 +197,8 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
                 controller: _timeController,
                 readOnly: true,
                 decoration: const InputDecoration(
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                   labelText: 'Time of Birth',
                   border: OutlineInputBorder(),
                   suffixIcon: Icon(Icons.access_time),
@@ -271,6 +273,8 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
               TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                   labelText: 'Place of Birth',
                   border: OutlineInputBorder(),
                   suffixIcon: _isLoading ? CircularProgressIndicator() : null,
@@ -427,10 +431,11 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
     );
   }
 
-  Widget _buildFieldContainer({required Widget child}) {
+  Widget _buildFieldContainer({required Widget child, verticalHeight}) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      padding:
+          EdgeInsets.symmetric(vertical: verticalHeight ?? 0, horizontal: 12),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(5),

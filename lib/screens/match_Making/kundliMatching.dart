@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/screens/match_Making/matchMakingModel.dart';
@@ -337,8 +338,17 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
                   SizedBox(
                     height: 20,
                   ),
-                  Center(
+                  SizedBox(
+                    width: double.infinity,
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        elevation: 5,
+                      ),
                       onPressed: () async {
                         Matchmaking match = await submitData();
 
@@ -352,17 +362,11 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
                         );
                         // Navigate to compatibility results screen
                       },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 50, vertical: 15),
-                        backgroundColor: Colors.orange,
-                        textStyle: const TextStyle(fontSize: 16),
-                      ),
                       child: const Text(
                         'Check Compatibility',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 16.0,
+                          fontSize: 18.0,
                         ),
                       ),
                     ),
@@ -383,7 +387,7 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
   Widget _buildFieldContainer({required Widget child}) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(5),
@@ -435,6 +439,8 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
               TextField(
                 controller: nameController,
                 decoration: const InputDecoration(
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                   labelText: 'Name',
                   border: OutlineInputBorder(),
                 ),
@@ -444,6 +450,8 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
                 controller: dobController,
                 readOnly: true,
                 decoration: const InputDecoration(
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                   labelText: 'Date of Birth',
                   border: OutlineInputBorder(),
                   suffixIcon: Icon(Icons.calendar_today),
@@ -455,6 +463,8 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
                 controller: timeController,
                 readOnly: true,
                 decoration: const InputDecoration(
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                   labelText: 'Time of Birth',
                   border: OutlineInputBorder(),
                   suffixIcon: Icon(Icons.access_time),
@@ -466,6 +476,8 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
               TextField(
                 controller: placeController,
                 decoration: InputDecoration(
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                   labelText: 'Place of Birth',
                   border: OutlineInputBorder(),
                   suffixIcon: _isLoading ? CircularProgressIndicator() : null,
@@ -498,18 +510,18 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
                 ),
 
               // Display selected city's details
-              if (selectedCity != null)
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Selected City: $selectedCity'),
-                      Text('Latitude: $selectedlat'),
-                      Text('Longitude: $selectedlon'),
-                    ],
-                  ),
-                ),
+              // if (selectedCity != null)
+              //   Padding(
+              //     padding: const EdgeInsets.all(8.0),
+              //     child: Column(
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       children: [
+              //         Text('Selected City: $selectedCity'),
+              //         Text('Latitude: $selectedlat'),
+              //         Text('Longitude: $selectedlon'),
+              //       ],
+              //     ),
+              //   ),
 
               // TextField(
               //   controller: placeController,

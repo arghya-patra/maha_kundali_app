@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/screens/Kundli/kundliDetails.dart';
@@ -291,6 +292,8 @@ class _KundliScreenState extends State<KundliScreen>
                     TextField(
                       controller: _nameController,
                       decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
                         labelText: 'Name',
                         border: OutlineInputBorder(),
                       ),
@@ -300,6 +303,8 @@ class _KundliScreenState extends State<KundliScreen>
                       controller: _dateController,
                       readOnly: true,
                       decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
                         labelText: 'Date of Birth',
                         border: OutlineInputBorder(),
                         suffixIcon: Icon(Icons.calendar_today),
@@ -311,6 +316,8 @@ class _KundliScreenState extends State<KundliScreen>
                       controller: _timeController,
                       readOnly: true,
                       decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
                         labelText: 'Time of Birth',
                         border: OutlineInputBorder(),
                         suffixIcon: Icon(Icons.access_time),
@@ -329,6 +336,8 @@ class _KundliScreenState extends State<KundliScreen>
                     TextField(
                       controller: _searchController,
                       decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
                         labelText: 'Place of Birth',
                         border: OutlineInputBorder(),
                         suffixIcon:
@@ -400,19 +409,24 @@ class _KundliScreenState extends State<KundliScreen>
                       ),
                     ),
                     const SizedBox(height: 30),
-                    Center(
+                    SizedBox(
+                      width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
                           submitData();
                           // Submit action and navigate to another screen
                         },
-                        child: const Text('Submit'),
+                        child: const Text(
+                          'Submit',
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
                         style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 50,
-                            vertical: 15,
-                          ),
                           backgroundColor: Colors.orange,
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          elevation: 5,
                         ),
                       ),
                     ),
@@ -426,7 +440,7 @@ class _KundliScreenState extends State<KundliScreen>
   Widget _buildFieldContainer({required Widget child}) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(5),

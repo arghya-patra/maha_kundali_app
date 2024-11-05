@@ -201,6 +201,8 @@ class _PersonalHoroscopeFormScreenState
               TextField(
                 controller: _nameController,
                 decoration: const InputDecoration(
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                   labelText: 'Name',
                   border: OutlineInputBorder(),
                 ),
@@ -211,6 +213,8 @@ class _PersonalHoroscopeFormScreenState
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                   labelText: 'Email',
                   border: OutlineInputBorder(),
                 ),
@@ -221,6 +225,8 @@ class _PersonalHoroscopeFormScreenState
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
                 decoration: const InputDecoration(
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                   labelText: 'Mobile',
                   border: OutlineInputBorder(),
                 ),
@@ -242,6 +248,8 @@ class _PersonalHoroscopeFormScreenState
                 controller: _timeController,
                 readOnly: true,
                 decoration: const InputDecoration(
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                   labelText: 'Time of Birth',
                   border: OutlineInputBorder(),
                   suffixIcon: Icon(Icons.access_time),
@@ -291,28 +299,30 @@ class _PersonalHoroscopeFormScreenState
               const SizedBox(height: 16),
               _buildLabel('Select Language'),
               _buildFieldContainer(
-                child: DropdownButton<String>(
-                  isExpanded: true,
-                  value: selectedLanguage,
-                  underline: const SizedBox(),
-                  items: ["English", "Hindi"].map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedLanguage = value!;
-                    });
-                  },
-                ),
-              ),
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    value: selectedLanguage,
+                    underline: const SizedBox(),
+                    items: ["English", "Hindi"].map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedLanguage = value!;
+                      });
+                    },
+                  ),
+                  verticalHeight: 1.0),
               const SizedBox(height: 16),
               _buildLabel('Place of Birth'),
               TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                   labelText: 'Place of Birth',
                   border: OutlineInputBorder(),
                   suffixIcon: _isLoading ? CircularProgressIndicator() : null,
@@ -404,23 +414,23 @@ class _PersonalHoroscopeFormScreenState
               const SizedBox(height: 16),
               _buildLabel('Timezone'),
               _buildFieldContainer(
-                child: DropdownButton<String>(
-                  isExpanded: true,
-                  value: selectedTimezone,
-                  underline: const SizedBox(),
-                  items: ["IST", "GMT", "PST", "EST"].map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedTimezone = value!;
-                    });
-                  },
-                ),
-              ),
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    value: selectedTimezone,
+                    underline: const SizedBox(),
+                    items: ["IST", "GMT", "PST", "EST"].map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedTimezone = value!;
+                      });
+                    },
+                  ),
+                  verticalHeight: 1.0),
               const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
@@ -481,10 +491,11 @@ class _PersonalHoroscopeFormScreenState
     );
   }
 
-  Widget _buildFieldContainer({required Widget child}) {
+  Widget _buildFieldContainer({required Widget child, verticalHeight}) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+      padding:
+          EdgeInsets.symmetric(vertical: verticalHeight ?? 10, horizontal: 12),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(5),

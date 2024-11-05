@@ -256,6 +256,8 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                       decoration: const InputDecoration(
                         labelText: 'Name',
                         border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -266,6 +268,8 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                       decoration: InputDecoration(
                         labelText: 'Place of Birth',
                         border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
                         suffixIcon:
                             _isLoading ? CircularProgressIndicator() : null,
                       ),
@@ -345,6 +349,8 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                       controller: _dateController,
                       readOnly: true,
                       decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
                         labelText: 'Date of Birth',
                         border: OutlineInputBorder(),
                         suffixIcon: Icon(Icons.calendar_today),
@@ -356,6 +362,8 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                       controller: _timeController,
                       readOnly: true,
                       decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
                         labelText: 'Time of Birth',
                         border: OutlineInputBorder(),
                         suffixIcon: Icon(Icons.access_time),
@@ -363,19 +371,24 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                       onTap: () => _selectTime(context),
                     ),
                     const SizedBox(height: 30),
-                    Center(
+                    SizedBox(
+                      width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
                           submitData();
                           // Submit action and navigate to another screen
                         },
-                        child: const Text('Submit'),
+                        child: const Text(
+                          'Submit',
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
                         style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 50,
-                            vertical: 15,
-                          ),
                           backgroundColor: Colors.orange,
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          elevation: 5,
                         ),
                       ),
                     ),

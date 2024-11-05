@@ -80,6 +80,8 @@ class _NumerologyFormScreenState extends State<NumerologyFormScreen> {
               TextField(
                 controller: _nameController,
                 decoration: const InputDecoration(
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                   labelText: 'Name',
                   border: OutlineInputBorder(),
                 ),
@@ -89,11 +91,11 @@ class _NumerologyFormScreenState extends State<NumerologyFormScreen> {
               GestureDetector(
                 onTap: () => _selectDate(context),
                 child: _buildFieldContainer(
-                  child: Text(
-                    "${selectedDate.toLocal()}".split(' ')[0],
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ),
+                    child: Text(
+                      "${selectedDate.toLocal()}".split(' ')[0],
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    verticalHeight: 10.0),
               ),
               const SizedBox(height: 16),
               _buildLabel('Select Language'),
@@ -114,7 +116,7 @@ class _NumerologyFormScreenState extends State<NumerologyFormScreen> {
                       });
                     },
                   ),
-                  verticalHeight: 8.0),
+                  verticalHeight: 0.0),
               const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
@@ -183,7 +185,7 @@ class _NumerologyFormScreenState extends State<NumerologyFormScreen> {
     return Container(
       width: double.infinity,
       padding:
-          EdgeInsets.symmetric(vertical: verticalHeight ?? 18, horizontal: 12),
+          EdgeInsets.symmetric(vertical: verticalHeight ?? 0, horizontal: 12),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(5),

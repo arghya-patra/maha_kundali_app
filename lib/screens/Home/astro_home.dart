@@ -21,6 +21,8 @@ import 'package:maha_kundali_app/screens/Horoscope/horoscopeScreen.dart';
 import 'package:maha_kundali_app/screens/Kundli/kundliScreen.dart';
 import 'package:maha_kundali_app/screens/LiveAstrologers/liveastrologerScreen.dart';
 import 'package:maha_kundali_app/screens/Numerology/numerology_form.dart';
+import 'package:maha_kundali_app/screens/Payment/phnpe.dart';
+import 'package:maha_kundali_app/screens/Payment/phnpegetWay.dart';
 import 'package:maha_kundali_app/screens/Personal%20Horoscope/personal_horoscope_form.dart';
 import 'package:maha_kundali_app/screens/Service-Report/all_service_report.dart';
 import 'package:maha_kundali_app/screens/chats/callHistory.dart';
@@ -407,9 +409,9 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => WalletScreen(),
-                ),
+                MaterialPageRoute(builder: (context) => PhonePay()
+                    // WalletScreen(),
+                    ),
               );
             },
             child: const CircleAvatar(
