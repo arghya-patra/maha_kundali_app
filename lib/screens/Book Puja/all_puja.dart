@@ -45,7 +45,7 @@ class _PujaScreenState extends State<PujaScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Puja List'),
+        title: const Text('Pooja List'),
         centerTitle: true,
         flexibleSpace: Container(
           decoration: const BoxDecoration(

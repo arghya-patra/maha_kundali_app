@@ -60,7 +60,7 @@ class _PujaDetailsScreenState extends State<PujaDetailsScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Puja Details"),
+        title: Text("Pooja Details"),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -139,7 +139,10 @@ class _PujaDetailsScreenState extends State<PujaDetailsScreen>
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: Text("Select Astrologer"),
+                        child: Text(
+                          "Select Astrologer",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                       SizedBox(height: 8),
                       // Row(
@@ -257,49 +260,78 @@ class _PujaDetailsScreenState extends State<PujaDetailsScreen>
 
   // Similar Puja Item Widget
   Widget _buildSimilarPujaItem(Map<String, dynamic> puja) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      margin: EdgeInsets.only(right: 16),
-      child: Container(
-        width: 160,
-        padding: EdgeInsets.all(8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.network(puja['icon'], height: 100, fit: BoxFit.cover),
-            SizedBox(height: 8),
-            Text(
-              puja['name'],
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              overflow: TextOverflow.ellipsis,
-            ),
-            // SizedBox(height: 4),
-            // Text(
-            //   '₹${puja['price']}',
-            //   style: TextStyle(fontSize: 14, color: Colors.green),
-            // ),
-            SizedBox(height: 2),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PujaDetailsScreen(name: puja['name']),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PujaDetailsScreen(name: puja['name']),
+          ),
+        );
+      },
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        margin: EdgeInsets.only(right: 16),
+        child: Container(
+          width: 160,
+          padding: EdgeInsets.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.network(puja['icon'], height: 100, fit: BoxFit.cover),
+              SizedBox(height: 8),
+              Text(
+                puja['name'],
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
+              ),
+              // SizedBox(height: 4),
+              // Text(
+              //   '₹${puja['price']}',
+              //   style: TextStyle(fontSize: 14, color: Colors.green),
+              // ),
+              SizedBox(height: 2),
+              OutlinedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          PujaDetailsScreen(name: puja['name']),
+                    ),
+                  );
+                },
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(
+                    color:
+                        Colors.deepOrangeAccent, // Border color for the outline
+                    width: 2.0, // Border width for the outline
                   ),
-                );
-                // Navigate to Puja Booking Screen
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal:
+                        10.0, // Reduced horizontal padding for a smaller button
+                    vertical:
+                        1.0, // Reduced vertical padding for a more compact button
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(10.0), // Softer button edges
+                  ),
+                ),
+                child: const Text(
+                  'Book Now',
+                  style: TextStyle(
+                    fontSize: 12.0, // Smaller font size for a more compact look
+                    color: Colors
+                        .deepOrangeAccent, // Text color to match the border
+                    fontWeight: FontWeight.w500, // Slightly bold for emphasis
+                  ),
                 ),
               ),
-              child: Text("Book Now"),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

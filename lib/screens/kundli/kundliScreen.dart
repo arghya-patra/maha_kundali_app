@@ -99,6 +99,9 @@ class _KundliScreenState extends State<KundliScreen>
   }
 
   submitData() async {
+    setState(() {
+      isLoading2 = true;
+    });
     String url = APIData.login;
     print(url.toString());
     final response = await http.post(Uri.parse(url), body: {
@@ -128,7 +131,9 @@ class _KundliScreenState extends State<KundliScreen>
       // final planetDetails = Map<String, PlanetDetails>.from(data['horoscope']
       //         ['planet_details']
       //     .map((k, v) => MapEntry(k, PlanetDetails.fromJson(v))));
-
+      setState(() {
+        isLoading2 = false;
+      });
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -413,8 +418,26 @@ class _KundliScreenState extends State<KundliScreen>
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
+                          if (_nameController.text.isEmpty) {
+                            _showError("Please enter your name.");
+                            return;
+                          }
+                          if (_searchController.text.isEmpty ||
+                              _selectedCity == null) {
+                            _showError("Please select a place of birth.");
+                            return;
+                          }
+                          if (_dateController.text.isEmpty) {
+                            _showError("Please select your date of birth.");
+                            return;
+                          }
+                          if (_timeController.text.isEmpty) {
+                            _showError("Please select your time of birth.");
+                            return;
+                          }
+
+                          // If all validations pass, proceed with submission
                           submitData();
-                          // Submit action and navigate to another screen
                         },
                         child: const Text(
                           'Submit',
@@ -434,6 +457,15 @@ class _KundliScreenState extends State<KundliScreen>
                 ),
               ),
             ),
+    );
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
     );
   }
 

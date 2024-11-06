@@ -10,6 +10,7 @@ import 'package:maha_kundali_app/screens/panchang/panchangScreen.dart';
 import 'package:maha_kundali_app/screens/panchang/panchang_model.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:http/http.dart' as http;
+import 'package:shimmer/shimmer.dart';
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
 // import 'package:place_picker/place_picker.dart';
 
@@ -45,9 +46,16 @@ class _PersonalHoroscopeFormScreenState
   String? _selectedLon;
   bool _isLoading = false;
 
+  bool isLoading2 = true;
+
   @override
   void initState() {
     super.initState();
+    Future.delayed(const Duration(seconds: 2), () {
+      setState(() {
+        isLoading2 = false;
+      });
+    });
     _searchController.addListener(_onSearchChanged);
   }
 
@@ -126,6 +134,9 @@ class _PersonalHoroscopeFormScreenState
   }
 
   submitData() async {
+    setState(() {
+      isLoading2 = true;
+    });
     String url = APIData.login;
     print(url.toString());
     final response = await http.post(Uri.parse(url), body: {
@@ -143,6 +154,9 @@ class _PersonalHoroscopeFormScreenState
     print(response.body);
 
     if (response.statusCode == 200) {
+      setState(() {
+        isLoading2 = false;
+      });
       setState(() {
         horoscopeResponse =
             HoroscopeResponse.fromJson(json.decode(response.body));
@@ -191,278 +205,332 @@ class _PersonalHoroscopeFormScreenState
         title: const Text("Know Your Personal Horoscope"),
         backgroundColor: Colors.orange,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildLabel('Enter Name'),
-              TextField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                  labelText: 'Name',
-                  border: OutlineInputBorder(),
-                ),
+      body: isLoading2
+          ? Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(height: 200, color: Colors.white),
+                  const SizedBox(height: 20),
+                  Container(height: 30, width: 200, color: Colors.white),
+                  const SizedBox(height: 10),
+                  Container(height: 15, color: Colors.white),
+                  const SizedBox(height: 5),
+                  Container(height: 15, width: 150, color: Colors.white),
+                  const SizedBox(height: 30),
+                  Container(height: 50, color: Colors.white),
+                ],
               ),
-              const SizedBox(height: 16),
-              _buildLabel('Enter Email'),
-              TextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              _buildLabel('Enter Mobile'),
-              TextField(
-                controller: _phoneController,
-                keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                  labelText: 'Mobile',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              _buildLabel('Select Date of Birth'),
-              GestureDetector(
-                onTap: () => _selectDate(context),
-                child: _buildFieldContainer(
-                  child: Text(
-                    "${selectedDate.toLocal()}".split(' ')[0],
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              _buildLabel('Select Time of Birth'),
-              TextField(
-                controller: _timeController,
-                readOnly: true,
-                decoration: const InputDecoration(
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                  labelText: 'Time of Birth',
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.access_time),
-                ),
-                onTap: () => _selectTime(context),
-              ),
-              // _buildFieldContainer(
-              //   child: DropdownButton<String>(
-              //     isExpanded: true,
-              //     value: selectedHour,
-              //     underline: const SizedBox(),
-              //     items: List.generate(
-              //       24,
-              //       (index) => DropdownMenuItem(
-              //         value: (index + 1).toString(),
-              //         child: Text((index + 1).toString()),
-              //       ),
-              //     ),
-              //     onChanged: (value) {
-              //       setState(() {
-              //         selectedHour = value!;
-              //       });
-              //     },
-              //   ),
-              // ),
-              // const SizedBox(height: 16),
-              // _buildLabel('Select Minute'),
-              // _buildFieldContainer(
-              //   child: DropdownButton<String>(
-              //     isExpanded: true,
-              //     value: selectedMinute,
-              //     underline: const SizedBox(),
-              //     items: List.generate(
-              //       60,
-              //       (index) => DropdownMenuItem(
-              //         child: Text((index + 1).toString()),
-              //         value: (index + 1).toString(),
-              //       ),
-              //     ),
-              //     onChanged: (value) {
-              //       setState(() {
-              //         selectedMinute = value!;
-              //       });
-              //     },
-              //   ),
-              // ),
-              const SizedBox(height: 16),
-              _buildLabel('Select Language'),
-              _buildFieldContainer(
-                  child: DropdownButton<String>(
-                    isExpanded: true,
-                    value: selectedLanguage,
-                    underline: const SizedBox(),
-                    items: ["English", "Hindi"].map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedLanguage = value!;
-                      });
-                    },
-                  ),
-                  verticalHeight: 1.0),
-              const SizedBox(height: 16),
-              _buildLabel('Place of Birth'),
-              TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                  labelText: 'Place of Birth',
-                  border: OutlineInputBorder(),
-                  suffixIcon: _isLoading ? CircularProgressIndicator() : null,
-                ),
-              ),
-              const SizedBox(height: 10),
-
-              // Dropdown list for city suggestions
-              if (_cities.isNotEmpty)
-                Container(
-                  height: 200,
-                  child: ListView.builder(
-                    itemCount: _cities.length,
-                    itemBuilder: (context, index) {
-                      final city = _cities[index]['city'];
-                      final lat = _cities[index]['lat'];
-                      final lon = _cities[index]['lon'];
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _selectedCity = city;
-                            _selectedLat = lat;
-                            _selectedLon = lon;
-                            _searchController.text =
-                                city; // Set the selected city
-                            _cities.clear(); // Clear the dropdown
-                          });
-                        },
-                        child: Container(
-                          height: 50, // Set the desired height
-                          padding: const EdgeInsets.all(
-                              8.0), // Optional: Add padding for the text
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.grey, // Set the color of the border
-                              width: 1.0, // Set the width of the border
-                            ),
-                            borderRadius: BorderRadius.circular(
-                                5.0), // Optional: Add rounded corners
-                          ),
-                          child: Text(
-                            city,
-                            style: TextStyle(
-                                fontSize: 16), // Customize text style if needed
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-
-              // Display selected city's details
-              if (_selectedCity != null)
-                Padding(
-                  padding: const EdgeInsets.all(3.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Selected City: $_selectedCity'),
-                      Text('Latitude: $_selectedLat'),
-                      Text('Longitude: $_selectedLon'),
-                    ],
-                  ),
-                ),
-
-              //----------------------------------------------------------------
-
-              // GestureDetector(
-              //   onTap: () async {
-              //     // LocationResult result = await Navigator.of(context).push(
-              //     //   MaterialPageRoute(
-              //     //     builder: (context) => PlacePicker(
-              //     //       "YOUR_GOOGLE_API_KEY",
-              //     //     ),
-              //     //   ),
-              //     // );
-
-              //     // setState(() {
-              //     //   birthPlace = result.formattedAddress!;
-              //     // });
-              //   },
-              //   child: _buildFieldContainer(
-              //     child: Text(
-              //       birthPlace.isEmpty ? "Pick a location" : birthPlace,
-              //       style: const TextStyle(fontSize: 16),
-              //     ),
-              //   ),
-              // ),
-              const SizedBox(height: 16),
-              _buildLabel('Timezone'),
-              _buildFieldContainer(
-                  child: DropdownButton<String>(
-                    isExpanded: true,
-                    value: selectedTimezone,
-                    underline: const SizedBox(),
-                    items: ["IST", "GMT", "PST", "EST"].map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedTimezone = value!;
-                      });
-                    },
-                  ),
-                  verticalHeight: 1.0),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
+            )
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildLabel('Enter Name'),
+                    TextField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                        labelText: 'Name',
+                        border: OutlineInputBorder(),
+                      ),
                     ),
-                    elevation: 5,
-                  ),
-                  onPressed: () async {
-                    submitData();
-                    // Panchang panchang = await submitData();
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //       builder: (context) =>
-                    //           PanchangScreen(panchang: panchang)),
-                    // );
-                    // Handle form submission
-                  },
-                  child: const Text(
-                    'Submit',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
-                  ),
+                    const SizedBox(height: 16),
+                    _buildLabel('Enter Email'),
+                    TextField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                        labelText: 'Email',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildLabel('Enter Mobile'),
+                    TextField(
+                      controller: _phoneController,
+                      keyboardType: TextInputType.phone,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                        labelText: 'Mobile',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildLabel('Select Date of Birth'),
+                    GestureDetector(
+                      onTap: () => _selectDate(context),
+                      child: _buildFieldContainer(
+                        child: Text(
+                          "${selectedDate.toLocal()}".split(' ')[0],
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildLabel('Select Time of Birth'),
+                    TextField(
+                      controller: _timeController,
+                      readOnly: true,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                        labelText: 'Time of Birth',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.access_time),
+                      ),
+                      onTap: () => _selectTime(context),
+                    ),
+                    // _buildFieldContainer(
+                    //   child: DropdownButton<String>(
+                    //     isExpanded: true,
+                    //     value: selectedHour,
+                    //     underline: const SizedBox(),
+                    //     items: List.generate(
+                    //       24,
+                    //       (index) => DropdownMenuItem(
+                    //         value: (index + 1).toString(),
+                    //         child: Text((index + 1).toString()),
+                    //       ),
+                    //     ),
+                    //     onChanged: (value) {
+                    //       setState(() {
+                    //         selectedHour = value!;
+                    //       });
+                    //     },
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 16),
+                    // _buildLabel('Select Minute'),
+                    // _buildFieldContainer(
+                    //   child: DropdownButton<String>(
+                    //     isExpanded: true,
+                    //     value: selectedMinute,
+                    //     underline: const SizedBox(),
+                    //     items: List.generate(
+                    //       60,
+                    //       (index) => DropdownMenuItem(
+                    //         child: Text((index + 1).toString()),
+                    //         value: (index + 1).toString(),
+                    //       ),
+                    //     ),
+                    //     onChanged: (value) {
+                    //       setState(() {
+                    //         selectedMinute = value!;
+                    //       });
+                    //     },
+                    //   ),
+                    // ),
+                    const SizedBox(height: 16),
+                    _buildLabel('Select Language'),
+                    _buildFieldContainer(
+                        child: DropdownButton<String>(
+                          isExpanded: true,
+                          value: selectedLanguage,
+                          underline: const SizedBox(),
+                          items: ["English", "Hindi"].map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedLanguage = value!;
+                            });
+                          },
+                        ),
+                        verticalHeight: 1.0),
+                    const SizedBox(height: 16),
+                    _buildLabel('Place of Birth'),
+                    TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                        labelText: 'Place of Birth',
+                        border: OutlineInputBorder(),
+                        suffixIcon:
+                            _isLoading ? CircularProgressIndicator() : null,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Dropdown list for city suggestions
+                    if (_cities.isNotEmpty)
+                      Container(
+                        height: 200,
+                        child: ListView.builder(
+                          itemCount: _cities.length,
+                          itemBuilder: (context, index) {
+                            final city = _cities[index]['city'];
+                            final lat = _cities[index]['lat'];
+                            final lon = _cities[index]['lon'];
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _selectedCity = city;
+                                  _selectedLat = lat;
+                                  _selectedLon = lon;
+                                  _searchController.text =
+                                      city; // Set the selected city
+                                  _cities.clear(); // Clear the dropdown
+                                });
+                              },
+                              child: Container(
+                                height: 50, // Set the desired height
+                                padding: const EdgeInsets.all(
+                                    8.0), // Optional: Add padding for the text
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors
+                                        .grey, // Set the color of the border
+                                    width: 1.0, // Set the width of the border
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                      5.0), // Optional: Add rounded corners
+                                ),
+                                child: Text(
+                                  city,
+                                  style: TextStyle(
+                                      fontSize:
+                                          16), // Customize text style if needed
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+
+                    // Display selected city's details
+                    if (_selectedCity != null)
+                      Padding(
+                        padding: const EdgeInsets.all(3.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Selected City: $_selectedCity'),
+                            Text('Latitude: $_selectedLat'),
+                            Text('Longitude: $_selectedLon'),
+                          ],
+                        ),
+                      ),
+
+                    //----------------------------------------------------------------
+
+                    // GestureDetector(
+                    //   onTap: () async {
+                    //     // LocationResult result = await Navigator.of(context).push(
+                    //     //   MaterialPageRoute(
+                    //     //     builder: (context) => PlacePicker(
+                    //     //       "YOUR_GOOGLE_API_KEY",
+                    //     //     ),
+                    //     //   ),
+                    //     // );
+
+                    //     // setState(() {
+                    //     //   birthPlace = result.formattedAddress!;
+                    //     // });
+                    //   },
+                    //   child: _buildFieldContainer(
+                    //     child: Text(
+                    //       birthPlace.isEmpty ? "Pick a location" : birthPlace,
+                    //       style: const TextStyle(fontSize: 16),
+                    //     ),
+                    //   ),
+                    // ),
+                    const SizedBox(height: 16),
+                    _buildLabel('Timezone'),
+                    _buildFieldContainer(
+                        child: DropdownButton<String>(
+                          isExpanded: true,
+                          value: selectedTimezone,
+                          underline: const SizedBox(),
+                          items:
+                              ["IST", "GMT", "PST", "EST"].map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedTimezone = value!;
+                            });
+                          },
+                        ),
+                        verticalHeight: 1.0),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          elevation: 5,
+                        ),
+                        onPressed: () async {
+                          if (_nameController.text.isEmpty) {
+                            _showError("Please enter your name.");
+                            return;
+                          }
+                          if (_emailController.text.isEmpty) {
+                            _showError("Please enter your email.");
+                            return;
+                          }
+                          if (_searchController.text.isEmpty ||
+                              _selectedCity == null) {
+                            _showError("Please select a place of birth.");
+                            return;
+                          }
+                          if (_phoneController.text.isEmpty) {
+                            _showError("Please enter your Mobile number");
+                            return;
+                          }
+                          if (_timeController.text.isEmpty) {
+                            _showError("Please select your time of birth.");
+                            return;
+                          }
+
+                          submitData();
+                          // Panchang panchang = await submitData();
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //       builder: (context) =>
+                          //           PanchangScreen(panchang: panchang)),
+                          // );
+                          // Handle form submission
+                        },
+                        child: const Text(
+                          'Submit',
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+    );
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
       ),
     );
   }

@@ -169,7 +169,11 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
   }
 
   submitData() async {
+    setState(() {
+      _isLoading2 = true;
+    });
     String url = APIData.login;
+
     print(url.toString());
     final response = await http.post(Uri.parse(url), body: {
       'action': 'free-service-type',
@@ -190,7 +194,7 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
       final Map<String, dynamic> data = jsonDecode(response.body);
       setState(() {
         svgData = data['content'];
-        // isLoading = false;
+        _isLoading2 = false;
       });
 
       Navigator.push(
@@ -375,7 +379,28 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
+                          // Validate input fields
+                          if (_nameController.text.isEmpty) {
+                            _showError("Please enter your name.");
+                            return;
+                          }
+                          if (_searchController.text.isEmpty ||
+                              _selectedCity == null) {
+                            _showError("Please select a place of birth.");
+                            return;
+                          }
+                          if (_dateController.text.isEmpty) {
+                            _showError("Please select your date of birth.");
+                            return;
+                          }
+                          if (_timeController.text.isEmpty) {
+                            _showError("Please select your time of birth.");
+                            return;
+                          }
+
+                          // If all validations pass, proceed with submission
                           submitData();
+                          //submitData();
                           // Submit action and navigate to another screen
                         },
                         child: const Text(
@@ -396,6 +421,15 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                 ),
               ),
             ),
+    );
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
     );
   }
 }

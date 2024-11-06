@@ -409,7 +409,7 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => PhonePay()
+                MaterialPageRoute(builder: (context) => WalletScreen()
                     // WalletScreen(),
                     ),
               );

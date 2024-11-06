@@ -92,7 +92,7 @@ class _BookingPujaScreenState extends State<BookingPujaScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Book Puja'),
+        title: const Text('Book Pooja'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -334,6 +334,7 @@ class _BookingPujaScreenState extends State<BookingPujaScreen> {
       enabled: enable,
       maxLines: maxlines,
       decoration: InputDecoration(
+        //  contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
         labelText: label,
         border: const OutlineInputBorder(),
         filled: true,

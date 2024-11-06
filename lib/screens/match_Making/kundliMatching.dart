@@ -204,6 +204,9 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
   }
 
   submitData() async {
+    setState(() {
+      _isLoading2 = true;
+    });
     String url = APIData.login;
     print(url.toString());
     final response = await http.post(Uri.parse(url), body: {
@@ -219,14 +222,17 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
       'girl_tob': _girlTimeController.text,
       'girl_pob': _selectedGirlCity,
       'lang': 'en',
-      'boy_lat': '22.54111111',
-      'boy_lon': '88.33777778',
-      'girl_lat': '22.54111111',
-      'girl_lon': '88.33777778'
+      'boy_lat': _selectedBoyLat,
+      'boy_lon': _selectedBoyLon,
+      'girl_lat': _selectedGirlLat,
+      'girl_lon': _selectedGirlLon
     });
     print(response.body);
 
     if (response.statusCode == 200) {
+      setState(() {
+        _isLoading2 = false;
+      });
       return Matchmaking.fromJson(jsonDecode(response.body)['matchmaking']);
     } else {
       throw Exception('Failed to load horoscope details');
@@ -273,7 +279,7 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    "Kundli Matching",
+                    "Kundai Matching",
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -281,7 +287,7 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
                   ),
                   const SizedBox(height: 10),
                   const Text(
-                    "Kundli Matching is a process that helps to match the horoscopes of the bride and groom before marriage.",
+                    "Kundali Matching is a process that helps to match the horoscopes of the bride and groom before marriage.",
                     style: TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 30),
@@ -350,6 +356,33 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
                         elevation: 5,
                       ),
                       onPressed: () async {
+                        // Validate input fields
+                        if (_boyNameController.text.isEmpty ||
+                            _girlNameController.text.isEmpty) {
+                          _showError("Please enter your name.");
+                          return;
+                        }
+                        if (_boysearchController.text.isEmpty ||
+                            _girlsearchController.text.isEmpty ||
+                            _selectedGirlCity == null ||
+                            _selectedBoyCity == null) {
+                          _showError("Please select a place of birth.");
+                          return;
+                        }
+                        if (_boyDobController.text.isEmpty ||
+                            _girlDobController.text.isEmpty) {
+                          _showError("Please select your date of birth.");
+                          return;
+                        }
+                        if (_boyTimeController.text.isEmpty ||
+                            _girlTimeController.text.isEmpty) {
+                          _showError("Please select your time of birth.");
+                          return;
+                        }
+
+                        // If all validations pass, proceed with submission
+                        // submitData();
+
                         Matchmaking match = await submitData();
 
                         Navigator.push(
@@ -374,6 +407,15 @@ class _KundliMatchingScreenState extends State<KundliMatchingScreen>
                 ],
               ),
             ),
+    );
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
     );
   }
 

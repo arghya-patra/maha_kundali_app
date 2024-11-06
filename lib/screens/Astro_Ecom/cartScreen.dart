@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
+import 'package:maha_kundali_app/screens/Payment/phnpegetWay.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
+import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:http/http.dart' as http;
 
@@ -14,10 +17,88 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
   bool isLoading = true;
   List<Map<String, dynamic>> cartItems = [];
 
+  //-------------------
+  int a = 10;
+  String environment = "SANDBOX";
+  String appId = "";
+  String merchantId = "PGTESTPAYUAT86";
+  bool enableLogging = true;
+  String checksum = "";
+  String saltkey = "96434309-7796-489d-8924-ab56988a6076";
+  String saltindex = "1";
+  String callbackUrl =
+      "https://webhook.site/b5fc8951-42a3-4857-be8a-fdd60dd7a79e";
+  String body = "";
+  Object? result;
+  String apiEndPoint = "/pg/v1/pay";
+
+  getCheksum() {
+    final requesBody = {
+      "merchantId": merchantId,
+      "merchantTransactionId": "transaction_123",
+      "merchantUserId": "90223250",
+      "amount": 1000,
+      "mobileNumber": "9999999999",
+      "callbackUrl": "https://webhook.site/callback-url",
+      "paymentInstrument": {
+        "type": "PAY_PAGE",
+      },
+    };
+
+    String base64body = base64.encode(utf8.encode(json.encode(requesBody)));
+    checksum =
+        '${sha256.convert(utf8.encode(base64body + apiEndPoint + saltkey)).toString()}###${saltindex}';
+    return base64body;
+  }
+
   @override
   void initState() {
+    phonePayInit();
+    body = getCheksum().toString();
     super.initState();
     _fetchCartData();
+  }
+
+  void phonePayInit() {
+    PhonePePaymentSdk.init(environment, appId, merchantId, enableLogging)
+        .then((val) => {
+              setState(() {
+                result = 'PhonePe SDK Initialized - $val';
+              })
+            })
+        .catchError((error) {
+      handleError(error);
+      return <dynamic>{};
+    });
+  }
+
+  void handleError(error) {
+    setState(() {
+      result = {'error': error};
+    });
+  }
+
+  void starTrunction() async {
+    await PhonePePaymentSdk.startTransaction(body, callbackUrl, checksum, "")
+        .then((response) => {
+              setState(() {
+                if (response != null) {
+                  String status = response['status'].toString();
+                  String error = response['error'].toString();
+                  if (status == 'SUCCESS') {
+                    print('Flow complete');
+                  } else {
+                    print("flow was not complete");
+                  }
+                } else {
+                  // "Flow Incomplete";
+                }
+              })
+            })
+        .catchError((error) {
+      // handleError(error)
+      return <dynamic>{};
+    });
   }
 
   // Fetch cart data from API
@@ -115,7 +196,7 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                     },
                   )
                 : cartItems.length <= 0
-                    ? Center(
+                    ? const Center(
                         child: Text("Cart is Empty!"),
                       )
                     : ListView.builder(
@@ -209,6 +290,14 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                       minimumSize: const Size(double.infinity, 50),
                     ),
                     onPressed: () {
+                      starTrunction();
+
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => const PhonePay()
+                      //       // WalletScreen(),
+                      //       ),
+                      // );
                       // Place order action
                     },
                     child: Text(
