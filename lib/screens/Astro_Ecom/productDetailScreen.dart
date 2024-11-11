@@ -1,5 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
+import 'package:maha_kundali_app/components/util.dart';
+import 'package:maha_kundali_app/screens/Astro_Ecom/cartScreen.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:http/http.dart' as http;
@@ -19,6 +23,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
 
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+  int cartCount = 4;
+  bool isAddedToCart = false;
 
   @override
   void initState() {
@@ -78,12 +84,46 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
           ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.shopping_cart),
-            onPressed: () {
-              // Navigate to the cart screen or perform any action
-            },
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ShoppingCartScreen()
+                        // WalletScreen(),
+                        ),
+                  );
+                },
+              ),
+              //if (cart.isNotEmpty)
+              Positioned(
+                right: 4,
+                top: 4,
+                child: CircleAvatar(
+                  radius: 8,
+                  backgroundColor: Colors.white,
+                  child: Text(
+                    cartCount.toString(),
+                    style: const TextStyle(fontSize: 12, color: Colors.black),
+                  ),
+                ),
+              ),
+            ],
           ),
+          // IconButton(
+          //   icon: const Icon(Icons.shopping_cart),
+          //   onPressed: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(builder: (context) => ShoppingCartScreen()
+          //           // WalletScreen(),
+          //           ),
+          //     );
+          //     // Navigate to the cart screen or perform any action
+          //   },
+          // ),
         ],
       ),
       body: Stack(
@@ -249,6 +289,17 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
+                  setState(() {
+                    isAddedToCart = !isAddedToCart;
+                    if (!isAddedToCart) {
+                      cartCount--;
+                      toastMessage(message: 'Item Removed from cart');
+                    } else {
+                      toastMessage(message: 'Item Added to cart');
+                      cartCount++;
+                    }
+                  });
+
                   // Add to Cart action
                 },
                 style: ElevatedButton.styleFrom(
@@ -258,8 +309,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                child: const Text(
-                  'Add to Cart',
+                child: Text(
+                  isAddedToCart ? "Remove from cart" : 'Add to Cart',
                   style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
               ),
@@ -268,6 +319,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ShoppingCartScreen()
+                        // WalletScreen(),
+                        ),
+                  );
                   // Buy Now action
                 },
                 style: ElevatedButton.styleFrom(

@@ -359,17 +359,16 @@ class _SelectAstrologerListScreenState
 
           final astrologers = snapshot.data!;
 
-          return GridView.builder(
+          return ListView.builder(
             padding: const EdgeInsets.all(8.0),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
-              crossAxisSpacing: 8.0,
-              mainAxisSpacing: 8.0,
-            ),
             itemCount: astrologers.length,
             itemBuilder: (context, index) {
               final astrologer = astrologers[index];
-              return _buildAstrologerCard(astrologer);
+              return Padding(
+                padding: const EdgeInsets.only(
+                    bottom: 8.0), // Add space between cards
+                child: _buildAstrologerCard(astrologer),
+              );
             },
           );
         },
@@ -445,86 +444,132 @@ class _SelectAstrologerListScreenState
   }
 
   Widget _buildAstrologerCard(Astrologer astrologer) {
-    return Card(
-      color: const Color.fromARGB(255, 255, 239, 204),
-      elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.15),
+            spreadRadius: 2,
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        borderRadius: BorderRadius.circular(10.0),
+        border: Border.all(
+          color: Colors.orange, // Orange border
+          width: 1.5, // Adjust width as needed
+        ),
       ),
-      child: Column(
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      padding: const EdgeInsets.all(12.0),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipRRect(
-            borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(12.0)),
-            child: Image.network(
-              astrologer.logo,
-              height: 180,
-              width: double.infinity,
-              fit: BoxFit.contain,
-            ),
+          // Image with Verified Icon
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: Image.network(
+                  astrologer.logo,
+                  height: 80,
+                  width: 80,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: CircleAvatar(
+                  radius: 10,
+                  backgroundColor: Colors.white,
+                  child: Icon(
+                    Icons.verified,
+                    color: Colors.blue,
+                    size: 18,
+                  ),
+                ),
+              ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(12.0),
+          const SizedBox(width: 12.0),
+
+          // Details Column
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   astrologer.name,
                   style: const TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 16.0,
                     fontWeight: FontWeight.bold,
-                    color: Colors.orange,
+                    color: Colors.black87,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 6.0),
-                Text(
-                  'Puja Price: ₹${astrologer.price}',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(height: 6.0),
-                Text(
-                  'Experience: ${astrologer.experience}',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(height: 12.0),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      print(astrologer.id);
-                      // Handle the select action
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => BookingPujaScreen(
-                                  pujaName: widget.pujaName,
-                                  astrologerId: astrologer.id,
-                                )),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                const SizedBox(height: 4.0),
+                Row(
+                  children: [
+                    Icon(Icons.price_check, color: Colors.orange, size: 16),
+                    const SizedBox(width: 4.0),
+                    Text(
+                      '₹${astrologer.price}',
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        color: Colors.grey[700],
                       ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 12.0),
-                      elevation: 4.0,
                     ),
-                    child: const Text(
-                      'Select',
-                      style: TextStyle(fontSize: 16.0),
+                  ],
+                ),
+                const SizedBox(height: 4.0),
+                Row(
+                  children: [
+                    Icon(Icons.star, color: Colors.amber, size: 16),
+                    const SizedBox(width: 4.0),
+                    Text(
+                      '${astrologer.experience} yrs',
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        color: Colors.grey[700],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ],
+            ),
+          ),
+
+          // Select Button
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BookingPujaScreen(
+                    pujaName: widget.pujaName,
+                    astrologerId: astrologer.id,
+                  ),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              elevation: 1,
+              backgroundColor: Colors.orangeAccent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+            ),
+            child: const Text(
+              'Select',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],

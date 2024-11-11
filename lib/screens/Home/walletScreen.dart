@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
+import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
 import 'package:shimmer/shimmer.dart';
 
 class WalletScreen extends StatefulWidget {
@@ -12,11 +16,88 @@ class _WalletScreenState extends State<WalletScreen> {
   TextEditingController _amountController = TextEditingController();
 
   List<int> _autoAmounts = [200, 500, 1000, 2000];
+  //-------------------
+  //int a = 10;
+  String environment = "SANDBOX";
+  String appId = "";
+  String merchantId = "PGTESTPAYUAT86";
+  bool enableLogging = true;
+  String checksum = "";
+  String saltkey = "96434309-7796-489d-8924-ab56988a6076";
+  String saltindex = "1";
+  String callbackUrl =
+      "https://webhook.site/b5fc8951-42a3-4857-be8a-fdd60dd7a79e";
+  String body = "";
+  Object? result;
+  String apiEndPoint = "/pg/v1/pay";
+
+  getCheksum() {
+    final requesBody = {
+      "merchantId": merchantId,
+      "merchantTransactionId": "transaction_123",
+      "merchantUserId": "90223250",
+      "amount": 1200,
+      "mobileNumber": "9999999999",
+      "callbackUrl": "https://webhook.site/callback-url",
+      "paymentInstrument": {
+        "type": "PAY_PAGE",
+      },
+    };
+
+    String base64body = base64.encode(utf8.encode(json.encode(requesBody)));
+    checksum =
+        '${sha256.convert(utf8.encode(base64body + apiEndPoint + saltkey)).toString()}###${saltindex}';
+    return base64body;
+  }
 
   @override
   void initState() {
+    phonePayInit();
+    body = getCheksum().toString();
     super.initState();
     _loadData();
+  }
+
+  void phonePayInit() {
+    PhonePePaymentSdk.init(environment, appId, merchantId, enableLogging)
+        .then((val) => {
+              setState(() {
+                result = 'PhonePe SDK Initialized - $val';
+              })
+            })
+        .catchError((error) {
+      handleError(error);
+      return <dynamic>{};
+    });
+  }
+
+  void handleError(error) {
+    setState(() {
+      result = {'error': error};
+    });
+  }
+
+  void starTrunction() async {
+    await PhonePePaymentSdk.startTransaction(body, callbackUrl, checksum, "")
+        .then((response) => {
+              setState(() {
+                if (response != null) {
+                  String status = response['status'].toString();
+                  String error = response['error'].toString();
+                  if (status == 'SUCCESS') {
+                    print('Flow complete');
+                  } else {
+                    print("flow was not complete");
+                  }
+                } else {
+                  // "Flow Incomplete";
+                }
+              })
+            })
+        .catchError((error) {
+      // handleError(error)
+      return <dynamic>{};
+    });
   }
 
   Future<void> _loadData() async {
@@ -201,27 +282,39 @@ class _WalletScreenState extends State<WalletScreen> {
 
   Widget _buildAddButton() {
     return ElevatedButton(
-      onPressed: () {
-        // Handle payment process
-      },
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 14.0),
-        backgroundColor: Colors.orange,
-        textStyle: const TextStyle(fontSize: 18.0),
-      ),
-      child: AnimatedTextKit(
-        animatedTexts: [
-          WavyAnimatedText(
-            'Add Amount',
-            textStyle: const TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
+        onPressed: () {
+          if (_amountController.text.isNotEmpty) {
+            starTrunction();
+          }
+
+          // Handle payment process
+        },
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 14.0),
+          backgroundColor: Colors.orange,
+          textStyle: const TextStyle(fontSize: 18.0),
+        ),
+        child: const Text(
+          " Add Amount",
+          style: TextStyle(
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
-        ],
-        isRepeatingAnimation: true,
-      ),
-    );
+        )
+        // AnimatedTextKit(
+        //   animatedTexts: [
+        //     WavyAnimatedText(
+        //       'Add Amount',
+        //       textStyle: const TextStyle(
+        //         fontSize: 20.0,
+        //         fontWeight: FontWeight.bold,
+        //         color: Colors.white,
+        //       ),
+        //     ),
+        //   ],
+        //   isRepeatingAnimation: true,
+        // ),
+        );
   }
 }
