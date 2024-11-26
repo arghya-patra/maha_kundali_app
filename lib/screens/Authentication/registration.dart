@@ -238,7 +238,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Registration'),
+        centerTitle: true,
+        title: const Text('Sign up'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(

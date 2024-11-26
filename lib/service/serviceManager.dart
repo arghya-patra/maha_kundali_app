@@ -46,14 +46,14 @@ class ServiceManager {
     //getUserData();---need to use later
   }
 
-  void setAddressID(String addressID) async {
+  void setRole(String roleAs) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString('addressID', addressID);
+    prefs.setString('role_as', roleAs);
   }
 
-  void getAddressID() async {
+  void getRole() async {
     final prefs = await SharedPreferences.getInstance();
-    addressID = prefs.getString('addressID') ?? '';
+    roleAs = prefs.getString('role_as') ?? '';
   }
 
   void removeAll() async {

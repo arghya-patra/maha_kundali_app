@@ -6,14 +6,14 @@ class KundliDetailsScreen extends StatelessWidget {
   final AscendantReport ascendantReport;
   final MoonSign moonSign;
   final SunSign sunSign;
-  // final Map<String, PlanetDetails> planetDetails;
+  final Map<String, PlanetDetails> planetDetails;
 
   KundliDetailsScreen({
     required this.basicDetails,
     required this.ascendantReport,
     required this.moonSign,
     required this.sunSign,
-    //  required this.planetDetails,
+    required this.planetDetails,
   });
 
   @override
@@ -83,7 +83,7 @@ class KundliDetailsScreen extends StatelessWidget {
               //   'Planet Details',
               //   style: Theme.of(context).textTheme.headline6,
               // ),
-              Divider(),
+              // Divider(),
               // ...planetDetails.values
               //     .map((planet) => _buildPlanetDetail(planet))
               //     .toList(),

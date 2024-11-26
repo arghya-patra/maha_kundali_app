@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
@@ -36,9 +37,9 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <meta-data android:name="com.phonepe.android.sdk.isUAT" android:value="true"/> 
-        <meta-data android:name="com.phonepe.android.sdk.isSimulator" android:value="true"/>
-        <meta-data android:name="com.phonepe.android.sdk.MerchantId" android:value="PGTESTPAYUAT"/> 
+        <meta-data android:name="com.phonepe.android.sdk.isUAT" android:value="false"/> 
+        <meta-data android:name="com.phonepe.android.sdk.isSimulator" android:value="false"/>
+        <meta-data android:name="com.phonepe.android.sdk.MerchantId" android:value="M22J3NZTQPCO4"/> 
         <!-- <meta-data android:name="com.phonepe.android.sdk.AppId" android:value="appId"/> -->
     </application>
     <!-- Required to query activities that can process text, see:

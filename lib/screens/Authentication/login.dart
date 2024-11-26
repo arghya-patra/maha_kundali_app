@@ -193,14 +193,6 @@ class _LoginScreenState extends State<LoginScreen>
                                           loginUser(context);
                                         }
                                       },
-                                      child: const Text(
-                                        'Send OTP',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
-                                      ),
                                       style: ElevatedButton.styleFrom(
                                         elevation: 8,
                                         shadowColor: Colors.deepOrange,
@@ -218,6 +210,14 @@ class _LoginScreenState extends State<LoginScreen>
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 50.0,
                                           vertical: 15.0,
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        'Send OTP',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
                                         ),
                                       ),
                                     )

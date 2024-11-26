@@ -14,6 +14,7 @@ import 'package:maha_kundali_app/screens/Astro_Ecom/productListScreen.dart';
 import 'package:maha_kundali_app/screens/AstrologerProfile/astrologerProfileDetail.dart';
 import 'package:maha_kundali_app/screens/Birth%20Chart/birthChartForm.dart';
 import 'package:maha_kundali_app/screens/Book%20Puja/all_puja.dart';
+import 'package:maha_kundali_app/screens/Dosha/dosha_from.dart';
 import 'package:maha_kundali_app/screens/Favourite_Astrolgers/favAstro.dart';
 import 'package:maha_kundali_app/screens/Home/vdo_pl.dart';
 import 'package:maha_kundali_app/screens/Home/walletScreen.dart';
@@ -649,7 +650,7 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
 
   List<dynamic> routes = [
     BirthChartFormScreen(),
-    KundliScreen(),
+    DoshaFormScreen(),
     KundliScreen(),
     KundliMatchingScreen(),
     NumerologyFormScreen(),

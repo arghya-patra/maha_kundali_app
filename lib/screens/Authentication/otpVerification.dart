@@ -5,6 +5,7 @@ import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/components/util.dart';
 import 'package:maha_kundali_app/screens/Authentication/login.dart';
 import 'package:maha_kundali_app/screens/Home/dashboardScreen.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/dashBoard_astro.dart';
 import 'package:maha_kundali_app/screens/language_selection/language_selection.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -240,25 +241,31 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
           ServiceManager().setUser('${data['userDetails']['userId']}');
           ServiceManager()
               .setToken('${data['userDetails']['authorizationToken']}');
+          ServiceManager().setRole('${data['userDetails']['user_type']}');
 
           ServiceManager.userID = '${data['userDetails']['userId']}';
           ServiceManager.tokenID =
               '${data['userDetails']['authorizationToken']}';
+          ServiceManager.roleAs = '${data['userDetails']['user_type']}';
           ServiceManager().getUserData();
-          // ServiceManager.userEmail = '${data['userDetails']['email']}';
-          // ServiceManager.userMobile = '${data['userDetails']['mobile']}';
-          // ServiceManager.profileURL = '${data['userDetails']['logo']}';
-          // ServiceManager.userName = '${data['userDetails']['name']}';
+
+          print(ServiceManager.roleAs);
 
           print(ServiceManager.userID);
           print(ServiceManager.tokenID);
           // print(ServiceManager.roleAs);
           //  ServiceManager().getUserData();
           toastMessage(message: 'Logged In');
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => DashboardScreen()),
-              (route) => false);
+          ServiceManager.roleAs == 'buyer'
+              ? Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => DashboardScreen()),
+                  (route) => false)
+              : Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DashboardForAstrologerScreen()),
+                  (route) => false);
         } else {
           toastMessage(
               message: 'Registration Succesful! Please Login now',

@@ -1,24 +1,23 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/components/util.dart';
-import 'package:maha_kundali_app/screens/Astro_Ecom/cartScreen.dart';
-import 'package:maha_kundali_app/screens/Astro_Ecom/productListScreen.dart';
-import 'package:maha_kundali_app/screens/Home/astro_home.dart';
-import 'package:maha_kundali_app/screens/Home/test_astro_home2.dart';
-import 'package:maha_kundali_app/screens/Home/test_home_screen.dart';
-import 'package:maha_kundali_app/screens/Home/profile.dart';
-import 'package:maha_kundali_app/screens/chats/chatListScreen.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/bookingListScreen.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/earningScreen.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/home_astro.dart';
+import 'package:maha_kundali_app/screens/profileContent/editProfile.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
-import 'package:http/http.dart' as http;
 
-class DashboardScreen extends StatefulWidget {
+class DashboardForAstrologerScreen extends StatefulWidget {
   @override
-  _DashboardScreenState createState() => _DashboardScreenState();
+  _DashboardForAstrologerScreenState createState() =>
+      _DashboardForAstrologerScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen>
+class _DashboardForAstrologerScreenState
+    extends State<DashboardForAstrologerScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool isLoading = false;
@@ -26,9 +25,8 @@ class _DashboardScreenState extends State<DashboardScreen>
   @override
   void initState() {
     super.initState();
-    ServiceManager().getUserData();
     getDashboardData(context);
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -48,27 +46,28 @@ class _DashboardScreenState extends State<DashboardScreen>
       'action': 'dashboard-overview',
       'authorizationToken': ServiceManager.tokenID, //8100007581
     });
-    print("______________________________________");
-    print(res.body);
-    print("______________________________________");
     var data = jsonDecode(res.body);
     if (data['status'] == 200) {
       print("______________________________________");
       print(res.body);
       print("______________________________________");
-      try {} catch (e) {
+      try {
+        // toastMessage(message: 'Logged In');
+        // Navigator.pushAndRemoveUntil(
+        //     context,
+        //     MaterialPageRoute(builder: (context) => DashboardScreen()),
+        //     (route) => false);
+      } catch (e) {
         toastMessage(message: e.toString());
         setState(() {
           isLoading = false;
         });
-        print("catch");
         toastMessage(message: 'Something went wrong');
       }
     } else {
       setState(() {
         isLoading = false;
       });
-      print("ELse part");
       toastMessage(message: 'Something Went wrong!');
     }
     setState(() {
@@ -85,11 +84,10 @@ class _DashboardScreenState extends State<DashboardScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          AstrologerDashboard(), //  HomeScreen(),
-          ShoppingScreen(),
-          ChatListScreen(),
-          ShoppingCartScreen(),
-          ProfileScreen(),
+          HomeAstroScreen(),
+          BookingListScreen(),
+          EarningsScreen(),
+          EditProfileScreen(),
         ],
       ),
       bottomNavigationBar: _buildBottomTabBar(),
@@ -107,23 +105,23 @@ class _DashboardScreenState extends State<DashboardScreen>
       ),
       child: TabBar(
         controller: _tabController,
-        tabs: [
-          const Tab(icon: Icon(Icons.home)),
-          const Tab(icon: Icon(Icons.shop)),
-          Container(
-            height: 60,
-            child: const Column(
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.white,
-                  radius: 28,
-                  child: Icon(Icons.chat, size: 30, color: Colors.orange),
-                ),
-              ],
-            ),
-          ),
-          const Tab(icon: Icon(Icons.shopping_cart)),
-          const Tab(icon: Icon(Icons.person)),
+        tabs: const [
+          Tab(icon: Icon(Icons.home)),
+          Tab(icon: Icon(Icons.shop)),
+          // Container(
+          //   height: 60,
+          //   child: const Column(
+          //     children: [
+          //       CircleAvatar(
+          //         backgroundColor: Colors.white,
+          //         radius: 28,
+          //         child: Icon(Icons.chat, size: 30, color: Colors.orange),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          Tab(icon: Icon(Icons.shopping_cart)),
+          Tab(icon: Icon(Icons.person)),
         ],
         indicatorSize: TabBarIndicatorSize.tab,
         indicatorPadding: const EdgeInsets.all(5.0),
