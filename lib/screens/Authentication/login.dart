@@ -422,25 +422,13 @@ class _LoginScreenState extends State<LoginScreen>
     var data = jsonDecode(res.body);
 
     if (data['status'] == 200) {
-      print("______________________________________");
-      print(res.body);
-      print("______________________________________");
       try {
-        print(data['status']);
-        print(data['authorizationToken']);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Please check your mobile for OTP!'),
           backgroundColor: Colors.green,
         ));
-        //toastMessage(message: 'Please check your mobile for OTP!');
-        // print('${data['userInfo']['id']}');
-        // ServiceManager().setUser('${data['userInfo']['id']}');
         ServiceManager().setToken('${data['authorizationToken']}');
-        // ServiceManager.userID = '${data['userInfo']['id']}';
         ServiceManager.tokenID = '${data['authorizationToken']}';
-        // print(ServiceManager.roleAs);
-        // ServiceManager().getUserData();
-        // toastMessage(message: 'Logged In');
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -469,7 +457,6 @@ class _LoginScreenState extends State<LoginScreen>
         backgroundColor: Colors.red,
         content: Text(data['message']),
       ));
-      // toastMessage(message: data['message']);
     }
     setState(() {
       isLoading = false;
@@ -477,45 +464,45 @@ class _LoginScreenState extends State<LoginScreen>
     return 'Success';
   }
 
-  Future<String> loginUser2(BuildContext context) async {
-    setState(() {
-      isLoading = true;
-    });
-    String url = APIData.login;
-    var res = await http
-        .post(Uri.parse(url), body: {'action': 'login', 'mobile': mobile.text});
-    var data = jsonDecode(res.body);
-    print(res.body);
-    if (data['status'] == 200) {
-      try {
-        toastMessage(message: 'Please check your mobile for OTP!');
-        ServiceManager().setToken('${data['authorizationToken']}');
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (context) => OtpVerificationScreen(
-                    mobile: mobile.text,
-                    isReg: false,
-                    otp: data['otp'].toString(),
-                  )),
-          (route) => false,
-        );
-      } catch (e) {
-        toastMessage(message: 'Something went wrong');
-      } finally {
-        setState(() {
-          isLoading = false;
-        });
-      }
-    } else {
-      setState(() {
-        isLoading = false;
-      });
-      toastMessage(message: data['message']);
-    }
+  // Future<String> loginUser2(BuildContext context) async {
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //   String url = APIData.login;
+  //   var res = await http
+  //       .post(Uri.parse(url), body: {'action': 'login', 'mobile': mobile.text});
+  //   var data = jsonDecode(res.body);
+  //   print(res.body);
+  //   if (data['status'] == 200) {
+  //     try {
+  //       toastMessage(message: 'Please check your mobile for OTP!');
+  //       ServiceManager().setToken('${data['authorizationToken']}');
+  //       Navigator.pushAndRemoveUntil(
+  //         context,
+  //         MaterialPageRoute(
+  //             builder: (context) => OtpVerificationScreen(
+  //                   mobile: mobile.text,
+  //                   isReg: false,
+  //                   otp: data['otp'].toString(),
+  //                 )),
+  //         (route) => false,
+  //       );
+  //     } catch (e) {
+  //       toastMessage(message: 'Something went wrong');
+  //     } finally {
+  //       setState(() {
+  //         isLoading = false;
+  //       });
+  //     }
+  //   } else {
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //     toastMessage(message: data['message']);
+  //   }
 
-    return 'Success';
-  }
+  //   return 'Success';
+  // }
 }
 
 class WebViewScreen extends StatefulWidget {

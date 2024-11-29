@@ -29,8 +29,6 @@ class _BookingListScreenState extends State<BookingListScreen>
     String url = APIData.login;
 
     try {
-      print(ServiceManager.tokenID);
-      print(url.toString());
       var res = await http.post(Uri.parse(url), body: {
         'action': 'astrologer-booking-list',
         'authorizationToken': ServiceManager.tokenID, //8100007581
@@ -46,7 +44,7 @@ class _BookingListScreenState extends State<BookingListScreen>
         throw Exception('Failed to load data');
       }
     } catch (error) {
-      print(error);
+      // print(error);
       setState(() {
         _isLoading = false;
       });
@@ -90,7 +88,7 @@ class _BookingListScreenState extends State<BookingListScreen>
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           child: ListTile(
-            leading: Icon(Icons.book, color: Colors.deepPurple),
+            leading: Icon(Icons.book, color: Colors.deepOrange),
             title: Text(booking['pooja_name'],
                 style: TextStyle(fontWeight: FontWeight.bold)),
             subtitle: Column(

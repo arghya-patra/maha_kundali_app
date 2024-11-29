@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/components/util.dart';
 import 'package:maha_kundali_app/screens/Book%20Puja/astrologers_model.dart';
-import 'package:maha_kundali_app/screens/Home/dashboardScreen.dart';
+import 'package:maha_kundali_app/screens/Home/userDashboardScreen.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:dropdown_search/dropdown_search.dart';
@@ -579,7 +579,7 @@ class _BookingPujaScreenState extends State<BookingPujaScreen> {
         toastMessage(message: 'Booking Successful!');
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => DashboardScreen()),
+            MaterialPageRoute(builder: (context) => UserDashboardScreen()),
             (route) => false);
       } else {
         toastMessage(message: 'Something went wrong');

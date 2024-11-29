@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/components/util.dart';
 import 'package:maha_kundali_app/screens/Authentication/login.dart';
-import 'package:maha_kundali_app/screens/Home/dashboardScreen.dart';
+import 'package:maha_kundali_app/screens/Home/userDashboardScreen.dart';
 import 'package:maha_kundali_app/screens/HomeAstrologers/dashBoard_astro.dart';
 import 'package:maha_kundali_app/screens/language_selection/language_selection.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
@@ -125,11 +125,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
                   enableActiveFill: true,
                   onCompleted: (v) {
                     sendOtp(context);
-                    print("Completed");
                   },
-                  onChanged: (value) {
-                    print(value);
-                  },
+                  onChanged: (value) {},
                 ),
               ),
             ),
@@ -153,30 +150,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
               ),
             ),
             const SizedBox(height: 32),
-            // Center(
-            //   child: ElevatedButton(
-            //     onPressed: () {
-            //       sendOtp(context);
-            //       // Navigator.push(
-            //       //   context,
-            //       //   MaterialPageRoute(
-            //       //     builder: (context) => SelectLanguageScreen(),
-            //       //   ),
-            //       // );
-            //       // Submit OTP action
-            //     },
-            //     style: ElevatedButton.styleFrom(
-            //       foregroundColor: Colors.white,
-            //       backgroundColor: Colors.orange,
-            //       shape: RoundedRectangleBorder(
-            //         borderRadius: BorderRadius.circular(30.0),
-            //       ),
-            //       padding: const EdgeInsets.symmetric(
-            //           horizontal: 50.0, vertical: 15.0),
-            //     ),
-            //     child: const Text('Submit'),
-            //   ),
-            // ),
             const Spacer(),
             Center(
               child: GestureDetector(
@@ -212,7 +185,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
       isLoading = true;
     });
     String url = APIData.login;
-    print(ServiceManager.tokenID);
     var bodyReg = {
       'action': 'verify-register-otp',
       'authorizationToken': ServiceManager.tokenID,
@@ -223,43 +195,51 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
       'authorizationToken': ServiceManager.tokenID, //8100007581
       'otp': _otpController.text
     };
-    print(url.toString());
     var res = await http.post(Uri.parse(url),
         body: widget.isReg ? bodyReg : bodyLogin);
     var data = jsonDecode(res.body);
-    print(data['status']);
-    print(res.body);
     if (data['status'] == 200) {
-      print("______________________________________");
-      print(res.body);
-      print("______________________________________");
       try {
         if (widget.isReg == false) {
-          print(data['status']);
-          print(data['authorizationToken']);
-          print('${data['userDetails']['userId']}');
-          ServiceManager().setUser('${data['userDetails']['userId']}');
+          print("***************");
+          print(data);
+          print("***************");
+
           ServiceManager()
               .setToken('${data['userDetails']['authorizationToken']}');
           ServiceManager().setRole('${data['userDetails']['user_type']}');
+          ServiceManager().setUserLogo(data['userDetails']['logo']);
+          ServiceManager().setUserName(data['userDetails']['name']);
+          ServiceManager().getRole();
+          ServiceManager().getUserName();
+          if (ServiceManager.roleAs == 'buyer') {
+            ServiceManager().getUserData();
+          }
+          ServiceManager().getUseLogo();
+          if (ServiceManager.roleAs == 'buyer') {
+            ServiceManager().setUser('${data['userDetails']['userId']}');
+            ServiceManager.userID = '${data['userDetails']['userId']}';
+          } else {
+            ServiceManager().setUser('${data['userDetails']['user_id']}');
+            ServiceManager.userID = '${data['userDetails']['user_id']}';
+          }
 
-          ServiceManager.userID = '${data['userDetails']['userId']}';
           ServiceManager.tokenID =
               '${data['userDetails']['authorizationToken']}';
           ServiceManager.roleAs = '${data['userDetails']['user_type']}';
-          ServiceManager().getUserData();
-
-          print(ServiceManager.roleAs);
-
-          print(ServiceManager.userID);
-          print(ServiceManager.tokenID);
-          // print(ServiceManager.roleAs);
-          //  ServiceManager().getUserData();
+          ServiceManager.profileURL = '${data['userDetails']['logo']}';
           toastMessage(message: 'Logged In');
+          print("&&&&&&&&&&&&&");
+          print(ServiceManager.roleAs);
+          print(ServiceManager.userID);
+          print(ServiceManager.profileURL);
+          print(ServiceManager.userName);
+          print("&&&&&&&&&&&&&");
           ServiceManager.roleAs == 'buyer'
               ? Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => DashboardScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => UserDashboardScreen()),
                   (route) => false)
               : Navigator.pushAndRemoveUntil(
                   context,
@@ -299,7 +279,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
       isLoading = true;
     });
     String url = APIData.login;
-    print(url.toString());
     var res = await http.post(Uri.parse(url), body: {
       'action': 'login',
       'mobile': widget.mobile // mobile.text, //8100007581
@@ -307,38 +286,18 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
     var data = jsonDecode(res.body);
 
     if (data['status'] == 200) {
-      print("______________________________________");
-      print(res.body);
-      print("______________________________________");
       try {
-        print(data['status']);
-        print(data['authorizationToken']);
-        print(data['otp']);
         toastMessage(message: 'Please check your mobile for OTP!');
-        print("***&***");
         setState(() {
           otpText = data['otp'].toString();
         });
-        print(otpText);
-        // print('${data['userInfo']['id']}');
-        // ServiceManager().setUser('${data['userInfo']['id']}');
         ServiceManager().setToken('${data['authorizationToken']}');
-        // ServiceManager.userID = '${data['userInfo']['id']}';
         ServiceManager.tokenID = '${data['authorizationToken']}';
-        // Navigator.pushAndRemoveUntil(
-        //     context,
-        //     MaterialPageRoute(
-        //         builder: (context) => OtpVerificationScreen(
-        //               isReg: false,
-        //               otp: data['otp'].toString(),
-        //             )),
-        //     (route) => false);
       } catch (e) {
         toastMessage(message: e.toString());
         setState(() {
           isLoading = false;
         });
-        // toastMessage(message: 'Something went wrong');
       }
     } else {
       setState(() {

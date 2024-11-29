@@ -24,8 +24,6 @@ class _EarningsScreenState extends State<EarningsScreen>
 
   Future<void> fetchData() async {
     String url = APIData.login;
-    print(ServiceManager.tokenID);
-    print(url.toString());
     var response = await http.post(Uri.parse(url), body: {
       'action': 'astrologer-earnings',
       'authorizationToken': ServiceManager.tokenID,

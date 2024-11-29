@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:maha_kundali_app/screens/Authentication/login.dart';
 import 'package:maha_kundali_app/screens/Authentication/registration.dart';
-import 'package:maha_kundali_app/screens/Home/dashboardScreen.dart';
+import 'package:maha_kundali_app/screens/Home/userDashboardScreen.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/dashBoard_astro.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:maha_kundali_app/theme/style.dart';
 
@@ -25,10 +26,17 @@ class _SplashScreenState extends State<SplashScreen> {
     // LocationService().fetchLocation();
     _timer = Timer.periodic(Duration(seconds: 3), (timer) {
       if (ServiceManager.userID != '') {
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => DashboardScreen()),
-            (route) => false);
+        ServiceManager.roleAs == 'buyer'
+            ? Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => UserDashboardScreen()),
+                (route) => false)
+            : Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DashboardForAstrologerScreen()),
+                (route) => false);
+        ;
       } else {
         Navigator.pushAndRemoveUntil(
             context,

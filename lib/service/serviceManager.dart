@@ -23,6 +23,27 @@ class ServiceManager {
   static String userAddress = '';
   static String addressID = '';
   static String roleAs = '';
+  void setUserName(String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('username', name);
+  }
+
+  void getUserName() async {
+    final prefs = await SharedPreferences.getInstance();
+    userName = prefs.getString('username') ?? '';
+    //getUserData();---need to use later
+  }
+
+  void setUserLogo(String logo) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('logo', profileURL);
+  }
+
+  void getUseLogo() async {
+    final prefs = await SharedPreferences.getInstance();
+    profileURL = prefs.getString('logo') ?? '';
+    //getUserData();---need to use later
+  }
 
   void setUser(String userID) async {
     final prefs = await SharedPreferences.getInstance();
@@ -60,6 +81,8 @@ class ServiceManager {
     final prefs = await SharedPreferences.getInstance();
     prefs.remove('userID');
     prefs.remove('tokenID');
+    prefs.remove('logo');
+    prefs.remove('username');
     // prefs.remove('addressID');
     userID = '';
     tokenID = '';
@@ -81,11 +104,6 @@ class ServiceManager {
       userEmail = '${data['userDetails']['email']}';
       profileURL = '${data['userDetails']['logo']}';
       userMobile = data['userDetails']['mobile'] ?? '';
-      // userAltMobile = data['astrologerDetails']['alternative_mob'] ?? '';
-      // userDob = data['astrologerDetails']['dob'] ?? '';
-      // designation = data['astrologerDetails']['Designation'] ?? '';
-      // userBranchID = data['astrologerDetails']['branchId'] ?? '';
-      // roleAs = '${data['astrologerDetails']['use_role']}';
     } else {
       // print('Status Code: ${res.statusCode}');
       // print(res.body);

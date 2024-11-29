@@ -33,8 +33,6 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
 
   Future<void> fetchDashboardData() async {
     String url = APIData.login;
-    print(ServiceManager.tokenID);
-    print(url.toString());
     var res = await http.post(Uri.parse(url), body: {
       'action': 'dashboard-overview',
       'authorizationToken': ServiceManager.tokenID, //8100007581
@@ -88,6 +86,200 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
 
   Widget _buildDrawer() {
     return Drawer(
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              Container(
+                height: 150.0, // Adjust the height as needed
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.orange, Colors.deepOrange],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 16.0, right: 16.0, top: 40.0, bottom: 25),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ServiceManager.profileURL == 'https://mahakundali.com/'
+                          ? const CircleAvatar(
+                              radius: 30,
+                              backgroundImage:
+                                  AssetImage('images/profile.jpeg'),
+                              backgroundColor: Colors.transparent,
+                            )
+                          : CircleAvatar(
+                              radius: 30,
+                              backgroundImage:
+                                  NetworkImage(ServiceManager.profileURL),
+                            ),
+                      const SizedBox(width: 10),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            ServiceManager.userName,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            ServiceManager.userMobile,
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 14),
+                          ),
+                        ],
+                      ),
+                      const Spacer(),
+                      // IconButton(
+                      //   icon: const Icon(Icons.close, color: Colors.white),
+                      //   onPressed: () {
+                      //     Navigator.of(context).pop();
+                      //   },
+                      // ),
+                    ],
+                  ),
+                ),
+              ),
+              const Positioned(
+                bottom: 5, // Position the wallet section at the bottom left
+                right: 12,
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.account_balance_wallet_outlined,
+                      color: Colors.white,
+                      size: 29,
+                    ),
+                    SizedBox(width: 8),
+                    Column(
+                      children: [
+                        Text(
+                          "Balance",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          '₹ 0.00', // Replace with the wallet balance variable
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                _buildDrawerItem(
+                  Icons.home,
+                  'Home',
+                ),
+                _buildDrawerItem(Icons.upload, 'Product Upload',
+                    route: ProductUploadScreen()),
+                GestureDetector(
+                  onTap: () {
+                    logoutBuilder(context, onClickYes: () {
+                      try {
+                        Navigator.pop(context);
+                        setState(() {
+                          isLoading = true;
+                        });
+                        ServiceManager().removeAll();
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginScreen()),
+                            (route) => false);
+                      } catch (e) {
+                        setState(() {
+                          isLoading = false;
+                        });
+                      }
+                    });
+                  },
+                  child: const ListTile(
+                    leading: Icon(Icons.logout),
+                    title: Text('Logout'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                const Text('Also available on'),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                        icon: const Icon(Icons.facebook), onPressed: () {}),
+                    IconButton(
+                        icon: const Icon(Icons.linked_camera),
+                        onPressed: () {}),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem(IconData icon, String title, {route}) {
+    return ListTile(
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 14.0, vertical: 0.0),
+      dense: true,
+      leading: Icon(icon),
+      title: Text(
+        title,
+        style: const TextStyle(fontSize: 16),
+      ),
+      onTap: () {
+        if (title == 'Home') {
+          Navigator.of(context).pop();
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => route,
+            ),
+          );
+        }
+
+        // Handle navigation here
+      },
+    );
+  }
+
+  Widget _buildDrawer2() {
+    print("^^^^^^^^");
+    print(ServiceManager.profileURL);
+    print("^^^^^^^^");
+    return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
@@ -99,9 +291,21 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
             ),
             accountName: Text(ServiceManager.userName),
             accountEmail: Text(ServiceManager.userEmail),
-            currentAccountPicture: CircleAvatar(
-              backgroundImage: NetworkImage(ServiceManager.profileURL),
-            ),
+            currentAccountPicture: ServiceManager.profileURL ==
+                    'https://mahakundali.com/'
+                ? const CircleAvatar(
+                    radius: 30,
+                    backgroundImage: AssetImage('images/profile.jpeg'),
+                    backgroundColor: Colors.transparent,
+                  )
+                : CircleAvatar(
+                    radius: 30,
+                    backgroundImage: NetworkImage(ServiceManager.profileURL),
+                  ),
+
+            //  CircleAvatar(
+            //   backgroundImage: NetworkImage(ServiceManager.profileURL),
+            // ),
           ),
           GestureDetector(
             onTap: () {

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/components/util.dart';
-import 'package:maha_kundali_app/screens/Home/dashboardScreen.dart';
+import 'package:maha_kundali_app/screens/Home/userDashboardScreen.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:image_picker/image_picker.dart';
@@ -56,7 +56,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _isLoading = true;
     });
     String url = APIData.login;
-    print(url);
     var res = await http.post(Uri.parse(url), body: {
       'action': 'user-details',
       'authorizationToken': ServiceManager.tokenID, //8100007581
@@ -64,7 +63,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     var data = jsonDecode(res.body);
     if (res.statusCode == 200) {
       var data = jsonDecode(res.body);
-      print(data.toString());
+
       _nameController.text = '${data['userDetails']['name']}';
       _emailController.text = '${data['userDetails']['email']}';
       _mobileController.text = '${data['userDetails']['mobile']}';
@@ -90,7 +89,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     String email = _emailController.text.trim();
     String mobile = _mobileController.text.trim();
     String url = APIData.login;
-    print(url.toString());
     var response = await http.post(Uri.parse(url), body: {
       'action': 'buyer-profile',
       'authorizationToken': ServiceManager.tokenID,
@@ -112,16 +110,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     setState(() {
       _isLoading = false;
     });
-    print(response.body);
     if (response.statusCode == 200) {
       // Assuming a successful response contains a "success" key
       var responseData = json.decode(response.body);
       if (responseData['status'] == 200) {
-        print(responseData);
         toastMessage(message: 'Profile Updated!', colors: Colors.green);
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => DashboardScreen()),
+            MaterialPageRoute(builder: (context) => UserDashboardScreen()),
             (route) => false);
       } else {
         toastMessage(message: 'Something Went wrong', colors: Colors.green);
@@ -446,7 +442,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (picked != null) {
       setState(() {
         _dateController.text = DateFormat('yyyy-MM-dd').format(picked);
-        print(_dateController.text);
       });
     }
   }
@@ -460,7 +455,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ':' +
             picked.minute.toString().padLeft(2, '0');
         _timeController.text = formattedTime;
-        print(formattedTime);
         // _timeController.text = picked.format(context);
       });
     }

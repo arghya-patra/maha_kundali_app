@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/components/buttons.dart';
-import 'package:maha_kundali_app/screens/Home/dashboardScreen.dart';
+import 'package:maha_kundali_app/screens/Home/userDashboardScreen.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:maha_kundali_app/theme/style.dart';
 
@@ -57,7 +57,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
       );
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => DashboardScreen()),
+          MaterialPageRoute(builder: (context) => UserDashboardScreen()),
           (route) => false);
 
       //  var data = jsonDecode(res.body);

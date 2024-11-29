@@ -25,7 +25,7 @@ class _DashboardForAstrologerScreenState
   @override
   void initState() {
     super.initState();
-    getDashboardData(context);
+    // getDashboardData(context);
     _tabController = TabController(length: 4, vsync: this);
   }
 
@@ -35,46 +35,35 @@ class _DashboardForAstrologerScreenState
     super.dispose();
   }
 
-  getDashboardData(context) async {
-    setState(() {
-      isLoading = true;
-    });
-    String url = APIData.login;
-    print(ServiceManager.tokenID);
-    print(url.toString());
-    var res = await http.post(Uri.parse(url), body: {
-      'action': 'dashboard-overview',
-      'authorizationToken': ServiceManager.tokenID, //8100007581
-    });
-    var data = jsonDecode(res.body);
-    if (data['status'] == 200) {
-      print("______________________________________");
-      print(res.body);
-      print("______________________________________");
-      try {
-        // toastMessage(message: 'Logged In');
-        // Navigator.pushAndRemoveUntil(
-        //     context,
-        //     MaterialPageRoute(builder: (context) => DashboardScreen()),
-        //     (route) => false);
-      } catch (e) {
-        toastMessage(message: e.toString());
-        setState(() {
-          isLoading = false;
-        });
-        toastMessage(message: 'Something went wrong');
-      }
-    } else {
-      setState(() {
-        isLoading = false;
-      });
-      toastMessage(message: 'Something Went wrong!');
-    }
-    setState(() {
-      isLoading = false;
-    });
-    return 'Success';
-  }
+  // getDashboardData(context) async {
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //   String url = APIData.login;
+  //   var res = await http.post(Uri.parse(url), body: {
+  //     'action': 'dashboard-overview',
+  //     'authorizationToken': ServiceManager.tokenID, //8100007581
+  //   });
+  //   var data = jsonDecode(res.body);
+  //   if (data['status'] == 200) {
+  //     try {} catch (e) {
+  //       toastMessage(message: e.toString());
+  //       setState(() {
+  //         isLoading = false;
+  //       });
+  //       toastMessage(message: 'Something went wrong');
+  //     }
+  //   } else {
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //     toastMessage(message: 'Something Went wrong!');
+  //   }
+  //   setState(() {
+  //     isLoading = false;
+  //   });
+  //   return 'Success';
+  // }
 
   @override
   Widget build(BuildContext context) {

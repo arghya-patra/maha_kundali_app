@@ -16,7 +16,7 @@ import 'package:maha_kundali_app/screens/Birth%20Chart/birthChartForm.dart';
 import 'package:maha_kundali_app/screens/Book%20Puja/all_puja.dart';
 import 'package:maha_kundali_app/screens/Dosha/dosha_from.dart';
 import 'package:maha_kundali_app/screens/Favourite_Astrolgers/favAstro.dart';
-import 'package:maha_kundali_app/screens/Home/vdo_pl.dart';
+import 'package:maha_kundali_app/screens/Home/test_purpose/vdo_pl.dart';
 import 'package:maha_kundali_app/screens/Home/walletScreen.dart';
 import 'package:maha_kundali_app/screens/Horoscope/horoscopeScreen.dart';
 import 'package:maha_kundali_app/screens/Kundli/kundliScreen.dart';
@@ -35,12 +35,12 @@ import 'package:video_player/video_player.dart';
 // import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class AstrologerDashboard extends StatefulWidget {
+class UserDashboard extends StatefulWidget {
   @override
-  _AstrologerDashboardState createState() => _AstrologerDashboardState();
+  _UserDashboardState createState() => _UserDashboardState();
 }
 
-class _AstrologerDashboardState extends State<AstrologerDashboard> {
+class _UserDashboardState extends State<UserDashboard> {
   Map<String, dynamic> apiData = {};
   List<String> _banners = [];
   bool showAllVideos = false;
@@ -71,9 +71,6 @@ class _AstrologerDashboardState extends State<AstrologerDashboard> {
       setState(() {
         apiData = json.decode(response.body);
       });
-      print("********************");
-      print(apiData);
-      print("********************");
       _banners = apiData['home_sliders']
           .map<String>((slider) => slider['background'].toString())
           .toList();
