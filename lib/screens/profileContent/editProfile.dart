@@ -80,7 +80,63 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     } else {}
   }
 
-  upDateProfileData() async {
+  Future<void> upDateProfileData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    String name = _nameController.text.trim();
+    String email = _emailController.text.trim();
+    String mobile = _mobileController.text.trim();
+    String url = APIData.login;
+
+    var request = http.MultipartRequest('POST', Uri.parse(url))
+      ..fields['action'] = 'buyer-profile'
+      ..fields['authorizationToken'] = ServiceManager.tokenID
+      ..fields['mobile'] = mobile
+      ..fields['name'] = name
+      ..fields['email'] = email
+      ..fields['gender'] = _gender
+      ..fields['dob'] = _dateController.text
+      ..fields['tob'] = _timeController.text
+      ..fields['pob'] = _placeController.text;
+
+    // Add the image file only if it's selected
+    if (_image != null) {
+      request.files
+          .add(await http.MultipartFile.fromPath('logo', _image!.path));
+    }
+
+    try {
+      var response = await request.send();
+      if (response.statusCode == 200) {
+        var responseData = await response.stream.bytesToString();
+        var jsonResponse = jsonDecode(responseData);
+        if (jsonResponse['status'] == 200) {
+          toastMessage(message: 'Profile Updated!', colors: Colors.green);
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => UserDashboardScreen()),
+            (route) => false,
+          );
+        } else {
+          toastMessage(message: jsonResponse['message'], colors: Colors.red);
+        }
+      } else {
+        toastMessage(
+            message: 'Something went wrong. Please try again.',
+            colors: Colors.red);
+      }
+    } catch (e) {
+      toastMessage(message: 'Error: $e', colors: Colors.red);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  upDateProfileData2() async {
     setState(() {
       _isLoading = true;
     });

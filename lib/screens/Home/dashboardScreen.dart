@@ -102,30 +102,77 @@ class _UserDashboardScreenState extends State<UserDashboardScreen>
       child: TabBar(
         controller: _tabController,
         tabs: [
-          const Tab(icon: Icon(Icons.home)),
-          const Tab(icon: Icon(Icons.shop)),
-          Container(
-            height: 60,
-            child: const Column(
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.white,
-                  radius: 28,
-                  child: Icon(Icons.chat, size: 30, color: Colors.orange),
-                ),
-              ],
+          Tab(
+            child: _buildTabContent(
+              icon: Icons.home,
+              label: 'Home',
             ),
           ),
-          const Tab(icon: Icon(Icons.shopping_cart)),
-          const Tab(icon: Icon(Icons.person)),
+          Tab(
+            child: _buildTabContent(
+              icon: Icons.shop,
+              label: 'Shop',
+            ),
+          ),
+          Tab(
+            child: Container(
+              height: 60,
+              decoration: BoxDecoration(
+                color: _tabController.index == 2
+                    ? Colors.white
+                    : Colors.transparent,
+                shape: BoxShape.circle,
+              ),
+              child: CircleAvatar(
+                backgroundColor: _tabController.index == 2
+                    ? Colors.white
+                    : Colors.transparent,
+                radius: 28,
+                child: Icon(
+                  Icons.chat,
+                  size: 30,
+                  color:
+                      _tabController.index == 2 ? Colors.orange : Colors.white,
+                ),
+              ),
+            ),
+          ),
+          Tab(
+            child: _buildTabContent(
+              icon: Icons.shopping_cart,
+              label: 'Cart',
+            ),
+          ),
+          Tab(
+            child: _buildTabContent(
+              icon: Icons.person,
+              label: 'Profile',
+            ),
+          ),
         ],
-        indicatorSize: TabBarIndicatorSize.tab,
-        indicatorPadding: const EdgeInsets.all(5.0),
-        indicatorColor: Colors.white,
-        indicator: const BoxDecoration(
+        indicator: BoxDecoration(
           shape: BoxShape.circle,
+          color: Colors.white.withOpacity(0.3),
         ),
+        labelColor: Colors.white,
+        unselectedLabelColor: Colors.white.withOpacity(0.7),
+        labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),
       ),
+    );
+  }
+
+  Widget _buildTabContent({required IconData icon, required String label}) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, size: 24),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12),
+        ),
+      ],
     );
   }
 }

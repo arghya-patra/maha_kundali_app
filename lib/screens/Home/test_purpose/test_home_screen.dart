@@ -255,9 +255,9 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
             child: const CircleAvatar(
-              radius: 18,
+              radius: 22,
               backgroundImage: AssetImage(
-                  'images/wallet.png'), // replace with your wallet image
+                  'images/wallet_icon.png'), // replace with your wallet image
             ),
           ),
           const SizedBox(width: 10),

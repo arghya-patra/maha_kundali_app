@@ -93,39 +93,96 @@ class _UserDashboardScreenState extends State<UserDashboardScreen>
   Widget _buildBottomTabBar() {
     return Container(
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.orange, Colors.deepOrange],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: Colors.amber,
       ),
       child: TabBar(
         controller: _tabController,
         tabs: [
-          const Tab(icon: Icon(Icons.home)),
-          const Tab(icon: Icon(Icons.shop)),
-          Container(
-            height: 60,
-            child: const Column(
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.white,
-                  radius: 28,
-                  child: Icon(Icons.chat, size: 30, color: Colors.orange),
-                ),
-              ],
+          Tab(
+            child: _buildTabContent(
+              icon: Icons.home,
+              label: 'Home',
+              isSelected: _tabController.index == 0,
             ),
           ),
-          const Tab(icon: Icon(Icons.shopping_cart)),
-          const Tab(icon: Icon(Icons.person)),
+          Tab(
+            child: _buildTabContent(
+              icon: Icons.shop,
+              label: 'Shop',
+              isSelected: _tabController.index == 1,
+            ),
+          ),
+          Tab(
+            child: Container(
+              height: 60,
+              decoration: BoxDecoration(
+                color: _tabController.index == 2
+                    ? Colors.white
+                    : Colors.transparent,
+                shape: BoxShape.circle,
+              ),
+              child: CircleAvatar(
+                backgroundColor: _tabController.index == 2
+                    ? Colors.white
+                    : Colors.transparent,
+                radius: 28,
+                child: Icon(
+                  Icons.chat,
+                  size: 30,
+                  color:
+                      _tabController.index == 2 ? Colors.orange : Colors.white,
+                ),
+              ),
+            ),
+          ),
+          Tab(
+            child: _buildTabContent(
+              icon: Icons.shopping_cart,
+              label: 'Cart',
+              isSelected: _tabController.index == 3,
+            ),
+          ),
+          Tab(
+            child: _buildTabContent(
+              icon: Icons.person,
+              label: 'Profile',
+              isSelected: _tabController.index == 4,
+            ),
+          ),
         ],
-        indicatorSize: TabBarIndicatorSize.tab,
-        indicatorPadding: const EdgeInsets.all(5.0),
-        indicatorColor: Colors.white,
-        indicator: const BoxDecoration(
-          shape: BoxShape.circle,
+        indicator: BoxDecoration(
+          borderRadius: BorderRadius.circular(120),
+          color: Colors.white.withOpacity(0.3),
         ),
+        indicatorPadding: EdgeInsets.all(0),
+        labelColor: Colors.black, // Selected tab icon color
+        unselectedLabelColor: Colors.white, // Unselected tab icon color
+        labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),
+        onTap: (index) {
+          setState(() {}); // Ensure the UI updates when the tab changes
+        },
       ),
+    );
+  }
+
+  Widget _buildTabContent({
+    required IconData icon,
+    required String label,
+    required bool isSelected,
+  }) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        CircleAvatar(
+          backgroundColor: Colors.transparent,
+          child: Icon(
+            icon,
+            size: 24,
+            color: isSelected ? Colors.black : Colors.white,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -112,8 +112,8 @@ class _ProductUploadScreenState extends State<ProductUploadScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:
-            const Text('Upload Product', style: TextStyle(color: Colors.white)),
+        title: const Text('Upload Products',
+            style: TextStyle(color: Colors.white)),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(

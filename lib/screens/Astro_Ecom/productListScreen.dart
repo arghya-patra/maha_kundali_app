@@ -161,8 +161,8 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 8.0,
-                  mainAxisSpacing: 8.0,
-                  childAspectRatio: 0.7,
+                  mainAxisSpacing: 3.0,
+                  childAspectRatio: 0.75,
                 ),
                 itemCount: filteredProducts.length,
                 itemBuilder: (context, index) {
@@ -187,36 +187,40 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
                           child: Card(
                             elevation: 4,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              side: product["isOffer"]
-                                  ? const BorderSide(
-                                      color: Colors.orange, width: 2)
-                                  : BorderSide.none,
-                            ),
+                                borderRadius: BorderRadius.circular(12),
+                                side: const BorderSide(
+                                    color: Colors.orange, width: 2)
+
+                                //  product["isOffer"]
+                                //     ? const BorderSide(
+                                //         color: Colors.orange, width: 2)
+                                //     : BorderSide.none,
+                                ),
                             child: Column(
                               children: [
-                                Expanded(
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8.0),
-                                    width: double.infinity,
-                                    child: Image.network(
-                                      product["image"],
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return const Icon(Icons.error);
-                                      },
-                                    ),
+                                Container(
+                                  height: 120,
+                                  padding: const EdgeInsets.all(8.0),
+                                  width: double.infinity,
+                                  child: Image.network(
+                                    product["image"],
+                                    fit: BoxFit.fill,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Icon(Icons.error);
+                                    },
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.only(
+                                      top: 8.0, left: 8.0, right: 7),
                                   child: Column(
                                     children: [
                                       Text(
                                         product["title"],
                                         style: const TextStyle(
                                             fontWeight: FontWeight.bold),
+                                        maxLines: 2, // Limit to 1 line
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                       Row(
                                         mainAxisAlignment:
@@ -239,9 +243,11 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
                                         ],
                                       ),
                                       Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
                                         children: [
-                                          IconButton(
-                                            icon: Icon(
+                                          GestureDetector(
+                                            child: Icon(
                                               product["inCart"]
                                                   ? Icons.shopping_cart
                                                   : Icons
@@ -250,10 +256,24 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
                                                   ? Colors.green
                                                   : Colors.grey,
                                             ),
-                                            onPressed: () {
+                                            onTap: () {
                                               toggleCartStatus(product);
                                             },
-                                          ),
+                                          )
+                                          // IconButton(
+                                          //   icon: Icon(
+                                          //     product["inCart"]
+                                          //         ? Icons.shopping_cart
+                                          //         : Icons
+                                          //             .shopping_cart_outlined,
+                                          //     color: product["inCart"]
+                                          //         ? Colors.green
+                                          //         : Colors.grey,
+                                          //   ),
+                                          //   onPressed: () {
+                                          //     toggleCartStatus(product);
+                                          //   },
+                                          // ),
                                         ],
                                       ),
                                     ],

@@ -281,6 +281,7 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                     child: Text(
                       'Place Order (Rs.${getTotalPrice().toStringAsFixed(2)})',
                       style: const TextStyle(
+                        color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),

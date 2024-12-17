@@ -21,10 +21,15 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    //ServiceManager().removeAll();
     ServiceManager().getUserID();
     ServiceManager().getTokenID();
+    ServiceManager().getRole();
+
     // LocationService().fetchLocation();
     _timer = Timer.periodic(Duration(seconds: 3), (timer) {
+      print(ServiceManager.roleAs);
+      print(ServiceManager.userID);
       if (ServiceManager.userID != '') {
         ServiceManager.roleAs == 'buyer'
             ? Navigator.pushAndRemoveUntil(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/components/util.dart';
+import 'package:maha_kundali_app/screens/Home/profile.dart';
 import 'package:maha_kundali_app/screens/HomeAstrologers/bookingListScreen.dart';
 import 'package:maha_kundali_app/screens/HomeAstrologers/earningScreen.dart';
 import 'package:maha_kundali_app/screens/HomeAstrologers/home_astro.dart';
@@ -76,7 +77,7 @@ class _DashboardForAstrologerScreenState
           HomeAstroScreen(),
           BookingListScreen(),
           EarningsScreen(),
-          EditProfileScreen(),
+          ProfileScreen() //EditProfileScreen(),
         ],
       ),
       bottomNavigationBar: _buildBottomTabBar(),

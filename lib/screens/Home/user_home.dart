@@ -71,6 +71,7 @@ class _UserDashboardState extends State<UserDashboard> {
       setState(() {
         apiData = json.decode(response.body);
       });
+      print(["*********", apiData['userDetails']['balance']]);
       _banners = apiData['home_sliders']
           .map<String>((slider) => slider['background'].toString())
           .toList();
@@ -146,40 +147,40 @@ class _UserDashboardState extends State<UserDashboard> {
                   ),
                 ),
               ),
-              const Positioned(
-                bottom: 5, // Position the wallet section at the bottom left
-                right: 12,
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.account_balance_wallet_outlined,
-                      color: Colors.white,
-                      size: 29,
-                    ),
-                    SizedBox(width: 8),
-                    Column(
-                      children: [
-                        Text(
-                          "Balance",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          '₹ 10.00', // Replace with the wallet balance variable
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+              // const Positioned(
+              //   bottom: 5, // Position the wallet section at the bottom left
+              //   right: 12,
+              //   child: Row(
+              //     children: [
+              //       Icon(
+              //         Icons.account_balance_wallet_outlined,
+              //         color: Colors.white,
+              //         size: 29,
+              //       ),
+              //       SizedBox(width: 8),
+              //       Column(
+              //         children: [
+              //           Text(
+              //             "Balance",
+              //             style: TextStyle(
+              //               color: Colors.white,
+              //               fontSize: 12,
+              //               fontWeight: FontWeight.w500,
+              //             ),
+              //           ),
+              //           Text(
+              //             '₹ 10.00', // Replace with the wallet balance variable
+              //             style: TextStyle(
+              //               color: Colors.white,
+              //               fontSize: 12,
+              //               fontWeight: FontWeight.w500,
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
           Expanded(
@@ -399,36 +400,67 @@ class _UserDashboardState extends State<UserDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.amber,
         title: const Text('Mahakundali'),
-        centerTitle: true,
         actions: [
           const SizedBox(width: 10),
           GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => WalletScreen()
-                    // WalletScreen(),
-                    ),
+                MaterialPageRoute(builder: (context) => WalletScreen()),
               );
             },
-            child: const CircleAvatar(
-              radius: 18,
-              backgroundImage: AssetImage(
-                  'images/wallet.png'), // replace with your wallet image
+            child: SizedBox(
+              width: 90,
+              height: 40,
+              child: Stack(
+                children: [
+                  // Wallet Icon
+                  const Positioned(
+                    left: 0,
+                    child: Icon(
+                      Icons.account_balance_wallet_outlined,
+                      color: Colors.white,
+                      size: 45,
+                    ),
+                  ),
+                  // Rectangle Icon with Text
+                  Positioned(
+                    left: 36, // Adjust this value to overlap icons perfectly
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        const Icon(
+                          Icons.rectangle_outlined,
+                          color: Colors.white,
+                          size: 45,
+                        ),
+                        // Amount Text
+                        SizedBox(
+                          width: 40, // Width to match the rectangle's size
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown, // Ensures text scales to fit
+                            child: Text(
+                              "₹${apiData['userDetails']['balance'].toString()}",
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 12, // Base size
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(width: 10),
         ],
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.orange, Colors.deepOrange],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
       ),
       drawer: _buildDrawer(),
       body: apiData.isEmpty
@@ -692,9 +724,8 @@ class _UserDashboardState extends State<UserDashboard> {
                               shape: BoxShape
                                   .circle, // Make the container circular
                               border: Border.all(
-                                color: const Color.fromARGB(
-                                    255, 255, 241, 111), // Border color
-                                width: 10, // Border width
+                                color: Colors.amber, // Border color
+                                width: 9, // Border width
                               ),
                             ),
                             child: ClipOval(
@@ -961,11 +992,8 @@ class _UserDashboardState extends State<UserDashboard> {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      'Experience: ${astrologer['Details']['experience']} years',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[700],
-                      ),
+                      'Experience: ${astrologer['Details']['experience']}',
+                      style: const TextStyle(fontSize: 14, color: Colors.black),
                     ),
                     const SizedBox(height: 5),
                     Row(

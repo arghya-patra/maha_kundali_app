@@ -4,6 +4,8 @@ import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'dart:convert';
 
+import 'package:url_launcher/url_launcher.dart';
+
 class EarningsScreen extends StatefulWidget {
   @override
   _EarningsScreenState createState() => _EarningsScreenState();
@@ -18,7 +20,7 @@ class _EarningsScreenState extends State<EarningsScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 6, vsync: this);
     fetchData();
   }
 
@@ -60,9 +62,15 @@ class _EarningsScreenState extends State<EarningsScreen>
           controller: _tabController,
           tabs: const [
             Tab(text: 'Overview'),
-            Tab(text: 'Chat\nEarnings'),
-            Tab(text: 'Pooja\nBookings'),
-            Tab(text: 'Product\nBookings'),
+            Tab(text: 'Chat'),
+            Tab(text: 'Pooja'),
+            Tab(text: 'Shop'),
+            Tab(
+              text: 'Call',
+            ),
+            Tab(
+              text: 'Report',
+            )
           ],
         ),
       ),
@@ -77,6 +85,8 @@ class _EarningsScreenState extends State<EarningsScreen>
                     buildChatList(),
                     buildPoojaBookingList(),
                     buildProductBookingList(),
+                    buildCallList(),
+                    buildReportList(),
                   ],
                 ),
     );
@@ -108,6 +118,98 @@ class _EarningsScreenState extends State<EarningsScreen>
         ),
       ),
     );
+  }
+
+  Widget buildReportList() {
+    return SingleChildScrollView(
+      child: Card(
+        margin: const EdgeInsets.all(8.0),
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Report Earnings',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const Divider(),
+              (data != null && data!['report_booking_list'].isNotEmpty)
+                  ? ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: data!['report_booking_list'].length,
+                      itemBuilder: (context, index) {
+                        final report = data!['report_booking_list'][index];
+                        return ListTile(
+                          leading: const CircleAvatar(
+                            backgroundColor: Colors.orange,
+                            child: Icon(Icons.report, color: Colors.white),
+                          ),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(report['report_name'] ?? 'Anonymous'),
+                            ],
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                  'Date: ${report['date']}\nStatus: ${report['status']}'),
+                              Text(
+                                '\$${report['amount']}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          trailing: Column(
+                            //mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.download,
+                                    color: Colors.black),
+                                onPressed: () {
+                                  _downloadFile(report['download']);
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    )
+                  : const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text(
+                          'No Report earnings to display.',
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Function to open the download URL
+  void _downloadFile(String url) async {
+    if (url.isNotEmpty) {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        debugPrint('Could not launch $url');
+      }
+    } else {
+      debugPrint('Invalid download URL');
+    }
   }
 
   Widget buildChatList() {
@@ -143,6 +245,60 @@ class _EarningsScreenState extends State<EarningsScreen>
                   );
                 },
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildCallList() {
+    return SingleChildScrollView(
+      child: Card(
+        margin: const EdgeInsets.all(8.0),
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Call Earnings',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const Divider(),
+              (data != null && data!['call_list'].isNotEmpty)
+                  ? ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: data!['call_list'].length,
+                      itemBuilder: (context, index) {
+                        final chat = data!['call_list'][index];
+                        return ListTile(
+                          leading: const CircleAvatar(
+                            backgroundColor: Colors.orange,
+                            child: Icon(Icons.call, color: Colors.white),
+                          ),
+                          title: Text(chat['customer_name'] ?? 'Anonymous'),
+                          subtitle: Text(
+                              'Rate: ${chat['rate_per_minutes']}/min\nDuration: ${chat['duration']} mins'),
+                          trailing: Text('\$${chat['amount']}',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold)),
+                        );
+                      },
+                    )
+                  : const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text(
+                          'No call earnings to display.',
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
             ],
           ),
         ),

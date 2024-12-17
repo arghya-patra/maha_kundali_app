@@ -84,34 +84,34 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
           ),
         ),
         actions: [
-          Stack(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.shopping_cart),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ShoppingCartScreen()
-                        // WalletScreen(),
-                        ),
-                  );
-                },
-              ),
-              //if (cart.isNotEmpty)
-              Positioned(
-                right: 4,
-                top: 4,
-                child: CircleAvatar(
-                  radius: 8,
-                  backgroundColor: Colors.white,
-                  child: Text(
-                    cartCount.toString(),
-                    style: const TextStyle(fontSize: 12, color: Colors.black),
-                  ),
-                ),
-              ),
-            ],
-          ),
+          // Stack(
+          //   children: [
+          //     IconButton(
+          //       icon: const Icon(Icons.shopping_cart),
+          //       onPressed: () {
+          //         Navigator.push(
+          //           context,
+          //           MaterialPageRoute(builder: (context) => ShoppingCartScreen()
+          //               // WalletScreen(),
+          //               ),
+          //         );
+          //       },
+          //     ),
+          //     //if (cart.isNotEmpty)
+          //     Positioned(
+          //       right: 4,
+          //       top: 4,
+          //       child: CircleAvatar(
+          //         radius: 8,
+          //         backgroundColor: Colors.white,
+          //         child: Text(
+          //           cartCount.toString(),
+          //           style: const TextStyle(fontSize: 12, color: Colors.black),
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
           // IconButton(
           //   icon: const Icon(Icons.shopping_cart),
           //   onPressed: () {

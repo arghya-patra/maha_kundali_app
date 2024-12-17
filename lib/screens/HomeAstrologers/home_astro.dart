@@ -5,6 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/screens/Authentication/login.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/Followers/astrologer_followers.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/PortFolio/galary_image.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/Review/astrologer_reviews.dart';
 import 'package:maha_kundali_app/screens/HomeAstrologers/productUpload.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:maha_kundali_app/theme/style.dart';
@@ -91,7 +94,7 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
           Stack(
             children: [
               Container(
-                height: 150.0, // Adjust the height as needed
+                height: 150.0,
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Colors.orange, Colors.deepOrange],
@@ -138,18 +141,12 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
                         ],
                       ),
                       const Spacer(),
-                      // IconButton(
-                      //   icon: const Icon(Icons.close, color: Colors.white),
-                      //   onPressed: () {
-                      //     Navigator.of(context).pop();
-                      //   },
-                      // ),
                     ],
                   ),
                 ),
               ),
               const Positioned(
-                bottom: 5, // Position the wallet section at the bottom left
+                bottom: 5,
                 right: 12,
                 child: Row(
                   children: [
@@ -170,7 +167,7 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
                           ),
                         ),
                         Text(
-                          '₹ 0.00', // Replace with the wallet balance variable
+                          '₹ 0.00',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 12,
@@ -188,12 +185,84 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                _buildDrawerItem(
-                  Icons.home,
-                  'Home',
-                ),
+                _buildDrawerItem(Icons.home, 'Home'),
                 _buildDrawerItem(Icons.upload, 'Product Upload',
                     route: ProductUploadScreen()),
+                _buildDrawerItem(Icons.people_alt_outlined, 'My Followers',
+                    route: FollowersScreen()),
+                _buildDrawerItem(Icons.reviews, 'My Reviews',
+                    route: AstrologerReviewsScreen()),
+                _buildDrawerItem(Icons.picture_in_picture, 'Portfolio Picture',
+                    route: AstrologerGalleryScreen()),
+                // ExpansionTile(
+                //   leading: const Icon(Icons.hourglass_empty),
+                //   title: const Text(
+                //     'Waiting List',
+                //     style: TextStyle(fontSize: 16),
+                //   ),
+                //   children: [
+                //     Padding(
+                //       padding: const EdgeInsets.only(left: 12.0),
+                //       child: _buildDrawerItem(Icons.phone, 'Call Waiting',
+                //           route: ProductUploadScreen()),
+                //     ),
+                //     Padding(
+                //       padding: const EdgeInsets.only(left: 12.0),
+                //       child: _buildDrawerItem(Icons.chat, 'Chat Waiting',
+                //           route: ProductUploadScreen()),
+                //     ),
+                //   ],
+                // ),
+                // ExpansionTile(
+                //   leading: const Icon(Icons.hourglass_empty),
+                //   title: const Text(
+                //     'Booking List',
+                //     style: TextStyle(fontSize: 16),
+                //   ),
+                //   children: [
+                //     Padding(
+                //       padding: const EdgeInsets.only(left: 12.0),
+                //       child: _buildDrawerItem(Icons.report, 'Report List',
+                //           route: ProductUploadScreen()),
+                //     ),
+                //     Padding(
+                //       padding: const EdgeInsets.only(left: 12.0),
+                //       child: _buildDrawerItem(Icons.list, 'Puja List',
+                //           route: ProductUploadScreen()),
+                //     ),
+                //     Padding(
+                //       padding: const EdgeInsets.only(left: 12.0),
+                //       child: _buildDrawerItem(
+                //           Icons.production_quantity_limits, 'Product List',
+                //           route: ProductUploadScreen()),
+                //     ),
+                //   ],
+                // ),
+                //  ExpansionTile(
+                //   leading: const Icon(Icons.hourglass_empty),
+                //   title: const Text(
+                //     'My Earning',
+                //     style: TextStyle(fontSize: 16),
+                //   ),
+                //   children: [
+                //     Padding(
+                //       padding: const EdgeInsets.only(left: 12.0),
+                //       child: _buildDrawerItem(Icons.report, 'Report List',
+                //           route: ProductUploadScreen()),
+                //     ),
+                //     Padding(
+                //       padding: const EdgeInsets.only(left: 12.0),
+                //       child: _buildDrawerItem(Icons.list, 'Puja List',
+                //           route: ProductUploadScreen()),
+                //     ),
+                //     Padding(
+                //       padding: const EdgeInsets.only(left: 12.0),
+                //       child: _buildDrawerItem(
+                //           Icons.production_quantity_limits, 'Product List',
+                //           route: ProductUploadScreen()),
+                //     ),
+                //   ],
+                // ),
                 GestureDetector(
                   onTap: () {
                     logoutBuilder(context, onClickYes: () {
@@ -261,7 +330,7 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
       onTap: () {
         if (title == 'Home') {
           Navigator.of(context).pop();
-        } else {
+        } else if (route != null) {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -269,8 +338,6 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
             ),
           );
         }
-
-        // Handle navigation here
       },
     );
   }
@@ -327,7 +394,7 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
             },
             child: const ListTile(
               leading: Icon(Icons.person),
-              title: Text('Product Upload'),
+              title: Text('Products Upload'),
             ),
           ),
           const ListTile(
@@ -400,8 +467,9 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
       for (var item in dashboardData!['astrologer_dashboard_overview']) {
         String title = item.keys.first;
         var data = item[title];
-        cards.add(_buildCard(
-            title, data['total'].toString(), data['icon'], data['url']));
+        cards.add(_buildCard(title, data['total'].toString(), data['icon']
+            //data['url']
+            ));
       }
     }
 
@@ -413,7 +481,7 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
     );
   }
 
-  Widget _buildCard(String title, String count, String iconUrl, String url) {
+  Widget _buildCard(String title, String count, String iconUrl) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(

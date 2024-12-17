@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:maha_kundali_app/screens/Authentication/login.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/Language/astro_language.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/Puja/astro_puja.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/Skills/astrologerSkillsScreen.dart';
 import 'package:maha_kundali_app/screens/profileContent/buyMembershipScreen.dart';
 import 'package:maha_kundali_app/screens/profileContent/callIntakeForm.dart';
 import 'package:maha_kundali_app/screens/profileContent/editProfile.dart';
@@ -24,7 +27,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     // Simulate a loading delay
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 2), () {
       setState(() {
         _isLoading = false;
       });
@@ -59,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
         return Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20.0),
@@ -70,8 +73,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(Icons.camera_alt, color: Colors.orange),
-                title: Text('Camera'),
+                leading: const Icon(Icons.camera_alt, color: Colors.orange),
+                title: const Text('Camera'),
                 onTap: () async {
                   final pickedFile =
                       await _picker.pickImage(source: ImageSource.camera);
@@ -84,8 +87,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.photo_album, color: Colors.orange),
-                title: Text('Gallery'),
+                leading: const Icon(Icons.photo_album, color: Colors.orange),
+                title: const Text('Gallery'),
                 onTap: () async {
                   final pickedFile =
                       await _picker.pickImage(source: ImageSource.gallery);
@@ -108,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return ListTile(
       leading: Icon(icon, color: Colors.orange),
       title: Text(title),
-      trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
+      trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey),
       onTap: onTap,
     );
   }
@@ -117,10 +120,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile'),
+        title: const Text('Profile'),
         centerTitle: true,
         flexibleSpace: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Colors.orange, Colors.deepOrange],
               begin: Alignment.topLeft,
@@ -163,13 +166,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       // ),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Text(ServiceManager.userName,
                       style: Theme.of(context).textTheme.titleLarge),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(ServiceManager.userEmail,
                       style: Theme.of(context).textTheme.titleMedium),
-                  SizedBox(height: 32),
+                  const SizedBox(height: 32),
                   _buildProfileOption('Edit Profile', Icons.edit, () {
                     Navigator.push(
                         context,
@@ -182,6 +185,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         MaterialPageRoute(
                             builder: (context) => SettingsScreen()));
                   }),
+                  ServiceManager.roleAs != 'buyer'
+                      ? _buildProfileOption('Skills', Icons.abc, () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      AstrologerSkillsScreen()));
+                        })
+                      : Container(),
+                  ServiceManager.roleAs != 'buyer'
+                      ? _buildProfileOption('Language', Icons.language, () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      AstrologerLangScreen()));
+                        })
+                      : Container(),
+                  ServiceManager.roleAs != 'buyer'
+                      ? _buildProfileOption('Puja', Icons.handyman, () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SelectPujaScreen()));
+                        })
+                      : Container(),
                   // _buildProfileOption(
                   //     'Buy Membership',
                   //     //Billing Details',
@@ -233,43 +262,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
           radius: 50,
           backgroundColor: Colors.grey[300],
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         Container(
           height: 20,
           width: 150,
           color: Colors.grey[300],
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Container(
           height: 20,
           width: 200,
           color: Colors.grey[300],
         ),
-        SizedBox(height: 32),
+        const SizedBox(height: 32),
         Container(
           height: 20,
           width: double.infinity,
           color: Colors.grey[300],
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         Container(
           height: 20,
           width: double.infinity,
           color: Colors.grey[300],
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         Container(
           height: 20,
           width: double.infinity,
           color: Colors.grey[300],
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         Container(
           height: 20,
           width: double.infinity,
           color: Colors.grey[300],
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         Container(
           height: 20,
           width: double.infinity,
@@ -285,9 +314,9 @@ class UserManagementScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User Management'),
+        title: const Text('User Management'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('User Management Screen'),
       ),
     );

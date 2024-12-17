@@ -239,7 +239,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Sign up'),
+        title: const Text('Register as an User'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
