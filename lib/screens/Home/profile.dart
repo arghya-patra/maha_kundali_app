@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:maha_kundali_app/screens/Authentication/login.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/Availability/availability_astro.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/Bank%20Details/bankDetailsAstro.dart';
 import 'package:maha_kundali_app/screens/HomeAstrologers/Language/astro_language.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/Profile_Edit/contactAstroProfile.dart';
 import 'package:maha_kundali_app/screens/HomeAstrologers/Puja/astro_puja.dart';
 import 'package:maha_kundali_app/screens/HomeAstrologers/Skills/astrologerSkillsScreen.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/Profile_Edit/editAstroProfile.dart';
 import 'package:maha_kundali_app/screens/profileContent/buyMembershipScreen.dart';
 import 'package:maha_kundali_app/screens/profileContent/callIntakeForm.dart';
 import 'package:maha_kundali_app/screens/profileContent/editProfile.dart';
@@ -138,118 +142,160 @@ class _ProfileScreenState extends State<ProfileScreen> {
               highlightColor: Colors.grey[100]!,
               child: _buildShimmerEffect(),
             )
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  Stack(
-                    children: [
-                      CircleAvatar(
-                        radius: 50,
-                        backgroundImage:
-                            NetworkImage(ServiceManager.profileURL),
-                      ),
-                      // Positioned(
-                      //   bottom: 0,
-                      //   right: 0,
-                      //   child: GestureDetector(
-                      //     onTap: _showImageSourceActionSheet,
-                      //     child: Container(
-                      //       decoration: BoxDecoration(
-                      //         shape: BoxShape.circle,
-                      //         color: Colors.orange,
-                      //       ),
-                      //       padding: EdgeInsets.all(8.0),
-                      //       child: Icon(Icons.edit, color: Colors.white),
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(ServiceManager.userName,
-                      style: Theme.of(context).textTheme.titleLarge),
-                  const SizedBox(height: 8),
-                  Text(ServiceManager.userEmail,
-                      style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: 32),
-                  _buildProfileOption('Edit Profile', Icons.edit, () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => EditProfileScreen()));
-                  }),
-                  _buildProfileOption('Settings', Icons.settings, () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SettingsScreen()));
-                  }),
-                  ServiceManager.roleAs != 'buyer'
-                      ? _buildProfileOption('Skills', Icons.abc, () {
-                          Navigator.push(
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundImage:
+                              NetworkImage(ServiceManager.profileURL),
+                        ),
+                        // Positioned(
+                        //   bottom: 0,
+                        //   right: 0,
+                        //   child: GestureDetector(
+                        //     onTap: _showImageSourceActionSheet,
+                        //     child: Container(
+                        //       decoration: BoxDecoration(
+                        //         shape: BoxShape.circle,
+                        //         color: Colors.orange,
+                        //       ),
+                        //       padding: EdgeInsets.all(8.0),
+                        //       child: Icon(Icons.edit, color: Colors.white),
+                        //     ),
+                        //   ),
+                        // ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(ServiceManager.userName,
+                        style: Theme.of(context).textTheme.titleLarge),
+                    const SizedBox(height: 8),
+                    Text(ServiceManager.userEmail,
+                        style: Theme.of(context).textTheme.titleMedium),
+                    const SizedBox(height: 32),
+                    _buildProfileOption('Edit Profile', Icons.edit, () {
+                      ServiceManager.roleAs != 'buyer'
+                          ? Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      AstrologerSkillsScreen()));
-                        })
-                      : Container(),
-                  ServiceManager.roleAs != 'buyer'
-                      ? _buildProfileOption('Language', Icons.language, () {
-                          Navigator.push(
+                                      EditAstroProfileScreen()))
+                          : Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      AstrologerLangScreen()));
-                        })
-                      : Container(),
-                  ServiceManager.roleAs != 'buyer'
-                      ? _buildProfileOption('Puja', Icons.handyman, () {
-                          Navigator.push(
+                                  builder: (context) => EditProfileScreen()));
+                    }),
+
+                    ServiceManager.roleAs != 'buyer'
+                        ? _buildProfileOption('Edit Contact Details', Icons.abc,
+                            () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ContactAstroProfileScreen()));
+                          })
+                        : Container(),
+                    ServiceManager.roleAs != 'buyer'
+                        ? _buildProfileOption('Edit Bank Details', Icons.abc,
+                            () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        EditBankDetailsAstro()));
+                          })
+                        : Container(),
+                    ServiceManager.roleAs != 'buyer'
+                        ? _buildProfileOption(
+                            'Availability', Icons.event_available, () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        AstrologerAvailability()));
+                          })
+                        : Container(),
+
+                    ServiceManager.roleAs != 'buyer'
+                        ? Container()
+                        : _buildProfileOption('Settings', Icons.settings, () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SettingsScreen()));
+                          }),
+                    ServiceManager.roleAs != 'buyer'
+                        ? _buildProfileOption('Skills', Icons.abc, () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        AstrologerSkillsScreen()));
+                          })
+                        : Container(),
+                    ServiceManager.roleAs != 'buyer'
+                        ? _buildProfileOption('Language', Icons.language, () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        AstrologerLangScreen()));
+                          })
+                        : Container(),
+                    ServiceManager.roleAs != 'buyer'
+                        ? _buildProfileOption('Puja', Icons.handyman, () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SelectPujaScreen()));
+                          })
+                        : Container(),
+                    // _buildProfileOption(
+                    //     'Buy Membership',
+                    //     //Billing Details',
+                    //     Icons.credit_card, () {
+                    //   Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //           builder: (context) => BuyMembershipScreen()));
+                    // }),
+                    // _buildProfileOption(
+                    //     'Call Intake Form',
+                    //     //User Management
+                    //     Icons.group, () {
+                    //   Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //           builder: (context) => CallIntakeFormScreen()));
+                    // }),
+                    _buildProfileOption('Logout', Icons.logout, () {
+                      logoutBuilder(context, onClickYes: () {
+                        try {
+                          Navigator.pop(context);
+                          setState(() {
+                            _isLoading = true;
+                          });
+                          ServiceManager().removeAll();
+                          Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => SelectPujaScreen()));
-                        })
-                      : Container(),
-                  // _buildProfileOption(
-                  //     'Buy Membership',
-                  //     //Billing Details',
-                  //     Icons.credit_card, () {
-                  //   Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //           builder: (context) => BuyMembershipScreen()));
-                  // }),
-                  // _buildProfileOption(
-                  //     'Call Intake Form',
-                  //     //User Management
-                  //     Icons.group, () {
-                  //   Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //           builder: (context) => CallIntakeFormScreen()));
-                  // }),
-                  _buildProfileOption('Logout', Icons.logout, () {
-                    logoutBuilder(context, onClickYes: () {
-                      try {
-                        Navigator.pop(context);
-                        setState(() {
-                          _isLoading = true;
-                        });
-                        ServiceManager().removeAll();
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginScreen()),
-                            (route) => false);
-                      } catch (e) {
-                        setState(() {
-                          _isLoading = false;
-                        });
-                      }
-                    });
-                  }),
-                ],
+                                  builder: (context) => LoginScreen()),
+                              (route) => false);
+                        } catch (e) {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                        }
+                      });
+                    }),
+                  ],
+                ),
               ),
             ),
     );

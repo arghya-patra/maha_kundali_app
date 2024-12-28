@@ -25,6 +25,9 @@ class _AstrologerGalleryScreenState extends State<AstrologerGalleryScreen> {
   }
 
   Future<void> fetchGallery() async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       String url = APIData.login;
       var response = await http.post(Uri.parse(url), body: {
@@ -52,6 +55,9 @@ class _AstrologerGalleryScreenState extends State<AstrologerGalleryScreen> {
       });
       debugPrint('Error fetching gallery: $e');
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   Future<void> deleteImage(String id) async {
@@ -78,16 +84,25 @@ class _AstrologerGalleryScreenState extends State<AstrologerGalleryScreen> {
   }
 
   Future<void> uploadImage(File image) async {
+    String url = APIData.login;
+
     try {
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse(
-            'https://example.com/api/upload-image'), // Replace with your upload API endpoint
+        Uri.parse(url), // Replace with your upload API endpoint
       );
+      request.fields['action'] = 'astrologer-media';
+      request.fields['authorizationToken'] = ServiceManager.tokenID;
+      request.fields['media'] = 'picture';
+      request.fields['mode'] = 'add';
       request.files.add(await http.MultipartFile.fromPath('file', image.path));
 
       final response = await request.send();
       if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Image Added'),
+          backgroundColor: Colors.green,
+        ));
         fetchGallery(); // Refresh gallery
       }
     } catch (e) {

@@ -7,8 +7,12 @@ import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/screens/Authentication/login.dart';
 import 'package:maha_kundali_app/screens/HomeAstrologers/Followers/astrologer_followers.dart';
 import 'package:maha_kundali_app/screens/HomeAstrologers/PortFolio/galary_image.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/PortFolio/galary_video.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/Request%20Payout/request_payout.dart';
 import 'package:maha_kundali_app/screens/HomeAstrologers/Review/astrologer_reviews.dart';
-import 'package:maha_kundali_app/screens/HomeAstrologers/productUpload.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/Upload_Product/productList.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/Upload_Product/productUpload.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/Vacation/vacation_astro.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:maha_kundali_app/theme/style.dart';
 
@@ -20,6 +24,7 @@ class HomeAstroScreen extends StatefulWidget {
 class _HomeAstroScreenState extends State<HomeAstroScreen> {
   Map<String, dynamic>? dashboardData;
   bool isLoading = true;
+  String balance = "0.0";
 
   @override
   void initState() {
@@ -35,6 +40,10 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
   }
 
   Future<void> fetchDashboardData() async {
+    setState(() {
+      isLoading = true;
+    });
+
     String url = APIData.login;
     var res = await http.post(Uri.parse(url), body: {
       'action': 'dashboard-overview',
@@ -43,9 +52,11 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
     var data = jsonDecode(res.body);
 
     if (res.statusCode == 200) {
+      print(['____', data]);
       setState(() {
         dashboardData = json.decode(res.body);
         isLoading = false;
+        balance = dashboardData!['userDetails']['balance'].toString();
       });
     } else {
       setState(() {
@@ -145,7 +156,7 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
                   ),
                 ),
               ),
-              const Positioned(
+              Positioned(
                 bottom: 5,
                 right: 12,
                 child: Row(
@@ -167,7 +178,7 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
                           ),
                         ),
                         Text(
-                          '₹ 0.00',
+                          balance,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 12,
@@ -187,13 +198,19 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
               children: [
                 _buildDrawerItem(Icons.home, 'Home'),
                 _buildDrawerItem(Icons.upload, 'Product Upload',
-                    route: ProductUploadScreen()),
+                    route: SupplierProductListScreen()),
+                _buildDrawerItem(Icons.holiday_village_outlined, 'Vacation',
+                    route: VacationListScreen()),
                 _buildDrawerItem(Icons.people_alt_outlined, 'My Followers',
                     route: FollowersScreen()),
                 _buildDrawerItem(Icons.reviews, 'My Reviews',
                     route: AstrologerReviewsScreen()),
                 _buildDrawerItem(Icons.picture_in_picture, 'Portfolio Picture',
                     route: AstrologerGalleryScreen()),
+                _buildDrawerItem(Icons.picture_in_picture, 'Portfolio Videos',
+                    route: AstrologerVideoGalleryScreen()),
+                _buildDrawerItem(Icons.payment, 'Request Payout',
+                    route: AstrologerPayoutScreen()),
                 // ExpansionTile(
                 //   leading: const Icon(Icons.hourglass_empty),
                 //   title: const Text(

@@ -15,16 +15,21 @@ class _BookingListScreenState extends State<BookingListScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _isLoading = true;
-  Map<String, dynamic>? _bookingData;
+  Map<String, dynamic>? _reportBookingData;
+  Map<String, dynamic>? _poojaBookingData;
+  Map<String, dynamic>? _productBookingData;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-    _fetchBookingData();
+
+    _fetchBookingData('product');
+    _fetchBookingData('report');
+    _fetchBookingData('puja');
+    _tabController = TabController(length: 3, vsync: this);
   }
 
-  Future<void> _fetchBookingData() async {
+  Future<void> _fetchBookingData(type) async {
     // Replace with your actual API endpoint
     String url = APIData.login;
 
@@ -32,13 +37,28 @@ class _BookingListScreenState extends State<BookingListScreen>
       var res = await http.post(Uri.parse(url), body: {
         'action': 'astrologer-booking-list',
         'authorizationToken': ServiceManager.tokenID, //8100007581
+        'type': type
       });
       var data = jsonDecode(res.body);
-      print(["******", data]);
 
       if (res.statusCode == 200) {
         setState(() {
-          _bookingData = json.decode(res.body);
+          if (type == "puja") {
+            print("0");
+            print(["******", data['list']]);
+            _poojaBookingData = json.decode(res.body);
+          }
+          if (type == "product") {
+            print("1");
+            print(["******", data['list']]);
+            _productBookingData = json.decode(res.body);
+          }
+          if (type == "report") {
+            print("2");
+            print(["******", data['list']]);
+            _reportBookingData = json.decode(res.body);
+          }
+
           _isLoading = false;
         });
       } else {
@@ -72,12 +92,11 @@ class _BookingListScreenState extends State<BookingListScreen>
   }
 
   Widget _buildPoojaBookingList() {
-    if (_bookingData == null || _bookingData!['pooja_booking_list'] == null) {
+    if (_poojaBookingData == null || _poojaBookingData!['list'] == null) {
       return Center(child: Text('No Pooja Bookings found.'));
     }
 
-    final poojaBookingList =
-        _bookingData!['pooja_booking_list'] as List<dynamic>;
+    final poojaBookingList = _poojaBookingData!['list'] as List<dynamic>;
 
     return ListView.builder(
       itemCount: poojaBookingList.length,
@@ -107,12 +126,11 @@ class _BookingListScreenState extends State<BookingListScreen>
   }
 
   Widget _buildProductBookingList() {
-    if (_bookingData == null || _bookingData!['product_booking_list'] == null) {
+    if (_productBookingData == null || _productBookingData!['list'] == null) {
       return Center(child: Text('No Product Bookings found.'));
     }
 
-    final productBookingList =
-        _bookingData!['product_booking_list'] as List<dynamic>;
+    final productBookingList = _productBookingData!['list'] as List<dynamic>;
 
     return ListView.builder(
       itemCount: productBookingList.length,
@@ -141,6 +159,40 @@ class _BookingListScreenState extends State<BookingListScreen>
     );
   }
 
+  Widget _buildReportBookingList() {
+    if (_reportBookingData == null || _reportBookingData!['list'] == null) {
+      return Center(child: Text('No Report Bookings found.'));
+    }
+
+    final reportBookingList = _reportBookingData!['list'] as List<dynamic>;
+
+    return ListView.builder(
+      itemCount: reportBookingList.length,
+      itemBuilder: (context, index) {
+        final booking = reportBookingList[index];
+        return Card(
+          elevation: 4,
+          margin: EdgeInsets.all(10),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          child: ListTile(
+            leading: Icon(Icons.shopping_bag, color: Colors.deepOrange),
+            title: Text(booking['report_name'],
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Customer: ${booking['customer_name']}'),
+                Text('Order Date: ${booking['order_date']}'),
+                Text('Status: ${booking['status']}'),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -149,8 +201,9 @@ class _BookingListScreenState extends State<BookingListScreen>
         bottom: TabBar(
           controller: _tabController,
           tabs: [
-            Tab(text: 'Pooja Booking'),
-            Tab(text: 'Product Booking'),
+            Tab(text: 'Pooja '),
+            Tab(text: 'Product '),
+            Tab(text: 'Report '),
           ],
         ),
       ),
@@ -161,6 +214,7 @@ class _BookingListScreenState extends State<BookingListScreen>
               children: [
                 _buildPoojaBookingList(),
                 _buildProductBookingList(),
+                _buildReportBookingList(),
               ],
             ),
     );
