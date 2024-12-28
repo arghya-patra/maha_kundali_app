@@ -207,8 +207,8 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
                     route: AstrologerReviewsScreen()),
                 _buildDrawerItem(Icons.picture_in_picture, 'Portfolio Picture',
                     route: AstrologerGalleryScreen()),
-                _buildDrawerItem(Icons.picture_in_picture, 'Portfolio Videos',
-                    route: AstrologerVideoGalleryScreen()),
+                // _buildDrawerItem(Icons.picture_in_picture, 'Portfolio Videos',
+                //     route: AstrologerVideoGalleryScreen()),
                 _buildDrawerItem(Icons.payment, 'Request Payout',
                     route: AstrologerPayoutScreen()),
                 // ExpansionTile(
