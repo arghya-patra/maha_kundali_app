@@ -54,7 +54,7 @@ class BoyGirlDetails {
 }
 
 class Ashtakoot {
-  int score;
+  double score;
   String botResponse;
   Map<String, AshtakootDetails> details;
 
@@ -85,7 +85,7 @@ class Ashtakoot {
 class AshtakootDetails {
   String boyValue;
   String girlValue;
-  int score;
+  String score;
   String description;
   String name;
   int fullScore;
@@ -104,7 +104,10 @@ class AshtakootDetails {
       boyValue: json['boy_tara'] ?? json['boy_gana'] ?? json['boy_yoni'] ?? '',
       girlValue:
           json['girl_tara'] ?? json['girl_gana'] ?? json['girl_yoni'] ?? '',
-      score: json['tara'] ?? json['gana'] ?? json['yoni'] ?? 0,
+      score: json['tara'].toString() ??
+          json['gana'].toString() ??
+          json['yoni'].toString() ??
+          '',
       description: json['description'],
       name: json['name'],
       fullScore: json['full_score'],

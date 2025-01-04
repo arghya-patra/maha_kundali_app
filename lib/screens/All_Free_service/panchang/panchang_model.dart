@@ -98,7 +98,7 @@ class Nakshatra {
       end: json['end'],
       meaning: json['meaning'],
       special: json['special'],
-      summary: json['summary'],
+      summary: json['summary'] ?? '',
     );
   }
 }

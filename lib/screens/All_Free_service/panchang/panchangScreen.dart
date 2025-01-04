@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:maha_kundali_app/screens/panchang/panchang_model.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/panchang/panchang_model.dart';
 
 class PanchangScreen extends StatefulWidget {
   final Panchang panchang;
@@ -32,7 +32,8 @@ class _PanchangScreenState extends State<PanchangScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildTitleSection('Day: ${widget.panchang.dayName}', Icons.calendar_today),
+            _buildTitleSection(
+                'Day: ${widget.panchang.dayName}', Icons.calendar_today),
             _buildCardSection('Tithi', [
               _buildDetailItem('Name', widget.panchang.tithi.name),
               _buildDetailItem('Start', widget.panchang.tithi.start),
@@ -69,10 +70,14 @@ class _PanchangScreenState extends State<PanchangScreen> {
             ]),
             SizedBox(height: 20),
             _buildCardSection('Advanced Details', [
-              _buildDetailItem('Sunrise', widget.panchang.advancedDetails.sunRise),
-              _buildDetailItem('Sunset', widget.panchang.advancedDetails.sunSet),
-              _buildDetailItem('Moonrise', widget.panchang.advancedDetails.moonRise),
-              _buildDetailItem('Moonset', widget.panchang.advancedDetails.moonSet),
+              _buildDetailItem(
+                  'Sunrise', widget.panchang.advancedDetails.sunRise),
+              _buildDetailItem(
+                  'Sunset', widget.panchang.advancedDetails.sunSet),
+              _buildDetailItem(
+                  'Moonrise', widget.panchang.advancedDetails.moonRise),
+              _buildDetailItem(
+                  'Moonset', widget.panchang.advancedDetails.moonSet),
             ]),
           ],
         ),

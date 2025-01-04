@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:maha_kundali_app/screens/Numerology/num_detail.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Numerology/num_detail.dart';
 
 class NumerologyScreen extends StatefulWidget {
   @override

@@ -35,6 +35,7 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
   String? _selectedLat;
   String? _selectedLon;
   bool _isLoading = false;
+  String? subTitle;
   @override
   void initState() {
     super.initState();
@@ -194,6 +195,7 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
       final Map<String, dynamic> data = jsonDecode(response.body);
       setState(() {
         svgData = data['content'];
+        subTitle = data['sub_title'];
         _isLoading2 = false;
       });
 
@@ -202,7 +204,7 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
         MaterialPageRoute(
             builder: (context) => BirthChartScreen(
                   svgData: svgData,
-                  subTitle: '',
+                  subTitle: subTitle,
                 )),
       );
     } else {

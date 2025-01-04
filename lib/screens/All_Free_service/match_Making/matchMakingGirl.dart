@@ -2,23 +2,35 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
-import 'package:maha_kundali_app/screens/Birth%20Chart/birthChartDetails.dart';
-import 'package:maha_kundali_app/screens/Dosha/doshaDetails.dart';
-import 'package:maha_kundali_app/screens/Kundli/kundliDetails.dart';
-import 'package:maha_kundali_app/screens/Kundli/kundliModel.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Dosha/doshaDetails.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/match_Making/matchMakingModel.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/match_Making/matchReport.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:http/http.dart' as http;
 
-class DoshaFormScreen extends StatefulWidget {
+class MatchmakingGirl extends StatefulWidget {
+  String? boyName;
+  String? boyDob;
+  String? boyTob;
+  String? boyPob;
+  String? boyLat;
+  String? boyLon;
+  MatchmakingGirl({
+    required this.boyName,
+    required this.boyDob,
+    required this.boyTob,
+    required this.boyPob,
+    required this.boyLat,
+    required this.boyLon,
+  });
   @override
-  _DoshaFormScreenState createState() => _DoshaFormScreenState();
+  _MatchmakingGirlState createState() => _MatchmakingGirlState();
 }
 
-class _DoshaFormScreenState extends State<DoshaFormScreen>
+class _MatchmakingGirlState extends State<MatchmakingGirl>
     with SingleTickerProviderStateMixin {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _placeController = TextEditingController();
@@ -27,7 +39,6 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
 
   bool _isLoading2 = true;
   late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
   String? svgData;
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
@@ -36,7 +47,6 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
   String? _selectedLat;
   String? _selectedLon;
   bool _isLoading = false;
-  String selectedLanguage = "English";
   @override
   void initState() {
     super.initState();
@@ -44,9 +54,6 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
 
     _animationController =
         AnimationController(vsync: this, duration: const Duration(seconds: 2));
-
-    _fadeAnimation =
-        Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
 
     // Simulating loading time
     Future.delayed(const Duration(seconds: 2), () {
@@ -131,6 +138,42 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
     }
   }
 
+  submitData() async {
+    setState(() {
+      _isLoading2 = true;
+    });
+    String url = APIData.login;
+    print(url.toString());
+    final response = await http.post(Uri.parse(url), body: {
+      'action': 'free-service-type',
+      'authorizationToken': ServiceManager.tokenID,
+      'type': 'matchmaking',
+      'boy_name': widget.boyName,
+      'boy_dob': widget.boyDob,
+      'boy_tob': widget.boyTob,
+      'boy_pob': widget.boyPob,
+      'girl_name': _nameController.text,
+      'girl_dob': _dateController.text,
+      'girl_tob': _timeController.text,
+      'girl_pob': _selectedCity,
+      'lang': 'en',
+      'boy_lat': widget.boyLat,
+      'boy_lon': widget.boyLon,
+      'girl_lat': _selectedLat,
+      'girl_lon': _selectedLon
+    });
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      setState(() {
+        _isLoading2 = false;
+      });
+      return Matchmaking.fromJson(jsonDecode(response.body)['matchmaking']);
+    } else {
+      throw Exception('Failed to load horoscope details');
+    }
+  }
+
   @override
   void dispose() {
     _animationController.dispose();
@@ -170,44 +213,11 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
     }
   }
 
-  // submitData() async {
-  //   setState(() {
-  //     _isLoading2 = true;
-  //   });
-  //   String url = APIData.login;
-
-  //   print(url.toString());
-  //   final response = await http.post(Uri.parse(url), body: {
-  //     'action': 'free-service-type',
-  //     'authorizationToken': ServiceManager.tokenID,
-  //     'type': 'dosha',
-  //     'name': _nameController.text,
-  //     'dob': _dateController.text,
-  //     'tob': _timeController.text,
-  //     'pob': _selectedCity,
-  //     'lang': 'en',
-  //     //'city': _selectedCity,
-  //     'lat': _selectedLat,
-  //     'lon': _selectedLon
-  //   });
-  //   print(response.body);
-
-  //   if (response.statusCode == 200) {
-  //     final Map<String, dynamic> data = jsonDecode(response.body);
-  //     setState(() {
-  //       svgData = data['content'];
-  //       _isLoading2 = false;
-  //     });
-  //   } else {
-  //     throw Exception('Failed to load horoscope details');
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Know your Dosha'),
+        title: const Text('Enter data of Female'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -243,7 +253,7 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 10),
                     TextField(
                       controller: _nameController,
                       decoration: const InputDecoration(
@@ -314,29 +324,6 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
                           },
                         ),
                       ),
-
-                    // Display selected city's details
-                    // if (_selectedCity != null)
-                    //   Padding(
-                    //     padding: const EdgeInsets.all(3.0),
-                    //     child: Column(
-                    //       crossAxisAlignment: CrossAxisAlignment.start,
-                    //       children: [
-                    //         Text('Selected City: $_selectedCity'),
-                    //         Text('Latitude: $_selectedLat'),
-                    //         Text('Longitude: $_selectedLon'),
-                    //       ],
-                    //     ),
-                    //   ),
-
-                    //----------------------------------------------------------------------------
-                    // TextField(
-                    //   controller: _placeController,
-                    //   decoration: const InputDecoration(
-                    //     labelText: 'Place of Birth',
-                    //     border: OutlineInputBorder(),
-                    //   ),
-                    // ),
                     const SizedBox(height: 20),
                     TextField(
                       controller: _dateController,
@@ -363,30 +350,12 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
                       ),
                       onTap: () => _selectTime(context),
                     ),
-                    const SizedBox(height: 20),
-                    _buildFieldContainer(
-                      child: DropdownButton<String>(
-                        isExpanded: true,
-                        value: selectedLanguage,
-                        underline: const SizedBox(),
-                        items: ["English", "Hindi"].map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedLanguage = value!;
-                          });
-                        },
-                      ),
-                    ),
+
                     const SizedBox(height: 30),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           // Validate input fields
                           if (_nameController.text.isEmpty) {
                             _showError("Please enter your name.");
@@ -406,26 +375,19 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
                             return;
                           }
 
-                          // If all validations pass, proceed with submission
-                          // submitData();
+                          Matchmaking match = await submitData();
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => DoshaDetailsScreen(
-                                    name: _nameController.text,
-                                    dob: _dateController.text,
-                                    tob: _timeController.text,
-                                    pob: _selectedCity,
-                                    lat: _selectedLat,
-                                    lon: _selectedLon)),
+                              builder: (context) => MatchmakingResultScreen(
+                                matchmaking: match,
+                              ),
+                            ),
                           );
                           //submitData();
                           // Submit action and navigate to another screen
                         },
-                        child: const Text(
-                          'Submit',
-                          style: TextStyle(fontSize: 18, color: Colors.white),
-                        ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.orange,
                           padding: const EdgeInsets.symmetric(vertical: 15),
@@ -434,24 +396,16 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
                           ),
                           elevation: 5,
                         ),
+                        child: const Text(
+                          'Submit',
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-    );
-  }
-
-  Widget _buildFieldContainer({required Widget child}) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: child,
     );
   }
 

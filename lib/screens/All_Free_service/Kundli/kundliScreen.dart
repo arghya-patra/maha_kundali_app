@@ -6,9 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
-import 'package:maha_kundali_app/screens/Dosha/doshaDetails.dart';
-import 'package:maha_kundali_app/screens/Kundli/kundliDetails.dart';
-import 'package:maha_kundali_app/screens/Kundli/kundliModel.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Dosha/doshaDetails.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Kundli/kundliDetails.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Kundli/kundliModel.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:http/http.dart' as http;
@@ -448,7 +448,9 @@ class _KundliScreenState extends State<KundliScreen>
                                     tob: _timeController.text,
                                     pob: _selectedCity,
                                     lat: _selectedLat,
-                                    lon: _selectedLon)),
+                                    lon: _selectedLon,
+                                    language: selectedLanguage,
+                                    screen: 'kun')),
                           );
                         },
                         child: const Text(

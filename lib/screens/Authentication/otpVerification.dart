@@ -32,6 +32,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
   @override
   void initState() {
     super.initState();
+    //print(otpText!);
+    print(widget.otp);
     otpText = widget.otp;
     _controller = AnimationController(
       vsync: this,
@@ -83,7 +85,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
           children: [
             Text(
               textAlign: TextAlign.center,
-              'Enter the code we have sent to ${widget.mobile}\n otp: ${otpText}',
+              'Enter the code we have sent to ${widget.mobile}',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 32),

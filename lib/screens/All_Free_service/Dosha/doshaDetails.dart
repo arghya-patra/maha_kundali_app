@@ -13,13 +13,17 @@ class DoshaDetailsScreen extends StatefulWidget {
   String? pob;
   String? lat;
   String? lon;
+  String? language;
+  String? screen;
   DoshaDetailsScreen(
       {required this.name,
       required this.dob,
       required this.tob,
       required this.pob,
       required this.lat,
-      required this.lon});
+      required this.lon,
+      required this.language,
+      required this.screen});
 
   @override
   _DoshaDetailsScreenState createState() => _DoshaDetailsScreenState();
@@ -37,6 +41,7 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
   @override
   void initState() {
     super.initState();
+
     _tabController = TabController(length: 4, vsync: this);
     _fetchHoroscopeData("horoscope"); // Fetch data for the first tab
     _fetchHoroscopeData("dosha");
@@ -62,7 +67,7 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
         'dob': widget.dob,
         'tob': widget.tob,
         'pob': widget.pob,
-        'lang': 'en',
+        'lang': widget.language == "English" ? 'en' : 'hi',
         //'city': _selectedCity,
         'lat': widget.lat,
         'lon': widget.lon,
@@ -194,18 +199,21 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
         dashaData!['maha_dasha']['response']['mahadasha_order'] as List;
 
     return SingleChildScrollView(
-      child: DataTable(
-        columns: const [
-          DataColumn(label: Text('Maha Dasha')),
-          DataColumn(label: Text('Start Date')),
-        ],
-        rows: List<DataRow>.generate(
-          mahaDasha.length,
-          (index) => DataRow(
-            cells: [
-              DataCell(Text(mahaDasha[index])),
-              DataCell(Text(mahaDashaOrder[index])),
-            ],
+      child: Container(
+        color: Color.fromARGB(255, 255, 239, 191),
+        child: DataTable(
+          columns: const [
+            DataColumn(label: Text('Maha Dasha')),
+            DataColumn(label: Text('Start Date')),
+          ],
+          rows: List<DataRow>.generate(
+            mahaDasha.length,
+            (index) => DataRow(
+              cells: [
+                DataCell(Text(mahaDasha[index])),
+                DataCell(Text(mahaDashaOrder[index])),
+              ],
+            ),
           ),
         ),
       ),
@@ -234,16 +242,22 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 10),
-          Table(
-            border: TableBorder.all(color: Colors.grey),
-            columnWidths: const {0: FlexColumnWidth(1), 1: FlexColumnWidth(2)},
-            children: [
-              _buildTableRow("Name", basicDetails['name']),
-              _buildTableRow("Date of Birth", basicDetails['dob']),
-              _buildTableRow("Time", basicDetails['time']),
-              _buildTableRow("Latitude", basicDetails['lat']),
-              _buildTableRow("Longitude", basicDetails['lon']),
-            ],
+          Container(
+            color: Color.fromARGB(255, 255, 239, 191),
+            child: Table(
+              border: TableBorder.all(color: Colors.grey),
+              columnWidths: const {
+                0: FlexColumnWidth(1),
+                1: FlexColumnWidth(2)
+              },
+              children: [
+                _buildTableRow("Name", basicDetails['name']),
+                _buildTableRow("Date of Birth", basicDetails['dob']),
+                _buildTableRow("Time", basicDetails['time']),
+                _buildTableRow("Latitude", basicDetails['lat']),
+                _buildTableRow("Longitude", basicDetails['lon']),
+              ],
+            ),
           ),
           SizedBox(height: 20),
           Text(
@@ -251,22 +265,31 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 10),
-          Table(
-            border: TableBorder.all(color: Colors.grey),
-            columnWidths: const {0: FlexColumnWidth(1), 1: FlexColumnWidth(2)},
-            children: [
-              _buildTableRow("Ascendant", ascendantReport['ascendant']),
-              _buildTableRow("Lord", ascendantReport['ascendant_lord']),
-              _buildTableRow(
-                  "Lord Location", ascendantReport['ascendant_lord_location']),
-              _buildTableRow("House Location",
-                  ascendantReport['ascendant_lord_house_location'].toString()),
-              _buildTableRow("Symbol", ascendantReport['symbol']),
-              _buildTableRow("Lucky Gem", ascendantReport['lucky_gem']),
-              _buildTableRow(
-                  "Good Qualities", ascendantReport['good_qualities']),
-              _buildTableRow("Bad Qualities", ascendantReport['bad_qualities']),
-            ],
+          Container(
+            color: Color.fromARGB(255, 255, 239, 191),
+            child: Table(
+              border: TableBorder.all(color: Colors.grey),
+              columnWidths: const {
+                0: FlexColumnWidth(1),
+                1: FlexColumnWidth(2)
+              },
+              children: [
+                _buildTableRow("Ascendant", ascendantReport['ascendant']),
+                _buildTableRow("Lord", ascendantReport['ascendant_lord']),
+                _buildTableRow("Lord Location",
+                    ascendantReport['ascendant_lord_location']),
+                _buildTableRow(
+                    "House Location",
+                    ascendantReport['ascendant_lord_house_location']
+                        .toString()),
+                _buildTableRow("Symbol", ascendantReport['symbol']),
+                _buildTableRow("Lucky Gem", ascendantReport['lucky_gem']),
+                _buildTableRow(
+                    "Good Qualities", ascendantReport['good_qualities']),
+                _buildTableRow(
+                    "Bad Qualities", ascendantReport['bad_qualities']),
+              ],
+            ),
           ),
         ],
       ),
@@ -334,27 +357,30 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 8),
-        Table(
-          border: TableBorder.all(color: Colors.grey, width: 0.5),
-          columnWidths: {
-            0: FlexColumnWidth(1),
-            1: FlexColumnWidth(2),
-          },
-          children: data.entries.map((entry) {
-            return TableRow(children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  entry.key,
-                  style: TextStyle(fontWeight: FontWeight.bold),
+        Container(
+          color: Color.fromARGB(255, 255, 239, 191),
+          child: Table(
+            border: TableBorder.all(color: Colors.grey, width: 0.5),
+            columnWidths: {
+              0: FlexColumnWidth(1),
+              1: FlexColumnWidth(2),
+            },
+            children: data.entries.map((entry) {
+              return TableRow(children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    entry.key,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(entry.value),
-              ),
-            ]);
-          }).toList(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(entry.value),
+                ),
+              ]);
+            }).toList(),
+          ),
         ),
       ],
     );
@@ -382,7 +408,8 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Horoscope Details"),
+        title:
+            Text(widget.screen == 'dos' ? "Dosha Details" : "Kundali Details"),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(

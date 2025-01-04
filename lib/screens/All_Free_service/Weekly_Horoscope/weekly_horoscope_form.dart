@@ -3,24 +3,25 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
-import 'package:maha_kundali_app/screens/Numerology/num_model.dart';
-import 'package:maha_kundali_app/screens/Numerology/numerology_details.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Numerology/num_model.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Numerology/numerology_details.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Weekly_Horoscope/weeklyDetails.dart';
 import 'package:maha_kundali_app/screens/Personal%20Horoscope/personal_hor_details.dart';
 import 'package:maha_kundali_app/screens/Personal%20Horoscope/personal_horoscope_model.dart';
-import 'package:maha_kundali_app/screens/panchang/panchangScreen.dart';
-import 'package:maha_kundali_app/screens/panchang/panchang_model.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/panchang/panchangScreen.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/panchang/panchang_model.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:http/http.dart' as http;
 import 'package:shimmer/shimmer.dart';
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
 // import 'package:place_picker/place_picker.dart';
 
-class NumerologyFormScreen extends StatefulWidget {
+class WeeklyHorosFormScreen extends StatefulWidget {
   @override
-  _NumerologyFormScreenState createState() => _NumerologyFormScreenState();
+  _WeeklyHorosFormScreenState createState() => _WeeklyHorosFormScreenState();
 }
 
-class _NumerologyFormScreenState extends State<NumerologyFormScreen> {
+class _WeeklyHorosFormScreenState extends State<WeeklyHorosFormScreen> {
   DateTime selectedDate = DateTime.now();
   String selectedHour = "1";
   String selectedMinute = "1";
@@ -33,7 +34,7 @@ class _NumerologyFormScreenState extends State<NumerologyFormScreen> {
 
   final TextEditingController _phoneController = TextEditingController();
   HoroscopeResponse? horoscopeResponse;
-  late Future<NumerologyResponse> futureNumerology;
+  late var futureWeeklyHoroscope;
   bool isLoading = true;
   String formattedDate = "";
 
@@ -47,7 +48,7 @@ class _NumerologyFormScreenState extends State<NumerologyFormScreen> {
     });
   }
 
-  Future<NumerologyResponse> submitData() async {
+  submitData() async {
     setState(() {
       isLoading = true;
     });
@@ -56,10 +57,10 @@ class _NumerologyFormScreenState extends State<NumerologyFormScreen> {
     final response = await http.post(Uri.parse(url), body: {
       'action': 'free-service-type',
       'authorizationToken': ServiceManager.tokenID,
-      'type': 'numerology',
+      'type': 'weekly-horoscope',
       'name': _nameController.text,
       'dob': formattedDate,
-      'lang': 'en'
+      'lang': selectedLanguage == "English" ? 'en' : 'hi'
     });
     print(response.body);
 
@@ -86,7 +87,7 @@ class _NumerologyFormScreenState extends State<NumerologyFormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Know Your Numerology"),
+        title: const Text("Know Your Weekly Horoscope"),
         backgroundColor: Colors.orange,
       ),
       body: isLoading
@@ -176,17 +177,19 @@ class _NumerologyFormScreenState extends State<NumerologyFormScreen> {
                             _showError("Please select your date of birth.");
                             return;
                           }
-                          setState(() {
-                            futureNumerology = submitData();
-                          });
+                          // setState(() {
+                          //   futureWeeklyHoroscope = submitData();
+                          // });
                           //submitData();
                           // NumerologyResponse numRes = await submitData();
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => NumerologyDetailsScreen(
-                                    name: _nameController.text,
-                                    futureNumerology: futureNumerology)),
+                                builder: (context) => WeeklyHoroscopeScreen(
+                                      name: _nameController.text,
+                                      dob: formattedDate,
+                                      language: selectedLanguage,
+                                    )),
                           );
                           // Handle form submission
                         },

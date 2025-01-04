@@ -10,7 +10,7 @@ class HoroscopeDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Horoscope Details'),
+        title: const Text('Horoscope Details'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -18,25 +18,25 @@ class HoroscopeDetailScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Horoscope Overview',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               _buildOverviewTable(),
-              SizedBox(height: 20),
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 'Planetary Details',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               _buildPlanetaryDetailsTable(),
-              SizedBox(height: 20),
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 'Dasha Details',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               _buildDashaDetailsTable(),
             ],
           ),
@@ -126,7 +126,8 @@ class HoroscopeDetailScreen extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+          child:
+              Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),

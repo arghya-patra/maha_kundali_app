@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maha_kundali_app/screens/AstrologerProfile/astrologerList.dart';
-import 'package:maha_kundali_app/screens/Numerology/num_model.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Numerology/num_model.dart';
 import 'package:shimmer/shimmer.dart';
 
 class NumerologyDetailsScreen extends StatefulWidget {

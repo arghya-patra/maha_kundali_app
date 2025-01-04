@@ -2,22 +2,19 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
-import 'package:maha_kundali_app/screens/All_Free_service/Birth%20Chart/birthChartDetails.dart';
-import 'package:maha_kundali_app/screens/All_Free_service/Kundli/kundliDetails.dart';
-import 'package:maha_kundali_app/screens/All_Free_service/Kundli/kundliModel.dart';
-import 'package:maha_kundali_app/service/serviceManager.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Dosha/doshaDetails.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/match_Making/matchMakingGirl.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:http/http.dart' as http;
 
-class BirthChartFormScreen extends StatefulWidget {
+class MatchmakingBoy extends StatefulWidget {
   @override
-  _BirthChartFormScreenState createState() => _BirthChartFormScreenState();
+  _MatchmakingBoyState createState() => _MatchmakingBoyState();
 }
 
-class _BirthChartFormScreenState extends State<BirthChartFormScreen>
+class _MatchmakingBoyState extends State<MatchmakingBoy>
     with SingleTickerProviderStateMixin {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _placeController = TextEditingController();
@@ -26,7 +23,6 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
 
   bool _isLoading2 = true;
   late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
   String? svgData;
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
@@ -42,9 +38,6 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
 
     _animationController =
         AnimationController(vsync: this, duration: const Duration(seconds: 2));
-
-    _fadeAnimation =
-        Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
 
     // Simulating loading time
     Future.delayed(const Duration(seconds: 2), () {
@@ -168,53 +161,11 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
     }
   }
 
-  submitData() async {
-    setState(() {
-      _isLoading2 = true;
-    });
-    String url = APIData.login;
-
-    print(url.toString());
-    final response = await http.post(Uri.parse(url), body: {
-      'action': 'free-service-type',
-      'authorizationToken': ServiceManager.tokenID,
-      'type': 'birthchart',
-      'name': _nameController.text,
-      'dob': _dateController.text,
-      'tob': _timeController.text,
-      'pob': _selectedCity,
-      'lang': 'en',
-      'city': _selectedCity,
-      'lat': _selectedLat,
-      'lon': _selectedLon
-    });
-    print(response.body);
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = jsonDecode(response.body);
-      setState(() {
-        svgData = data['content'];
-        _isLoading2 = false;
-      });
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => BirthChartScreen(
-                  svgData: svgData,
-                  subTitle: '',
-                )),
-      );
-    } else {
-      throw Exception('Failed to load horoscope details');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Know your Birth Chart'),
+        title: const Text('Enter data of Male'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -250,14 +201,7 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Get Your Chart?",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 10),
                     TextField(
                       controller: _nameController,
                       decoration: const InputDecoration(
@@ -328,29 +272,6 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                           },
                         ),
                       ),
-
-                    // Display selected city's details
-                    // if (_selectedCity != null)
-                    //   Padding(
-                    //     padding: const EdgeInsets.all(3.0),
-                    //     child: Column(
-                    //       crossAxisAlignment: CrossAxisAlignment.start,
-                    //       children: [
-                    //         Text('Selected City: $_selectedCity'),
-                    //         Text('Latitude: $_selectedLat'),
-                    //         Text('Longitude: $_selectedLon'),
-                    //       ],
-                    //     ),
-                    //   ),
-
-                    //----------------------------------------------------------------------------
-                    // TextField(
-                    //   controller: _placeController,
-                    //   decoration: const InputDecoration(
-                    //     labelText: 'Place of Birth',
-                    //     border: OutlineInputBorder(),
-                    //   ),
-                    // ),
                     const SizedBox(height: 20),
                     TextField(
                       controller: _dateController,
@@ -377,6 +298,7 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                       ),
                       onTap: () => _selectTime(context),
                     ),
+
                     const SizedBox(height: 30),
                     SizedBox(
                       width: double.infinity,
@@ -402,14 +324,22 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                           }
 
                           // If all validations pass, proceed with submission
-                          submitData();
+                          // submitData();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MatchmakingGirl(
+                                      boyName: _nameController.text,
+                                      boyDob: _dateController.text,
+                                      boyTob: _timeController.text,
+                                      boyPob: _selectedCity,
+                                      boyLat: _selectedLat,
+                                      boyLon: _selectedLon,
+                                    )),
+                          );
                           //submitData();
                           // Submit action and navigate to another screen
                         },
-                        child: const Text(
-                          'Submit',
-                          style: TextStyle(fontSize: 18, color: Colors.white),
-                        ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.orange,
                           padding: const EdgeInsets.symmetric(vertical: 15),
@@ -417,6 +347,10 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                             borderRadius: BorderRadius.circular(5),
                           ),
                           elevation: 5,
+                        ),
+                        child: const Text(
+                          'Submit',
+                          style: TextStyle(fontSize: 18, color: Colors.white),
                         ),
                       ),
                     ),

@@ -27,7 +27,7 @@ class _UserDashboardScreenState extends State<UserDashboardScreen>
   void initState() {
     super.initState();
     ServiceManager().getUserData();
-    getDashboardData(context);
+    // getDashboardData(context);
     _tabController = TabController(length: 5, vsync: this);
   }
 

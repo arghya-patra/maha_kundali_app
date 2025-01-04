@@ -11,23 +11,23 @@ import 'package:maha_kundali_app/screens/Astro_Ecom/my_order.dart';
 import 'package:maha_kundali_app/screens/Astro_Ecom/productListScreen.dart';
 import 'package:maha_kundali_app/screens/AstrologerProfile/astrologerList.dart';
 import 'package:maha_kundali_app/screens/AstrologerProfile/astrologerProfileDetail.dart';
-import 'package:maha_kundali_app/screens/Birth%20Chart/birthChartForm.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Birth%20Chart/birthChartForm.dart';
 import 'package:maha_kundali_app/screens/Book%20Puja/all_puja.dart';
 import 'package:maha_kundali_app/screens/Favourite_Astrolgers/favAstro.dart';
 import 'package:maha_kundali_app/screens/Home/walletScreen.dart';
 import 'package:maha_kundali_app/screens/Horoscope/horoscopeDetails.dart';
 import 'package:maha_kundali_app/screens/Horoscope/horoscopeScreen.dart';
 import 'package:maha_kundali_app/screens/LiveAstrologers/liveastrologerScreen.dart';
-import 'package:maha_kundali_app/screens/Numerology/numerology_form.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Numerology/numerology_form.dart';
 import 'package:maha_kundali_app/screens/Personal%20Horoscope/personal_horoscope_form.dart';
 import 'package:maha_kundali_app/screens/Service-Report/all_service_report.dart';
 import 'package:maha_kundali_app/screens/chats/callHistory.dart';
 import 'package:maha_kundali_app/screens/chats/chatListScreen.dart';
 import 'package:maha_kundali_app/screens/chats/chatMessageScreen.dart';
 import 'package:maha_kundali_app/screens/chats/customerSupportChat.dart';
-import 'package:maha_kundali_app/screens/match_Making/kundliMatching.dart';
-import 'package:maha_kundali_app/screens/Kundli/kundliScreen.dart';
-import 'package:maha_kundali_app/screens/panchang/panchangForm.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/match_Making/kundliMatching.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Kundli/kundliScreen.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/panchang/panchangForm.dart';
 import 'package:maha_kundali_app/screens/profileContent/buyMembershipScreen.dart';
 import 'package:maha_kundali_app/screens/profileContent/settingsScreen.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
@@ -385,7 +385,7 @@ class _HomeScreenState extends State<HomeScreen> {
       {
         'title': 'Kundali \nMatching',
         'image': 'images/love_compatibility.png',
-        'route': KundliMatchingScreen()
+        // 'route': KundliMatchingScreen()
       },
       {
         'title': 'Personal\nHoroscope',

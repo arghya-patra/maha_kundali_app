@@ -3,6 +3,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:maha_kundali_app/screens/All_Free_service/Weekly_Horoscope/weekly_horoscope_form.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/match_Making/matchMakingBoy.dart';
 import 'package:maha_kundali_app/screens/Astro_remedies/astroRemediesList.dart';
 import 'package:maha_kundali_app/screens/Astro_remedies/remidies_details.dart';
 import 'package:maha_kundali_app/screens/Blog/blog_screen.dart';
@@ -12,28 +14,23 @@ import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/screens/Astro_Ecom/my_order.dart';
 import 'package:maha_kundali_app/screens/Astro_Ecom/productListScreen.dart';
 import 'package:maha_kundali_app/screens/AstrologerProfile/astrologerProfileDetail.dart';
-import 'package:maha_kundali_app/screens/Birth%20Chart/birthChartForm.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Birth%20Chart/birthChartForm.dart';
 import 'package:maha_kundali_app/screens/Book%20Puja/all_puja.dart';
-import 'package:maha_kundali_app/screens/Dosha/dosha_from.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Dosha/dosha_from.dart';
 import 'package:maha_kundali_app/screens/Favourite_Astrolgers/favAstro.dart';
 import 'package:maha_kundali_app/screens/Home/test_purpose/vdo_pl.dart';
 import 'package:maha_kundali_app/screens/Home/walletScreen.dart';
 import 'package:maha_kundali_app/screens/Horoscope/horoscopeScreen.dart';
-import 'package:maha_kundali_app/screens/Kundli/kundliScreen.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Kundli/kundliScreen.dart';
 import 'package:maha_kundali_app/screens/LiveAstrologers/liveastrologerScreen.dart';
-import 'package:maha_kundali_app/screens/Numerology/numerology_form.dart';
-import 'package:maha_kundali_app/screens/Payment/phnpe.dart';
-import 'package:maha_kundali_app/screens/Payment/phnpegetWay.dart';
-import 'package:maha_kundali_app/screens/Personal%20Horoscope/personal_horoscope_form.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Numerology/numerology_form.dart';
 import 'package:maha_kundali_app/screens/Service-Report/all_service_report.dart';
 import 'package:maha_kundali_app/screens/chats/callHistory.dart';
-import 'package:maha_kundali_app/screens/match_Making/kundliMatching.dart';
-import 'package:maha_kundali_app/screens/panchang/panchangForm.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/panchang/panchangForm.dart';
 import 'package:maha_kundali_app/screens/profileContent/settingsScreen.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:video_player/video_player.dart';
 // import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class UserDashboard extends StatefulWidget {
   @override
@@ -48,39 +45,54 @@ class _UserDashboardState extends State<UserDashboard> {
   bool _showAllStories = false;
   bool _showAllBlogs = false;
   bool _showAllRemidies = false;
+  bool isLoading = false;
+  String? balance = '';
 
   @override
   void initState() {
-    // _banners = [
-    //   'images/banner1.png',
-    //   'images/banner2.jpg',
-    //   'images/banner3.jpeg',
-    // ];
     super.initState();
+
     fetchData();
   }
 
   Future<void> fetchData() async {
+    print(["response 111111wdd1"]);
+    setState(() {
+      isLoading = true;
+    });
     String url = APIData.login;
     print(url.toString());
     final response = await http.post(Uri.parse(url), body: {
       'action': 'user-dashboard',
       'authorizationToken': ServiceManager.tokenID
     });
+    print(["response 1111111", response.body]);
     if (response.statusCode == 200) {
+      await Future.delayed(const Duration(seconds: 1));
       setState(() {
         apiData = json.decode(response.body);
+        balance = apiData['userDetails']['balance'].toString();
       });
-      print(["*********", apiData['userDetails']['balance']]);
+      print(["&&&&&&&&&", apiData['userDetails']]);
+      // print(["*********", apiData['userDetails']['balance']]);
       _banners = apiData['home_sliders']
           .map<String>((slider) => slider['background'].toString())
           .toList();
 
       print(_banners);
+      setState(() {
+        isLoading = false;
+      });
       print("&&&&&&&&&&&&&&&&");
     } else {
       throw Exception('Failed to load data');
+      setState(() {
+        isLoading = false;
+      });
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   Widget _buildDrawer() {
@@ -147,40 +159,40 @@ class _UserDashboardState extends State<UserDashboard> {
                   ),
                 ),
               ),
-              // const Positioned(
-              //   bottom: 5, // Position the wallet section at the bottom left
-              //   right: 12,
-              //   child: Row(
-              //     children: [
-              //       Icon(
-              //         Icons.account_balance_wallet_outlined,
-              //         color: Colors.white,
-              //         size: 29,
-              //       ),
-              //       SizedBox(width: 8),
-              //       Column(
-              //         children: [
-              //           Text(
-              //             "Balance",
-              //             style: TextStyle(
-              //               color: Colors.white,
-              //               fontSize: 12,
-              //               fontWeight: FontWeight.w500,
-              //             ),
-              //           ),
-              //           Text(
-              //             '₹ 10.00', // Replace with the wallet balance variable
-              //             style: TextStyle(
-              //               color: Colors.white,
-              //               fontSize: 12,
-              //               fontWeight: FontWeight.w500,
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //     ],
-              //   ),
-              // ),
+              Positioned(
+                bottom: 5, // Position the wallet section at the bottom left
+                right: 12,
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.account_balance_wallet_outlined,
+                      color: Colors.white,
+                      size: 29,
+                    ),
+                    const SizedBox(width: 8),
+                    Column(
+                      children: [
+                        const Text(
+                          "Balance",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          balance!, // Replace with the wallet balance variable
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
           Expanded(
@@ -402,167 +414,175 @@ class _UserDashboardState extends State<UserDashboard> {
       appBar: AppBar(
         backgroundColor: Colors.amber,
         title: const Text('Mahakundali'),
-        actions: [
-          const SizedBox(width: 10),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => WalletScreen()),
-              );
-            },
-            child: SizedBox(
-              width: 90,
-              height: 40,
-              child: Stack(
-                children: [
-                  // Wallet Icon
-                  const Positioned(
-                    left: 0,
-                    child: Icon(
-                      Icons.account_balance_wallet_outlined,
-                      color: Colors.white,
-                      size: 45,
-                    ),
-                  ),
-                  // Rectangle Icon with Text
-                  Positioned(
-                    left: 36, // Adjust this value to overlap icons perfectly
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        const Icon(
-                          Icons.rectangle_outlined,
-                          color: Colors.white,
-                          size: 45,
-                        ),
-                        // Amount Text
-                        SizedBox(
-                          width: 40, // Width to match the rectangle's size
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown, // Ensures text scales to fit
-                            child: Text(
-                              "₹${apiData['userDetails']['balance'].toString()}",
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 12, // Base size
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(width: 10),
+        actions: const [
+          SizedBox(width: 10),
+          // GestureDetector(
+          //   onTap: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(builder: (context) => WalletScreen()),
+          //     );
+          //   },
+          //   child: SizedBox(
+          //     width: 90,
+          //     height: 40,
+          //     child: Stack(
+          //       children: [
+          //         // Wallet Icon
+          //         const Positioned(
+          //           left: 0,
+          //           child: Icon(
+          //             Icons.account_balance_wallet_outlined,
+          //             color: Colors.white,
+          //             size: 45,
+          //           ),
+          //         ),
+          //         // Rectangle Icon with Text
+          //         Positioned(
+          //           left: 36, // Adjust this value to overlap icons perfectly
+          //           child: Stack(
+          //             alignment: Alignment.center,
+          //             children: [
+          //               const Icon(
+          //                 Icons.rectangle_outlined,
+          //                 color: Colors.white,
+          //                 size: 45,
+          //               ),
+          //               // Amount Text
+          //               SizedBox(
+          //                 width: 40, // Width to match the rectangle's size
+          //                 child: FittedBox(
+          //                   fit: BoxFit.scaleDown, // Ensures text scales to fit
+          //                   child: Text(
+          //                     balance!,
+          //                     // "₹${apiData['userDetails']['balance'].toString()}",
+          //                     style: const TextStyle(
+          //                       color: Colors.black,
+          //                       fontSize: 12, // Base size
+          //                       fontWeight: FontWeight.bold,
+          //                     ),
+          //                     textAlign: TextAlign.center,
+          //                   ),
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
+          SizedBox(width: 10),
         ],
       ),
       drawer: _buildDrawer(),
       body: apiData.isEmpty
           ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Home Slider
-                  //const SizedBox(height: 10),
-                  CarouselSlider(
-                    options: CarouselOptions(
-                        height: 150.0, autoPlay: true, viewportFraction: 1.0),
-                    items: _banners.map((banner) {
-                      return Builder(
-                        builder: (BuildContext context) {
-                          return Container(
-                            width: MediaQuery.of(context).size.width,
-                            margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              image: DecorationImage(
-                                image: NetworkImage(banner),
-                                fit: BoxFit.contain,
-                              ),
-                            ),
+          : isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Home Slider
+                      //const SizedBox(height: 10),
+                      CarouselSlider(
+                        options: CarouselOptions(
+                            height: 150.0,
+                            autoPlay: true,
+                            viewportFraction: 1.0),
+                        items: _banners.map((banner) {
+                          return Builder(
+                            builder: (BuildContext context) {
+                              return Container(
+                                width: MediaQuery.of(context).size.width,
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 5.0),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  image: DecorationImage(
+                                    image: NetworkImage(banner),
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              );
+                            },
                           );
-                        },
-                      );
-                    }).toList(),
+                        }).toList(),
+                      ),
+                      //  buildHomeSlider(),
+                      const SizedBox(height: 10),
+
+                      // Free Services
+                      buildSectionTitle('Free Services', false, () {}),
+                      buildFreeServices(),
+
+                      // Top Astrologers
+                      buildSectionTitle('Top Astrologers', _showAllAstrologers,
+                          () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LiveAstrologerListScreen(),
+                          ),
+                        );
+
+                        // setState(() {
+                        //   _showAllAstrologers =
+                        //       !_showAllAstrologers; // Toggle astrologer visibility
+                        // });
+                      }),
+                      buildTopAstrologers(),
+                      const SizedBox(height: 10),
+
+                      // Customer Stories
+                      buildSectionTitle('Customer Stories', _showAllStories,
+                          () {
+                        setState(() {
+                          _showAllStories = !_showAllStories;
+                        });
+                      }),
+                      buildCustomerStories(context),
+                      const SizedBox(height: 10),
+
+                      // Blogs
+                      buildSectionTitle('Our Blog', _showAllBlogs, () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BlogListScreen(),
+                          ),
+                        );
+
+                        // setState(() {
+                        //   _showAllBlogs = !_showAllBlogs;
+                        // });
+                      }),
+                      buildBlogs(context),
+                      const SizedBox(height: 10),
+
+                      // Astro Remedies
+                      buildSectionTitle('Astro Remedies', _showAllRemidies, () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RemediesScreen(),
+                          ),
+                        );
+                        // setState(() {
+                        //   _showAllRemidies = !_showAllRemidies;
+                        // });
+                      }),
+                      buildAstroRemedies(),
+                      const SizedBox(height: 10),
+                      // buildSectionTitle('Watch Videos', false, () {}),
+                      // buildWatchVideos(),
+                      buildWhyMahaKundali(),
+                      // const SizedBox(height: 20),
+                      //buildWhyMahakundaliSection()
+                    ],
                   ),
-                  //  buildHomeSlider(),
-                  const SizedBox(height: 10),
-
-                  // Free Services
-                  buildSectionTitle('Free Services', false, () {}),
-                  buildFreeServices(),
-
-                  // Top Astrologers
-                  buildSectionTitle('Top Astrologers', _showAllAstrologers, () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LiveAstrologerListScreen(),
-                      ),
-                    );
-
-                    // setState(() {
-                    //   _showAllAstrologers =
-                    //       !_showAllAstrologers; // Toggle astrologer visibility
-                    // });
-                  }),
-                  buildTopAstrologers(),
-                  const SizedBox(height: 10),
-
-                  // Customer Stories
-                  buildSectionTitle('Customer Stories', _showAllStories, () {
-                    setState(() {
-                      _showAllStories = !_showAllStories;
-                    });
-                  }),
-                  buildCustomerStories(context),
-                  const SizedBox(height: 10),
-
-                  // Blogs
-                  buildSectionTitle('Our Blog', _showAllBlogs, () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BlogListScreen(),
-                      ),
-                    );
-
-                    // setState(() {
-                    //   _showAllBlogs = !_showAllBlogs;
-                    // });
-                  }),
-                  buildBlogs(context),
-                  const SizedBox(height: 10),
-
-                  // Astro Remedies
-                  buildSectionTitle('Astro Remedies', _showAllRemidies, () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => RemediesScreen(),
-                      ),
-                    );
-                    // setState(() {
-                    //   _showAllRemidies = !_showAllRemidies;
-                    // });
-                  }),
-                  buildAstroRemedies(),
-                  const SizedBox(height: 10),
-                  buildSectionTitle('Watch Videos', false, () {}),
-                  buildWatchVideos(),
-                  buildWhyMahaKundali(),
-                  // const SizedBox(height: 20),
-                  //buildWhyMahakundaliSection()
-                ],
-              ),
-            ),
+                ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -681,11 +701,11 @@ class _UserDashboardState extends State<UserDashboard> {
     BirthChartFormScreen(),
     DoshaFormScreen(),
     KundliScreen(),
-    KundliMatchingScreen(),
+    MatchmakingBoy(), //KundliMatchingScreen(),
     NumerologyFormScreen(),
     PanchangFormScreen(),
-    PersonalHoroscopeFormScreen(),
-    PersonalHoroscopeFormScreen()
+    // PersonalHoroscopeFormScreen(),
+    WeeklyHorosFormScreen()
   ];
   Widget buildFreeServices() {
     return apiData['free_services'] != null
@@ -695,6 +715,7 @@ class _UserDashboardState extends State<UserDashboard> {
               scrollDirection: Axis.horizontal,
               itemCount: apiData['free_services'].length,
               itemBuilder: (context, index) {
+                if (index == 6) return const SizedBox.shrink();
                 final service = apiData['free_services'][index];
                 String serviceName = service['name'];
                 List<String> words = serviceName.split(' ');
@@ -705,12 +726,23 @@ class _UserDashboardState extends State<UserDashboard> {
                   padding: const EdgeInsets.only(left: 10, right: 4),
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => routes[index],
-                        ),
-                      );
+                      print(index);
+                      if (index == 7) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => routes[index - 1],
+                          ),
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => routes[index],
+                          ),
+                        );
+                      }
+
                       // Action for tapping the service (optional)
                     },
                     child: Column(

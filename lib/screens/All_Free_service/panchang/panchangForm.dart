@@ -4,8 +4,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
-import 'package:maha_kundali_app/screens/Personal%20Horoscope/personal_hor_details.dart';
-import 'package:maha_kundali_app/screens/Personal%20Horoscope/personal_horoscope_model.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/panchang/panchangScreen.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/panchang/panchang_model.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
@@ -14,30 +12,20 @@ import 'package:shimmer/shimmer.dart';
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
 // import 'package:place_picker/place_picker.dart';
 
-class PersonalHoroscopeFormScreen extends StatefulWidget {
+class PanchangFormScreen extends StatefulWidget {
   @override
-  _PersonalHoroscopeFormScreenState createState() =>
-      _PersonalHoroscopeFormScreenState();
+  _PanchangFormScreenState createState() => _PanchangFormScreenState();
 }
 
-class _PersonalHoroscopeFormScreenState
-    extends State<PersonalHoroscopeFormScreen> {
+class _PanchangFormScreenState extends State<PanchangFormScreen> {
   DateTime selectedDate = DateTime.now();
   String selectedHour = "1";
   String selectedMinute = "1";
   String selectedLanguage = "English";
   String selectedTimezone = "IST";
   String birthPlace = "kolkata";
-  final TextEditingController _nameController = TextEditingController();
-
-  final TextEditingController _emailController = TextEditingController();
-
-  final TextEditingController _phoneController = TextEditingController();
-  HoroscopeResponse? horoscopeResponse;
-  final TextEditingController _timeController = TextEditingController();
-
   String formattedDate = "";
-
+  final TextEditingController _timeController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
   List<dynamic> _cities = [];
@@ -47,7 +35,6 @@ class _PersonalHoroscopeFormScreenState
   bool _isLoading = false;
 
   bool isLoading2 = true;
-
   @override
   void initState() {
     super.initState();
@@ -59,13 +46,35 @@ class _PersonalHoroscopeFormScreenState
     _searchController.addListener(_onSearchChanged);
   }
 
-  void _onSearchChanged() {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      if (_searchController.text.isNotEmpty) {
-        _fetchCities(_searchController.text);
-      }
+  submitData() async {
+    setState(() {
+      isLoading2 = true;
     });
+    String url = APIData.login;
+    print(url.toString());
+    final response = await http.post(Uri.parse(url), body: {
+      'action': 'free-service-type',
+      'authorizationToken': ServiceManager.tokenID,
+      'type': 'panchang',
+      'date': formattedDate,
+      'hr': selectedHour,
+      'min': selectedMinute,
+      'pob': _selectedCity,
+      'lang': selectedLanguage == "English" ? 'en' : 'hi',
+      'lat': _selectedLat,
+      'lon': _selectedLon
+    });
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      setState(() {
+        isLoading2 = false;
+      });
+      return Panchang.fromJson(
+          jsonDecode(response.body)['panchang']['panchang']['response']);
+    } else {
+      throw Exception('Failed to load horoscope details');
+    }
   }
 
   Future<void> _fetchCities(String query) async {
@@ -133,46 +142,13 @@ class _PersonalHoroscopeFormScreenState
     }
   }
 
-  submitData() async {
-    setState(() {
-      isLoading2 = true;
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (_searchController.text.isNotEmpty) {
+        _fetchCities(_searchController.text);
+      }
     });
-    String url = APIData.login;
-    print(url.toString());
-    final response = await http.post(Uri.parse(url), body: {
-      'action': 'free-service-type',
-      'authorizationToken': ServiceManager.tokenID,
-      'type': 'horoscope',
-      'name': _nameController.text,
-      'dob': formattedDate,
-      'tob': "$selectedHour:$selectedMinute",
-      'pob': _selectedCity,
-      'lang': 'en',
-      'lat': _selectedLat,
-      'lon': _selectedLon
-    });
-    print(response.body);
-
-    if (response.statusCode == 200) {
-      setState(() {
-        isLoading2 = false;
-      });
-      setState(() {
-        horoscopeResponse =
-            HoroscopeResponse.fromJson(json.decode(response.body));
-      });
-      // Navigate to next screen after data is fetched
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => HoroscopeDetailScreen(
-            horoscopeResponse: horoscopeResponse!,
-          ),
-        ),
-      );
-    } else {
-      throw Exception('Failed to load horoscope details');
-    }
   }
 
   Future<void> _selectTime(BuildContext context) async {
@@ -199,10 +175,18 @@ class _PersonalHoroscopeFormScreenState
   }
 
   @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Know Your Personal Horoscope"),
+        title: const Text("Know Your Panchang"),
         backgroundColor: Colors.orange,
       ),
       body: isLoading2
@@ -230,53 +214,18 @@ class _PersonalHoroscopeFormScreenState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildLabel('Enter Name'),
-                    TextField(
-                      controller: _nameController,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
-                        labelText: 'Name',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildLabel('Enter Email'),
-                    TextField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
-                        labelText: 'Email',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildLabel('Enter Mobile'),
-                    TextField(
-                      controller: _phoneController,
-                      keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
-                        labelText: 'Mobile',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildLabel('Select Date of Birth'),
+                    _buildLabel('Select Date'),
                     GestureDetector(
                       onTap: () => _selectDate(context),
                       child: _buildFieldContainer(
-                        child: Text(
-                          "${selectedDate.toLocal()}".split(' ')[0],
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                      ),
+                          child: Text(
+                            "${selectedDate.toLocal()}".split(' ')[0],
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          verticalHeight: 10.0),
                     ),
                     const SizedBox(height: 16),
-                    _buildLabel('Select Time of Birth'),
+                    _buildLabel('Select Time'),
                     TextField(
                       controller: _timeController,
                       readOnly: true,
@@ -332,25 +281,28 @@ class _PersonalHoroscopeFormScreenState
                     const SizedBox(height: 16),
                     _buildLabel('Select Language'),
                     _buildFieldContainer(
-                        child: DropdownButton<String>(
-                          isExpanded: true,
-                          value: selectedLanguage,
-                          underline: const SizedBox(),
-                          items: ["English", "Hindi"].map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              selectedLanguage = value!;
-                            });
-                          },
-                        ),
-                        verticalHeight: 1.0),
+                      child: DropdownButton<String>(
+                        isExpanded: true,
+                        value: selectedLanguage,
+                        underline: const SizedBox(),
+                        items: ["English", "Hindi"].map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedLanguage = value!;
+                          });
+                        },
+                      ),
+                    ),
                     const SizedBox(height: 16),
                     _buildLabel('Place of Birth'),
+
+                    //----------
+
                     TextField(
                       controller: _searchController,
                       decoration: InputDecoration(
@@ -424,22 +376,10 @@ class _PersonalHoroscopeFormScreenState
                         ),
                       ),
 
-                    //----------------------------------------------------------------
+                    //---------
 
                     // GestureDetector(
-                    //   onTap: () async {
-                    //     // LocationResult result = await Navigator.of(context).push(
-                    //     //   MaterialPageRoute(
-                    //     //     builder: (context) => PlacePicker(
-                    //     //       "YOUR_GOOGLE_API_KEY",
-                    //     //     ),
-                    //     //   ),
-                    //     // );
-
-                    //     // setState(() {
-                    //     //   birthPlace = result.formattedAddress!;
-                    //     // });
-                    //   },
+                    //   onTap: () async {},
                     //   child: _buildFieldContainer(
                     //     child: Text(
                     //       birthPlace.isEmpty ? "Pick a location" : birthPlace,
@@ -450,24 +390,23 @@ class _PersonalHoroscopeFormScreenState
                     const SizedBox(height: 16),
                     _buildLabel('Timezone'),
                     _buildFieldContainer(
-                        child: DropdownButton<String>(
-                          isExpanded: true,
-                          value: selectedTimezone,
-                          underline: const SizedBox(),
-                          items:
-                              ["IST", "GMT", "PST", "EST"].map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              selectedTimezone = value!;
-                            });
-                          },
-                        ),
-                        verticalHeight: 1.0),
+                      child: DropdownButton<String>(
+                        isExpanded: true,
+                        value: selectedTimezone,
+                        underline: const SizedBox(),
+                        items: ["IST", "GMT", "PST", "EST"].map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedTimezone = value!;
+                          });
+                        },
+                      ),
+                    ),
                     const SizedBox(height: 16),
                     SizedBox(
                       width: double.infinity,
@@ -481,36 +420,27 @@ class _PersonalHoroscopeFormScreenState
                           elevation: 5,
                         ),
                         onPressed: () async {
-                          if (_nameController.text.isEmpty) {
-                            _showError("Please enter your name.");
-                            return;
-                          }
-                          if (_emailController.text.isEmpty) {
-                            _showError("Please enter your email.");
-                            return;
-                          }
                           if (_searchController.text.isEmpty ||
                               _selectedCity == null) {
                             _showError("Please select a place of birth.");
                             return;
                           }
-                          if (_phoneController.text.isEmpty) {
-                            _showError("Please enter your Mobile number");
+                          if (formattedDate == "") {
+                            _showError("Please select your date of birth.");
                             return;
                           }
                           if (_timeController.text.isEmpty) {
                             _showError("Please select your time of birth.");
                             return;
                           }
-
-                          submitData();
-                          // Panchang panchang = await submitData();
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //       builder: (context) =>
-                          //           PanchangScreen(panchang: panchang)),
-                          // );
+                          //submitData();
+                          Panchang panchang = await submitData();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    PanchangScreen(panchang: panchang)),
+                          );
                           // Handle form submission
                         },
                         child: const Text(
@@ -563,7 +493,7 @@ class _PersonalHoroscopeFormScreenState
     return Container(
       width: double.infinity,
       padding:
-          EdgeInsets.symmetric(vertical: verticalHeight ?? 10, horizontal: 12),
+          EdgeInsets.symmetric(vertical: verticalHeight ?? 0, horizontal: 12),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(5),

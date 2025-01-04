@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:maha_kundali_app/screens/Kundli/kundliModel.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Kundli/kundliModel.dart';
 
 class KundliDetailsScreen extends StatelessWidget {
   final BasicDetails basicDetails;
