@@ -38,6 +38,7 @@ class _EditAstroProfileScreenState extends State<EditAstroProfileScreen> {
   final TextEditingController _panController = TextEditingController();
   final TextEditingController _aadharController = TextEditingController();
   final TextEditingController _aboutController = TextEditingController();
+  final TextEditingController degreeController = TextEditingController();
   String _gender = 'Male';
 
   @override
@@ -108,7 +109,7 @@ class _EditAstroProfileScreenState extends State<EditAstroProfileScreen> {
     String url = APIData.login;
 
     var request = http.MultipartRequest('POST', Uri.parse(url))
-      ..fields['action'] = 'buyer-profile'
+      ..fields['action'] = 'astrologer-profile-update' //'buyer-profile'
       ..fields['authorizationToken'] = ServiceManager.tokenID
       ..fields['mobile'] = mobile
       ..fields['name'] = name
@@ -129,6 +130,7 @@ class _EditAstroProfileScreenState extends State<EditAstroProfileScreen> {
 
     try {
       var response = await request.send();
+      print(["%%%%", response.stream.first]);
       if (response.statusCode == 200) {
         var responseData = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseData);
@@ -380,6 +382,9 @@ class _EditAstroProfileScreenState extends State<EditAstroProfileScreen> {
                     _buildTextFields(_aadharController, 'Aadhar card  Number',
                         readOnly: true),
                     const SizedBox(height: 16),
+                    _buildTextFields(degreeController, 'Highest Qualification'),
+                    const SizedBox(height: 16),
+
                     _buildTextFields(_aboutController, 'About', maxLines: 5),
 
                     const SizedBox(height: 32),

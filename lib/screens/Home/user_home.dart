@@ -203,7 +203,7 @@ class _UserDashboardState extends State<UserDashboard> {
                   Icons.home,
                   'Home',
                 ),
-                _buildDrawerItem(Icons.book_online, 'Book a Puja',
+                _buildDrawerItem(Icons.book_online, 'Book a Pooja',
                     route: PujaScreen()),
                 _buildDrawerItem(Icons.report_rounded, 'Book a Report',
                     route: AllServiceReportScreen()),
@@ -704,92 +704,86 @@ class _UserDashboardState extends State<UserDashboard> {
     MatchmakingBoy(), //KundliMatchingScreen(),
     NumerologyFormScreen(),
     PanchangFormScreen(),
-    // PersonalHoroscopeFormScreen(),
+    HoroscopeScreen(), // PersonalHoroscopeFormScreen(),
     WeeklyHorosFormScreen()
   ];
   Widget buildFreeServices() {
     return apiData['free_services'] != null
         ? Container(
-            height: 130, // Slightly increased height for a balanced layout
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.all(0.0),
+            height: 360, // Adjust height as per your design
+            child: GridView.builder(
               itemCount: apiData['free_services'].length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3, // Number of items in a row
+                crossAxisSpacing: 10, // Horizontal spacing between grid items
+                mainAxisSpacing: 0, // Vertical spacing between grid items
+                childAspectRatio: 1.0, // Adjust this for layout balance
+              ),
               itemBuilder: (context, index) {
-                if (index == 6) return const SizedBox.shrink();
+                // if (index == 6) return const SizedBox.shrink();
                 final service = apiData['free_services'][index];
                 String serviceName = service['name'];
                 List<String> words = serviceName.split(' ');
                 String formattedServiceName = words.length > 1
-                    ? '${words[0]}\n${words.sublist(1).join(' ')}'
+                    ? '${words[0]} ${words.sublist(1).join(' ')}'
                     : serviceName;
-                return Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 4),
-                  child: GestureDetector(
-                    onTap: () {
-                      print(index);
-                      if (index == 7) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => routes[index - 1],
-                          ),
-                        );
-                      } else {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => routes[index],
-                          ),
-                        );
-                      }
-
-                      // Action for tapping the service (optional)
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Hero(
-                          tag: service['thumb'], // Optional tag for animations
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape
-                                  .circle, // Make the container circular
-                              border: Border.all(
-                                color: Colors.amber, // Border color
-                                width: 9, // Border width
-                              ),
+                return GestureDetector(
+                  onTap: () {
+                    print(index);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            routes[index], //== 7 ? index - 1 : index],
+                      ),
+                    );
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Hero(
+                        tag: service['thumb'], // Optional tag for animations
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape:
+                                BoxShape.circle, // Make the container circular
+                            border: Border.all(
+                              color: Colors.amber, // Border color
+                              width: 4, // Border width
                             ),
-                            child: ClipOval(
-                              child: Image.network(
-                                service['thumb'],
-                                height: 50, // Height of the circular image
-                                width: 50, // Width of the circular image
-                                fit: BoxFit.cover,
-                              ),
+                          ),
+                          child: ClipOval(
+                            child: Image.network(
+                              service['thumb'],
+                              height: 60, // Height of the circular image
+                              width: 60, // Width of the circular image
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          formattedServiceName,
-                          textAlign: TextAlign.center,
-                          maxLines: 2, // Allow a maximum of 2 lines
-                          overflow: TextOverflow
-                              .ellipsis, // Add ellipsis if the text exceeds 2 lines
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.black, // White text for contrast
-                            shadows: [
-                              Shadow(
-                                color: Colors.black.withOpacity(0.4),
-                                blurRadius: 2,
-                              )
-                            ],
-                          ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        formattedServiceName.startsWith("Personal")
+                            ? "Horoscope"
+                            : formattedServiceName,
+                        textAlign: TextAlign.center,
+                        maxLines: 2, // Allow a maximum of 2 lines
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withOpacity(0.4),
+                              blurRadius: 2,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 );
               },

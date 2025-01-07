@@ -140,21 +140,54 @@ class _PanchangScreenState extends State<PanchangScreen> {
   // Card Section for grouping details with a Card style
   Widget _buildCardSection(String title, List<Widget> children) {
     return Card(
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 10),
+      elevation: 6,
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 2),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSectionTitle(title),
-            Divider(color: Colors.orange),
-            SizedBox(height: 10),
-            ...children, // Unpack children widgets for details
-          ],
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.orange.shade100, Colors.white],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Colors.orange.shade300,
+            width: 1.5,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.info, color: Colors.orange, size: 20),
+                  SizedBox(width: 8),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.orange.shade800,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Divider(
+                color: Colors.orange.shade400,
+                thickness: 1.5,
+                indent: 10,
+                endIndent: 10,
+              ),
+              const SizedBox(height: 10),
+              ...children, // Unpack children widgets for details
+            ],
+          ),
         ),
       ),
     );

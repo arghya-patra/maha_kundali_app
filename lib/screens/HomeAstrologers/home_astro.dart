@@ -13,6 +13,8 @@ import 'package:maha_kundali_app/screens/HomeAstrologers/Review/astrologer_revie
 import 'package:maha_kundali_app/screens/HomeAstrologers/Upload_Product/productList.dart';
 import 'package:maha_kundali_app/screens/HomeAstrologers/Upload_Product/productUpload.dart';
 import 'package:maha_kundali_app/screens/HomeAstrologers/Vacation/vacation_astro.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/bookingListScreen.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/earningScreen.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:maha_kundali_app/theme/style.dart';
 
@@ -199,11 +201,15 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
                 _buildDrawerItem(Icons.home, 'Home'),
                 _buildDrawerItem(Icons.upload, 'Product Upload',
                     route: SupplierProductListScreen()),
+                _buildDrawerItem(Icons.list_alt, 'Booking List',
+                    route: BookingListScreen()),
+                _buildDrawerItem(Icons.money_off_csred_sharp, 'Earnings',
+                    route: EarningsScreen()),
                 _buildDrawerItem(Icons.holiday_village_outlined, 'Vacation',
                     route: VacationListScreen()),
                 _buildDrawerItem(Icons.people_alt_outlined, 'My Followers',
                     route: FollowersScreen()),
-                _buildDrawerItem(Icons.reviews, 'My Reviews',
+                _buildDrawerItem(Icons.reviews, 'Customer Reviews',
                     route: AstrologerReviewsScreen()),
                 _buildDrawerItem(Icons.picture_in_picture, 'Portfolio Picture',
                     route: AstrologerGalleryScreen()),

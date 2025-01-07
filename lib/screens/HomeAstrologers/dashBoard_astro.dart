@@ -27,7 +27,7 @@ class _DashboardForAstrologerScreenState
   void initState() {
     super.initState();
     // getDashboardData(context);
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -75,8 +75,8 @@ class _DashboardForAstrologerScreenState
         controller: _tabController,
         children: [
           HomeAstroScreen(),
-          BookingListScreen(),
-          EarningsScreen(),
+          // BookingListScreen(),
+          // EarningsScreen(),
           ProfileScreen() //EditProfileScreen(),
         ],
       ),
@@ -97,7 +97,7 @@ class _DashboardForAstrologerScreenState
         controller: _tabController,
         tabs: const [
           Tab(icon: Icon(Icons.home)),
-          Tab(icon: Icon(Icons.shop)),
+          //Tab(icon: Icon(Icons.shop)),
           // Container(
           //   height: 60,
           //   child: const Column(
@@ -110,7 +110,7 @@ class _DashboardForAstrologerScreenState
           //     ],
           //   ),
           // ),
-          Tab(icon: Icon(Icons.shopping_cart)),
+          //Tab(icon: Icon(Icons.shopping_cart)),
           Tab(icon: Icon(Icons.person)),
         ],
         indicatorSize: TabBarIndicatorSize.tab,

@@ -94,6 +94,12 @@ class _EditBankDetailsAstroState extends State<EditBankDetailsAstro> {
         if (data['isSuccess'] == true) {
           print(["_____", data]);
           getUserData();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Bank Details Updated"),
+              backgroundColor: Colors.green,
+            ),
+          );
           setState(() {
             _isLoading = false;
           });
@@ -236,7 +242,7 @@ class _EditBankDetailsAstroState extends State<EditBankDetailsAstro> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             _buildRadioOption('Savings'),
-            _buildRadioOption('current'),
+            _buildRadioOption('Current'),
           ],
         ),
       ],

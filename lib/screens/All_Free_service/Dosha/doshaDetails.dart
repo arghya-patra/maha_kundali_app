@@ -77,14 +77,17 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
         setState(() {
           if (page == 'horoscope') {
             horoscopeData = json.decode(response.body);
+            // print(["%%%%%%%%%%%%%%", horoscopeData!['basic_details']]);
           }
 
           if (page == 'dosha') {
             doshaData = json.decode(response.body);
+            // print(["%%%%%%%%%%%%%%", doshaData!['mangaldosh']]);
           }
           if (page == 'dasha') {
             var data = json.decode(response.body);
             dashaData = data['dasha'];
+            print(["%%%%%%%%%%%%%%", dashaData]);
           }
           if (page == 'chart') {
             var data = json.decode(response.body);
@@ -190,13 +193,16 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
 
     if (dashaData == null) {
       return Center(
-        child: Text('Failed to load data.'),
+        child: CircularProgressIndicator(),
       );
     }
 
     final mahaDasha = dashaData!['maha_dasha']['response']['mahadasha'] as List;
     final mahaDashaOrder =
         dashaData!['maha_dasha']['response']['mahadasha_order'] as List;
+    //     final antarDasha = dashaData!['antar_dasha']['response']['antar_dasha'] as List;
+    // final antarDashaOrder =
+    //     dashaData!['antar_dasha']['response']['antar_dasha_order'] as List;
 
     return SingleChildScrollView(
       child: Container(
@@ -226,7 +232,9 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
     }
 
     if (horoscopeData == null) {
-      return Center(child: Text("Failed to load data"));
+      return Center(
+        child: CircularProgressIndicator(),
+      );
     }
 
     final basicDetails = horoscopeData!['basic_details'];
@@ -256,6 +264,8 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
                 _buildTableRow("Time", basicDetails['time']),
                 _buildTableRow("Latitude", basicDetails['lat']),
                 _buildTableRow("Longitude", basicDetails['lon']),
+                _buildTableRow("Sun Sign", basicDetails['sun_sign']),
+                _buildTableRow("City", basicDetails['city']),
               ],
             ),
           ),
@@ -309,6 +319,7 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
                 ? "Yes"
                 : "No",
             "Bot Response": data['kaalsarpdosh']['response']['bot_response'],
+            "Remedies": data['kaalsarpdosh']['response']['remedies'][0],
           }),
           SizedBox(height: 10),
           // Remedies Section
@@ -333,6 +344,8 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
                 : "No",
             "Bot Response": data['mangaldosh']['response']['bot_response'],
             "Score": "${data['mangaldosh']['response']['score']}%",
+            "Moon": "${data['mangaldosh']['response']['factors']['moon']}",
+            "Venus": "${data['mangaldosh']['response']['factors']['venus']}",
           }),
 
           // Other Doshas Section
@@ -424,7 +437,7 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
           indicatorColor: Colors.orange,
           tabs: const [
             Tab(text: "Horoscope"),
-            Tab(text: "Dosha"),
+            Tab(text: "Dosh"),
             Tab(text: "Dasha"),
             Tab(text: "Chart"),
           ],
@@ -436,7 +449,9 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
           _buildHoroscopeTab(),
           doshaData != null
               ? _buildDoshaTab(doshaData!)
-              : Center(child: Text("No data available")),
+              : Center(
+                  child: CircularProgressIndicator(),
+                ),
           _buildDashaTab(),
           _buildChartTab()
         ],

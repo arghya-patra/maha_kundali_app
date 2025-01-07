@@ -59,6 +59,7 @@ class _EarningsScreenState extends State<EarningsScreen>
           ),
         ),
         bottom: TabBar(
+          isScrollable: true,
           controller: _tabController,
           tabs: const [
             Tab(text: 'Overview'),
@@ -110,7 +111,7 @@ class _EarningsScreenState extends State<EarningsScreen>
               String value = item[key]?.toString() ?? 'N/A';
               return ListTile(
                 title: Text(key),
-                trailing: Text(value,
+                trailing: Text("Rs. ${value}",
                     style: const TextStyle(fontWeight: FontWeight.bold)),
               );
             }).toList(),
@@ -160,7 +161,7 @@ class _EarningsScreenState extends State<EarningsScreen>
                               Text(
                                   'Date: ${report['date']}\nStatus: ${report['status']}'),
                               Text(
-                                '\$${report['amount']}',
+                                '\Rs.${report['amount']}',
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold),
                               ),
@@ -240,7 +241,7 @@ class _EarningsScreenState extends State<EarningsScreen>
                     title: Text(chat['customer_name'] ?? 'Anonymous'),
                     subtitle: Text(
                         'Rate: ${chat['rate_per_minutes']}/min\nDuration: ${chat['duration']} mins'),
-                    trailing: Text('\$${chat['amount']}',
+                    trailing: Text('\Rs.${chat['amount']}',
                         style: const TextStyle(fontWeight: FontWeight.bold)),
                   );
                 },
@@ -283,7 +284,7 @@ class _EarningsScreenState extends State<EarningsScreen>
                           title: Text(chat['customer_name'] ?? 'Anonymous'),
                           subtitle: Text(
                               'Rate: ${chat['rate_per_minutes']}/min\nDuration: ${chat['duration']} mins'),
-                          trailing: Text('\$${chat['amount']}',
+                          trailing: Text('\Rs.${chat['amount']}',
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold)),
                         );
@@ -360,7 +361,7 @@ class _EarningsScreenState extends State<EarningsScreen>
                   ),
                   title: Text(product['product_name']),
                   subtitle: Text(
-                      'Customer: ${product['customer_name']}\nAmount: \$${product['amount']}'),
+                      'Customer: ${product['customer_name']}\nAmount: \Rs.${product['amount']}'),
                 );
               }).toList(),
             ],

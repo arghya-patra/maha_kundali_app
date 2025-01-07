@@ -35,6 +35,7 @@ class _AstrologerReviewsScreenState extends State<AstrologerReviewsScreen> {
             reviewsList = data['list'] ?? [];
             isLoading = false;
           });
+          print(reviewsList);
         }
       } else {
         setState(() {
@@ -64,90 +65,131 @@ class _AstrologerReviewsScreenState extends State<AstrologerReviewsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Astrologer Reviews'),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.orange, Colors.red],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+        appBar: AppBar(
+          title: const Text('Reviews'),
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.orange, Colors.red],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
             ),
           ),
         ),
-      ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : reviewsList.isEmpty
-              ? const Center(
-                  child: Text(
-                    'No reviews to display.',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.all(8.0),
-                  itemCount: reviewsList.length,
-                  itemBuilder: (context, index) {
-                    final review = reviewsList[index];
-                    return Card(
-                      elevation: 4,
-                      margin: const EdgeInsets.symmetric(vertical: 8.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor: Colors.orange,
-                                  child: Text(
-                                    review['name']?.substring(0, 1) ?? 'A',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: Text(
-                                    review['name'] ?? 'Anonymous',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  review['date'] ?? '',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              review['review'] ?? '',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            buildStarRating(int.parse(review['rate'] ?? '0')),
-                          ],
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : reviewsList.isEmpty
+                ? const Center(
+                    child: Text(
+                      'No reviews to display.',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(8.0),
+                    itemCount: reviewsList.length,
+                    itemBuilder: (context, index) {
+                      final review = reviewsList[index];
+                      return Card(
+                        elevation: 6,
+                        margin: const EdgeInsets.symmetric(vertical: 8.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      ),
-                    );
-                  },
-                ),
-    );
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 24,
+                                    backgroundColor: Colors.orange,
+                                    backgroundImage: review['avatar'] != null
+                                        ? NetworkImage(review['avatar'])
+                                        : null,
+                                    child: review['avatar'] == null
+                                        ? Text(
+                                            review['name']?.substring(0, 1) ??
+                                                'A',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          )
+                                        : null,
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          review['name'] ?? 'Anonymous',
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.calendar_today,
+                                              size: 14,
+                                              color: Colors.grey,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              review['date'] ?? '',
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Divider(
+                                height: 24,
+                                thickness: 1,
+                                color: Colors.grey,
+                              ),
+                              Text(
+                                review['review'] ?? '',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  height: 1.5,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                children: [
+                                  buildStarRating(
+                                      int.parse(review['rate'] ?? '0')),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    '${review['rate'] ?? '0'}/5',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.orange,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ));
   }
 }

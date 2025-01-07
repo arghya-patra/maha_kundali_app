@@ -76,7 +76,7 @@ class _AstrologerAvailabilityState extends State<AstrologerAvailability> {
         'authorizationToken': ServiceManager.tokenID,
         'day': day,
         'start_time': startTime,
-        'to_end_timedate': endTime
+        'end_time': endTime
       });
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -87,6 +87,12 @@ class _AstrologerAvailabilityState extends State<AstrologerAvailability> {
             fetchAvailability();
             isLoading = false;
           });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Availability Updated"),
+              backgroundColor: Colors.green,
+            ),
+          );
         }
       } else {
         setState(() {
@@ -121,6 +127,12 @@ class _AstrologerAvailabilityState extends State<AstrologerAvailability> {
         final data = json.decode(response.body);
         if (data['isSuccess'] == true) {
           print(["+++++++", data]);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Availability deleted"),
+              backgroundColor: Colors.green,
+            ),
+          );
           setState(() {
             //  vacationList = data['list'] ?? [];
             fetchAvailability();
@@ -166,21 +178,43 @@ class _AstrologerAvailabilityState extends State<AstrologerAvailability> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Add Availability'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          title: Center(
+            child: Text(
+              'Add Availability',
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.orangeAccent,
+              ),
+            ),
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               DropdownButtonFormField<String>(
-                  value: days[0],
-                  items: days
-                      .map((day) =>
-                          DropdownMenuItem(value: day, child: Text(day)))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selDate = value;
-                    });
-                  }),
+                value: days[0],
+                items: days
+                    .map(
+                        (day) => DropdownMenuItem(value: day, child: Text(day)))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selDate = value;
+                  });
+                },
+                decoration: InputDecoration(
+                  labelText: "Select Day",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[200],
+                ),
+              ),
+              SizedBox(height: 16.0),
               TextField(
                 controller: startTimeController,
                 onTap: () async {
@@ -199,12 +233,16 @@ class _AstrologerAvailabilityState extends State<AstrologerAvailability> {
                 },
                 decoration: InputDecoration(
                   labelText: "Start Time (HH:MM)",
-                  hintText: (_startTime != null)
-                      ? _startTime!.format(context)
-                      : 'Select Start Time',
+                  hintText: 'Select Start Time',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[200],
                 ),
                 readOnly: true,
               ),
+              SizedBox(height: 16.0),
               TextField(
                 controller: endTimeController,
                 onTap: () async {
@@ -223,30 +261,46 @@ class _AstrologerAvailabilityState extends State<AstrologerAvailability> {
                 },
                 decoration: InputDecoration(
                   labelText: "End Time (HH:MM)",
-                  hintText: (_endTime != null)
-                      ? _endTime!.format(context)
-                      : 'Select End Time',
+                  hintText: 'Select End Time',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[200],
                 ),
                 readOnly: true,
               ),
             ],
           ),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                final day = selDate;
-                final startTime = _startTime.toString();
-                // startTimeController.text;
-                final endTime = _endTime.toString(); //endTimeController.text;
-                addAvailability(
-                    day, startTimeController.text, endTimeController.text);
-                Navigator.pop(context);
-              },
-              child: Text('Save'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.redAccent),
+                  ),
+                ),
+                SizedBox(width: 8.0),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orangeAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                  ),
+                  onPressed: () {
+                    final day = selDate;
+                    final startTime = _startTime.toString();
+                    addAvailability(
+                        day, startTimeController.text, endTimeController.text);
+                    Navigator.pop(context);
+                  },
+                  child: Text('Save'),
+                ),
+              ],
             ),
           ],
         );
@@ -258,7 +312,10 @@ class _AstrologerAvailabilityState extends State<AstrologerAvailability> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Availability'),
+        title: Text(
+          'Availability',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+        ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -271,16 +328,31 @@ class _AstrologerAvailabilityState extends State<AstrologerAvailability> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.add),
+            icon: Icon(Icons.add, color: Colors.white),
             onPressed: () => showAddAvailabilityDialog(context),
+            tooltip: "Add Availability",
           ),
         ],
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: Colors.orangeAccent,
+              ),
+            )
           : availabilities.isEmpty
-              ? const Center(child: Text("No Availablities found."))
+              ? const Center(
+                  child: Text(
+                    "No Availabilities found.",
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey,
+                    ),
+                  ),
+                )
               : ListView.builder(
+                  padding: EdgeInsets.all(10.0),
                   itemCount: availabilities.length,
                   itemBuilder: (context, index) {
                     final availability = availabilities[index];
@@ -300,28 +372,41 @@ class _AstrologerAvailabilityState extends State<AstrologerAvailability> {
                     ));
 
                     return Card(
-                      elevation: 4.0,
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                      elevation: 6.0,
+                      margin: EdgeInsets.symmetric(vertical: 8.0),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        side: BorderSide(color: Colors.orange),
+                        borderRadius: BorderRadius.circular(12.0),
+                        side:
+                            BorderSide(color: Colors.orangeAccent, width: 1.5),
                       ),
-                      child: Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '${availability["day"]} - $formattedStartTime to $formattedEndTime',
-                              style: TextStyle(fontSize: 16.0),
+                      child: ListTile(
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 12.0,
+                        ),
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.orangeAccent,
+                          child: Text(
+                            availability["day"][0],
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
                             ),
-                            IconButton(
-                              icon: Icon(Icons.delete, color: Colors.red),
-                              onPressed: () =>
-                                  deleteAvailability(availability["id"]),
-                            ),
-                          ],
+                          ),
+                        ),
+                        title: Text(
+                          '${availability["day"]} - $formattedStartTime to $formattedEndTime',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete, color: Colors.red),
+                          onPressed: () =>
+                              deleteAvailability(availability["id"]),
+                          tooltip: "Delete Availability",
                         ),
                       ),
                     );

@@ -27,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
     ServiceManager().getRole();
 
     // LocationService().fetchLocation();
-    _timer = Timer.periodic(Duration(seconds: 3), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
       print(ServiceManager.roleAs);
       print(ServiceManager.userID);
       if (ServiceManager.userID != '') {
@@ -60,12 +60,32 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Image.asset(
-        'images/splash_img.webp',
-        height: MediaQuery.of(context).size.height,
-        fit: BoxFit.contain,
+      backgroundColor: Colors.amber,
+      body: Center(
+        child: ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return const LinearGradient(
+              colors: [Colors.orange, Colors.redAccent],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          child: const Text(
+            "Mahakundali",
+            style: TextStyle(
+              fontSize: 40,
+              fontWeight: FontWeight.bold,
+              color: Colors.white, // This color is required for ShaderMask
+            ),
+          ),
+        ),
       ),
+
+      // Image.asset(
+      //   'images/splash_img.webp',
+      //   height: MediaQuery.of(context).size.height,
+      //   fit: BoxFit.contain,
+      // ),
     );
   }
 }

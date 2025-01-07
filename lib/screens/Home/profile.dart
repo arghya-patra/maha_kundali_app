@@ -7,6 +7,7 @@ import 'package:maha_kundali_app/screens/HomeAstrologers/Profile_Edit/contactAst
 import 'package:maha_kundali_app/screens/HomeAstrologers/Puja/astro_puja.dart';
 import 'package:maha_kundali_app/screens/HomeAstrologers/Skills/astrologerSkillsScreen.dart';
 import 'package:maha_kundali_app/screens/HomeAstrologers/Profile_Edit/editAstroProfile.dart';
+import 'package:maha_kundali_app/screens/HomeAstrologers/Vacation/vacation_astro.dart';
 import 'package:maha_kundali_app/screens/profileContent/buyMembershipScreen.dart';
 import 'package:maha_kundali_app/screens/profileContent/callIntakeForm.dart';
 import 'package:maha_kundali_app/screens/profileContent/editProfile.dart';
@@ -219,6 +220,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 MaterialPageRoute(
                                     builder: (context) =>
                                         AstrologerAvailability()));
+                          })
+                        : Container(),
+                    ServiceManager.roleAs != 'buyer'
+                        ? _buildProfileOption('Vacation', Icons.beach_access,
+                            () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        VacationListScreen()));
                           })
                         : Container(),
 
