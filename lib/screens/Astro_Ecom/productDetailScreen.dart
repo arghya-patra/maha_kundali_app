@@ -56,6 +56,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
     if (response.statusCode == 200) {
       setState(() {
         productData = json.decode(response.body);
+        print(["&*&*&*", productData!['similar_product_list']]);
         isLoading = false;
       });
     } else {
@@ -211,6 +212,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
             padding: const EdgeInsets.all(8.0),
             child: GestureDetector(
               onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProductDetailsScreen(
+                      productId: product['product_id'],
+                    ),
+                  ),
+                );
                 // Handle product tap
               },
               child: Container(

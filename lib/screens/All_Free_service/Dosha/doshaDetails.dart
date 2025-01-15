@@ -62,7 +62,7 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
       final response = await http.post(Uri.parse(url), body: {
         'action': 'free-service-type',
         'authorizationToken': ServiceManager.tokenID,
-        'type': 'dosha',
+        'type': 'kundali',
         'name': widget.name,
         'dob': widget.dob,
         'tob': widget.tob,
@@ -74,10 +74,11 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
         'page': page
       });
       if (response.statusCode == 200) {
+        print(["%^%^%^%^%^", response.body]);
         setState(() {
           if (page == 'horoscope') {
             horoscopeData = json.decode(response.body);
-            // print(["%%%%%%%%%%%%%%", horoscopeData!['basic_details']]);
+            print(["%%%%%%%%%%%%%%", "jhjhj"]);
           }
 
           if (page == 'dosha') {
@@ -130,29 +131,33 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
       );
     }
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          // Lagna Chart
-          _buildChartWidget('Lagna', chartData!['Lagna']),
+    return Container(
+      color: Color.fromARGB(255, 255, 160, 122),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Lagna Chart
+            _buildChartWidget('Lagna', chartData!['Lagna']),
 
-          // Dreshkana Chart
-          _buildChartWidget('Dreshkana', chartData!['Dreshkana']),
-          _buildChartWidget('Somanatha', chartData!['Somanatha']),
-          _buildChartWidget('Saptamsa', chartData!['Saptamsa']),
-          _buildChartWidget('Navamsa', chartData!['Navamsa']),
-          _buildChartWidget('Dasamsa', chartData!['Dasamsa']),
-          _buildChartWidget(
-              'Dasamsa-EvenReverse', chartData!['Dasamsa-EvenReverse']),
-          _buildChartWidget('Dwadasamsa', chartData!['Dwadasamsa']),
-          _buildChartWidget('Shodashamsa', chartData!['Shodashamsa']),
-          _buildChartWidget('Vimsamsa', chartData!['Vimsamsa']),
-          _buildChartWidget('ChaturVimshamsha', chartData!['ChaturVimshamsha']),
-          _buildChartWidget('Trimshamsha', chartData!['Trimshamsha']),
-          _buildChartWidget('KhaVedamsa', chartData!['KhaVedamsa']),
-          _buildChartWidget('AkshaVedamsa', chartData!['AkshaVedamsa']),
-          _buildChartWidget('Shastiamsha', chartData!['Shastiamsha']),
-        ],
+            // Dreshkana Chart
+            _buildChartWidget('Dreshkana', chartData!['Dreshkana']),
+            _buildChartWidget('Somanatha', chartData!['Somanatha']),
+            _buildChartWidget('Saptamsa', chartData!['Saptamsa']),
+            _buildChartWidget('Navamsa', chartData!['Navamsa']),
+            _buildChartWidget('Dasamsa', chartData!['Dasamsa']),
+            _buildChartWidget(
+                'Dasamsa-EvenReverse', chartData!['Dasamsa-EvenReverse']),
+            _buildChartWidget('Dwadasamsa', chartData!['Dwadasamsa']),
+            _buildChartWidget('Shodashamsa', chartData!['Shodashamsa']),
+            _buildChartWidget('Vimsamsa', chartData!['Vimsamsa']),
+            _buildChartWidget(
+                'ChaturVimshamsha', chartData!['ChaturVimshamsha']),
+            _buildChartWidget('Trimshamsha', chartData!['Trimshamsha']),
+            _buildChartWidget('KhaVedamsa', chartData!['KhaVedamsa']),
+            _buildChartWidget('AkshaVedamsa', chartData!['AkshaVedamsa']),
+            _buildChartWidget('Shastiamsha', chartData!['Shastiamsha']),
+          ],
+        ),
       ),
     );
   }
@@ -422,7 +427,7 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
     return Scaffold(
       appBar: AppBar(
         title:
-            Text(widget.screen == 'dos' ? "Dosha Details" : "Kundali Details"),
+            Text(widget.screen == 'dos' ? "Dasha Details" : "Kundali Details"),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(

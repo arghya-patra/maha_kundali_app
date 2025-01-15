@@ -300,6 +300,21 @@ class _LoginScreenState extends State<LoginScreen>
                                 ),
                               ),
                             ),
+                            const SizedBox(height: 30),
+                            GestureDetector(
+                              onTap: () {
+                                _openWebView(
+                                    context, 'https://mahakundali.com/');
+                              },
+                              child: const Text(
+                                'Want to register as an Astrologer?',
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  fontSize: 16,
+                                  //decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -526,8 +541,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          // title: const Text(),
-          ),
+        title: const Text("Mahakundali"),
+      ),
       body: WebViewWidget(controller: controller),
     );
   }

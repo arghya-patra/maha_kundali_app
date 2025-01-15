@@ -56,9 +56,11 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
   }
 
   Future<void> toggleCartStatus(Map<String, dynamic> product) async {
+    print(["@#@#@#@#@", product['id']]);
     setState(() {
       isLoading = true;
     });
+    print(product['inCart']);
 
     final action =
         product['inCart'] ? 'delete-product-from-cart' : 'add-product-in-cart';
@@ -68,6 +70,7 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
       'authorizationToken': ServiceManager.tokenID,
       'product_id': product['id']
     });
+    print(["*&*&", response.body]);
 
     if (response.statusCode == 200) {
       print(response.body);
@@ -84,6 +87,7 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
       setState(() {
         isLoading = false;
       });
+
       throw Exception('Failed to update cart');
     }
   }

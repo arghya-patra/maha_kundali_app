@@ -207,7 +207,7 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Know your Dosha'),
+        title: const Text('Know your Dasha'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(

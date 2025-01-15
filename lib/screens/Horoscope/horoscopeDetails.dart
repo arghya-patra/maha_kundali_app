@@ -341,37 +341,148 @@ class _HoroscopeDetailsScreenState extends State<HoroscopeDetailsScreen>
   Widget _buildHoroscopeTab(Map<String, dynamic> data,
       Map<String, dynamic> horoscopeData, String title) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Add Image and Name at the top
+          // Zodiac Image with Gradient Background
           Center(
             child: Column(
               children: [
-                Image.network(
-                  data['myzodiac_details']['icon'],
-                  width: 100,
-                  height: 100,
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.orange.shade400,
+                        Colors.deepOrange.shade600
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 12,
+                        offset: Offset(4, 4),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(10),
+                  child: Image.network(
+                    data['myzodiac_details']['icon'],
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 15),
                 Text(
                   data['myzodiac_details']['name'],
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepOrange,
+                  ),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 20),
-          Text(
-            title,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          const SizedBox(height: 30),
+
+          // Title with Decorative Line
+          Row(
+            children: [
+              Expanded(
+                child: Divider(
+                  thickness: 1.5,
+                  color: Colors.orange.shade300,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Divider(
+                  thickness: 1.5,
+                  color: Colors.orange.shade300,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 10),
-          Text("Lucky Color: ${horoscopeData['lucky_color']}"),
-          Text("Lucky Numbers: ${horoscopeData['lucky_number'].join(', ')}"),
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
+
+          // Lucky Details Section
+          _buildLuckyDetails(horoscopeData),
+
+          const SizedBox(height: 20),
+
+          // Bot Response Section
           _buildBotResponseDetails(horoscopeData['bot_response']),
+        ],
+      ),
+    );
+  }
+
+// Sub-widget for Lucky Details
+  Widget _buildLuckyDetails(Map<String, dynamic> horoscopeData) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        gradient: LinearGradient(
+          colors: [Colors.orange.shade100, Colors.orange.shade300],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        border: Border.all(color: Colors.deepOrange.shade300, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.orange.shade200,
+            blurRadius: 8,
+            offset: const Offset(2, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.color_lens, color: Colors.deepOrange),
+              const SizedBox(width: 8),
+              Text(
+                "Lucky Color: ${horoscopeData['lucky_color']}",
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Icon(Icons.numbers, color: Colors.deepOrange),
+              const SizedBox(width: 8),
+              Text(
+                "Lucky Numbers: ${horoscopeData['lucky_number'].join(', ')}",
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -381,44 +492,102 @@ class _HoroscopeDetailsScreenState extends State<HoroscopeDetailsScreen>
   Widget _buildYearlyTab(Map<String, dynamic> data,
       Map<String, dynamic> yearlyData, String title) {
     List<String> phases = yearlyData.keys.toList();
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Add Image and Name at the top
+          // Zodiac Image and Name
           Center(
             child: Column(
               children: [
-                Image.network(
-                  data['myzodiac_details']['icon'],
-                  width: 100,
-                  height: 100,
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: const LinearGradient(
+                      colors: [Colors.orange, Colors.deepOrange],
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(8),
+                  child: Image.network(
+                    data['myzodiac_details']['icon'],
+                    width: 100,
+                    height: 100,
+                  ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
                   data['myzodiac_details']['name'],
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
+
+          // Title
           Text(
             title,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 16),
+
+          // Yearly Data
           ...phases.map((phase) {
             var phaseDetails = yearlyData[phase];
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("${phaseDetails['period']}:"),
-                Text("${phaseDetails['prediction']}"),
-                const SizedBox(height: 10),
-                _buildBotResponseDetails(phaseDetails),
-              ],
+            return Card(
+              elevation: 4,
+              margin: const EdgeInsets.only(bottom: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color.fromARGB(255, 240, 221, 192),
+                      Color.fromARGB(255, 255, 190, 170)
+                    ],
+                  ),
+                  border: Border.all(color: Colors.black, width: 1),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        phaseDetails['period'] ?? 'Period',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        phaseDetails['prediction'] ?? 'Prediction unavailable',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildBotResponseDetailsY(phaseDetails),
+                    ],
+                  ),
+                ),
+              ),
             );
           }).toList(),
         ],
@@ -426,42 +595,86 @@ class _HoroscopeDetailsScreenState extends State<HoroscopeDetailsScreen>
     );
   }
 
+// Helper to Build Bot Response Details
+  Widget _buildBotResponseDetailsY(Map<String, dynamic> phaseDetails) {
+    if (phaseDetails['bot_response'] == null) {
+      return const SizedBox.shrink();
+    }
+
+    return ExpansionTile(
+      tilePadding: EdgeInsets.zero,
+      title: const Text(
+        'Bot Response',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            phaseDetails['bot_response'] ?? 'No response available.',
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.black,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   // Widget to build bot response details
   Widget _buildBotResponseDetails(Map<String, dynamic> botResponse) {
     List<String> keys = botResponse.keys.toList();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: keys.map((key) {
-        var detail = botResponse[key];
+    return Container(
+      padding: EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        gradient: const LinearGradient(
+          colors: [
+            Color.fromARGB(255, 240, 221, 192),
+            Color.fromARGB(255, 255, 190, 170)
+          ],
+        ),
+        border: Border.all(color: Colors.black, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: keys.map((key) {
+          var detail = botResponse[key];
 
-        // Check if detail is a map, and contains the 'split_response' field
-        if (detail is Map<String, dynamic> &&
-            detail.containsKey('split_response')) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "$key: ${detail['split_response']}",
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(height: 5),
-            ],
-          );
-        } else {
-          // If it's not a map or doesn't contain 'split_response', handle it as a string or another type
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "$key: $detail", // Display the detail as a string or handle accordingly
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(height: 5),
-            ],
-          );
-        }
-      }).toList(),
+          // Check if detail is a map, and contains the 'split_response' field
+          if (detail is Map<String, dynamic> &&
+              detail.containsKey('split_response')) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "$key: ${detail['split_response']}",
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 5),
+              ],
+            );
+          } else {
+            // If it's not a map or doesn't contain 'split_response', handle it as a string or another type
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "$key: $detail", // Display the detail as a string or handle accordingly
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 5),
+              ],
+            );
+          }
+        }).toList(),
+      ),
     );
   }
 }

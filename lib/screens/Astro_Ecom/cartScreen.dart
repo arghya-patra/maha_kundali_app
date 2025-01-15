@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
+import 'package:maha_kundali_app/components/util.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
 import 'package:shimmer/shimmer.dart';
@@ -139,6 +140,7 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
       if (response.statusCode == 200) {
         setState(() {
           cartItems.removeWhere((item) => item['product_id'] == productId);
+           toastMessage(message: 'Item Removed from cart');
         });
       } else {
         print('Failed to remove item from cart');

@@ -3,7 +3,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:maha_kundali_app/screens/All_Free_service/Festivals/festivalsScreen.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/Weekly_Horoscope/weekly_horoscope_form.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/learn_astrology/learn_astrology_screen.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/match_Making/matchMakingBoy.dart';
 import 'package:maha_kundali_app/screens/Astro_remedies/astroRemediesList.dart';
 import 'package:maha_kundali_app/screens/Astro_remedies/remidies_details.dart';
@@ -71,6 +73,7 @@ class _UserDashboardState extends State<UserDashboard> {
       await Future.delayed(const Duration(seconds: 1));
       setState(() {
         apiData = json.decode(response.body);
+        print(apiData['free_services']);
         balance = apiData['userDetails']['balance'].toString();
       });
       print(["&&&&&&&&&", apiData['userDetails']]);
@@ -583,59 +586,112 @@ class _UserDashboardState extends State<UserDashboard> {
                     ],
                   ),
                 ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          // Chat Button
-          // const SizedBox(width: 8),
-          FloatingActionButton.extended(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => LiveAstrologerListScreen(),
-                ),
-              );
-              // Handle chat action
-            },
-            label: const Row(
-              children: [
-                Icon(Icons.chat, size: 20), // Adjust icon size
-                SizedBox(width: 4), // Reduced space between icon and text
-                Text('Chat with Astrologers',
-                    style: TextStyle(fontSize: 12)), // Reduced text size
-              ],
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Container(
+        width: double.infinity, // Take full width of the screen
+        padding: const EdgeInsets.symmetric(
+            horizontal: 16.0, vertical: 10.0), // Add padding around the buttons
+        child: Row(
+          mainAxisAlignment:
+              MainAxisAlignment.center, // Center the buttons horizontally
+          children: [
+            // Chat Button
+            FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LiveAstrologerListScreen(),
+                  ),
+                );
+              },
+              label: const Row(
+                children: [
+                  Icon(
+                    Icons.chat,
+                    size: 20, // Adjust icon size
+                    color: Colors.black, // Match the style of the text
+                  ),
+                  SizedBox(width: 8), // Space between icon and text
+                  Column(
+                    mainAxisSize: MainAxisSize.min, // Keep the text tight
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Chat',
+                        style: TextStyle(
+                          fontSize: 16, // Larger font size for "Chat"
+                          fontWeight: FontWeight
+                              .bold, // Highlight "Chat" with bold text
+                          color: Colors.black, // Highlight color for "Chat"
+                        ),
+                      ),
+                      Text(
+                        'with astrologers',
+                        style: TextStyle(
+                          fontSize:
+                              12, // Smaller font size for "with astrologers"
+                          color: Colors
+                              .black87, // Slightly muted color for secondary text
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              backgroundColor: const Color.fromARGB(255, 255, 242, 129),
+              heroTag: 'chatButton', // Unique hero tag
             ),
-            backgroundColor: const Color.fromARGB(255, 255, 242, 129),
-            // Optional: Adjust the background color or shape here if needed
-            heroTag: null, // Add a unique hero tag if you have multiple buttons
-          ),
-          const SizedBox(width: 8), // Reduced space between buttons
-          // Call Button
-          FloatingActionButton.extended(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => LiveAstrologerListScreen(),
-                ),
-              );
-              // Handle call action
-            },
-            label: const Row(
-              children: [
-                Icon(Icons.phone, size: 20), // Adjust icon size
-                SizedBox(width: 4), // Reduced space between icon and text
-                Text('Call with Astrologers',
-                    style: TextStyle(fontSize: 12)), // Reduced text size
-              ],
+            const SizedBox(width: 16), // Space between the two buttons
+            // Call Button
+            FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LiveAstrologerListScreen(),
+                  ),
+                );
+              },
+              label: const Row(
+                children: [
+                  Icon(
+                    Icons.phone,
+                    size: 20, // Adjust icon size
+                    color: Colors.black, // Match the style of the text
+                  ),
+                  SizedBox(width: 8), // Space between icon and text
+                  Column(
+                    mainAxisSize: MainAxisSize.min, // Keep the text tight
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Call',
+                        style: TextStyle(
+                          fontSize: 16, // Larger font size for "Call"
+                          fontWeight: FontWeight
+                              .bold, // Highlight "Call" with bold text
+                          color: Colors.black, // Highlight color for "Call"
+                        ),
+                      ),
+                      Text(
+                        'with astrologers',
+                        style: TextStyle(
+                          fontSize:
+                              12, // Smaller font size for "with astrologers"
+                          color: Colors
+                              .black87, // Slightly muted color for secondary text
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              backgroundColor: const Color.fromARGB(255, 255, 242, 129),
+              heroTag: 'callButton', // Unique hero tag
             ),
-            backgroundColor:
-                const Color.fromARGB(255, 255, 242, 129), // Change color here
-
-            heroTag: null, // Add a unique hero tag if you have multiple buttons
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -698,27 +754,39 @@ class _UserDashboardState extends State<UserDashboard> {
   }
 
   List<dynamic> routes = [
+    HoroscopeScreen(),
     BirthChartFormScreen(),
-    DoshaFormScreen(),
     KundliScreen(),
-    MatchmakingBoy(), //KundliMatchingScreen(),
     NumerologyFormScreen(),
+    MatchmakingBoy(),
+    DoshaFormScreen(),
     PanchangFormScreen(),
-    HoroscopeScreen(), // PersonalHoroscopeFormScreen(),
-    WeeklyHorosFormScreen()
+    AllServiceReportScreen(),
+    AllServiceReportScreen(),
+    ShoppingScreen(),
+    FestivalScreen(),
+    LearnAstrologyScreen()
+    // BirthChartFormScreen(),
+
+    //KundliMatchingScreen(),
+    // PersonalHoroscopeFormScreen(),
+    //WeeklyHorosFormScreen()
   ];
   Widget buildFreeServices() {
     return apiData['free_services'] != null
         ? Container(
             padding: const EdgeInsets.all(0.0),
-            height: 360, // Adjust height as per your design
+            //height: 360, // Adjust height as per your design
             child: GridView.builder(
+              physics:
+                  const NeverScrollableScrollPhysics(), // Disable GridView scrolling
+              shrinkWrap: true,
               itemCount: apiData['free_services'].length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3, // Number of items in a row
                 crossAxisSpacing: 10, // Horizontal spacing between grid items
                 mainAxisSpacing: 0, // Vertical spacing between grid items
-                childAspectRatio: 1.0, // Adjust this for layout balance
+                childAspectRatio: 1.1, // Adjust this for layout balance
               ),
               itemBuilder: (context, index) {
                 // if (index == 6) return const SizedBox.shrink();
@@ -764,7 +832,7 @@ class _UserDashboardState extends State<UserDashboard> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 2),
                       Text(
                         formattedServiceName.startsWith("Personal")
                             ? "Horoscope"

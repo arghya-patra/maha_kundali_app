@@ -200,7 +200,7 @@ class _PujaDetailsScreenState extends State<PujaDetailsScreen>
                       // ),
                       SizedBox(height: 24),
                       Text(
-                        'Similar Pujas:',
+                        'Similar Poojas:',
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
