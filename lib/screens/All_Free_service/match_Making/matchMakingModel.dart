@@ -54,7 +54,7 @@ class BoyGirlDetails {
 }
 
 class Ashtakoot {
-  double score;
+  String score;
   String botResponse;
   Map<String, AshtakootDetails> details;
 
@@ -66,7 +66,7 @@ class Ashtakoot {
 
   factory Ashtakoot.fromJson(Map<String, dynamic> json) {
     return Ashtakoot(
-      score: json['score'],
+      score: json['score'].toString(),
       botResponse: json['bot_response'],
       details: {
         "tara": AshtakootDetails.fromJson(json['tara']),

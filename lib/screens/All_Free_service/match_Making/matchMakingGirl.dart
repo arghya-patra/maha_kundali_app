@@ -376,6 +376,7 @@ class _MatchmakingGirlState extends State<MatchmakingGirl>
                           }
 
                           Matchmaking match = await submitData();
+                          print(["dfsdf", match.ashtakoot.score.toString()]);
 
                           Navigator.push(
                             context,

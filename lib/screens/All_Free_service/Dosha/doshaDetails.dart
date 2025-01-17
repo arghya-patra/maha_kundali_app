@@ -132,7 +132,7 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
     }
 
     return Container(
-      color: Color.fromARGB(255, 255, 160, 122),
+      // color: Color.fromARGB(255, 255, 160, 122),
       child: SingleChildScrollView(
         child: Column(
           children: [
