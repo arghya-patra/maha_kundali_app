@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/Dosha/doshaDetails.dart';
-import 'package:maha_kundali_app/screens/All_Free_service/match_Making/matchMakingModel.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/match_Making/matchReport.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/match_Making/matchResult.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:http/http.dart' as http;
@@ -142,9 +142,7 @@ class _MatchmakingGirlState extends State<MatchmakingGirl>
     setState(() {
       _isLoading2 = true;
     });
-    String url = APIData.login;
-    print(url.toString());
-    final response = await http.post(Uri.parse(url), body: {
+    var data = {
       'action': 'free-service-type',
       'authorizationToken': ServiceManager.tokenID,
       'type': 'matchmaking',
@@ -161,17 +159,42 @@ class _MatchmakingGirlState extends State<MatchmakingGirl>
       'boy_lon': widget.boyLon,
       'girl_lat': _selectedLat,
       'girl_lon': _selectedLon
+    };
+    setState(() {
+      _isLoading2 = false;
     });
-    print(response.body);
+    return data;
+    // String url = APIData.login;
+    // print(url.toString());
+    // final response = await http.post(Uri.parse(url), body: {
+    //   'action': 'free-service-type',
+    //   'authorizationToken': ServiceManager.tokenID,
+    //   'type': 'matchmaking',
+    //   'boy_name': widget.boyName,
+    //   'boy_dob': widget.boyDob,
+    //   'boy_tob': widget.boyTob,
+    //   'boy_pob': widget.boyPob,
+    //   'girl_name': _nameController.text,
+    //   'girl_dob': _dateController.text,
+    //   'girl_tob': _timeController.text,
+    //   'girl_pob': _selectedCity,
+    //   'lang': 'en',
+    //   'boy_lat': widget.boyLat,
+    //   'boy_lon': widget.boyLon,
+    //   'girl_lat': _selectedLat,
+    //   'girl_lon': _selectedLon
+    // });
+    // print(response.body);
 
-    if (response.statusCode == 200) {
-      setState(() {
-        _isLoading2 = false;
-      });
-      return Matchmaking.fromJson(jsonDecode(response.body)['matchmaking']);
-    } else {
-      throw Exception('Failed to load horoscope details');
-    }
+    // if (response.statusCode == 200) {
+    //   setState(() {
+    //     _isLoading2 = false;
+    //   });
+    //   return json.decode(response.body);
+    //   // Matchmaking.fromJson(jsonDecode(response.body)['matchmaking']);
+    // } else {
+    //   throw Exception('Failed to load horoscope details');
+    // }
   }
 
   @override
@@ -375,14 +398,14 @@ class _MatchmakingGirlState extends State<MatchmakingGirl>
                             return;
                           }
 
-                          Matchmaking match = await submitData();
-                          print(["dfsdf", match.ashtakoot.score.toString()]);
+                          var match = await submitData();
+                          //  print(["dfsdf", match.ashtakoot.score.toString()]);
 
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => MatchmakingResultScreen(
-                                matchmaking: match,
+                              builder: (context) => MatchmakingScreen(
+                                apiData: match,
                               ),
                             ),
                           );
