@@ -654,70 +654,220 @@ class _MatchmakingScreenState extends State<MatchmakingScreen>
     final ashtakootData = [
       ashtakoot['tara'],
       ashtakoot['gana'],
-      // Add other aspects like yoni, bhakoot, etc., if required
+      ashtakoot['yoni'],
+      ashtakoot['bhakoot'],
+      ashtakoot['grahamaitri'],
+      ashtakoot['vasya'],
+      ashtakoot['nadi'],
+      ashtakoot['varna'],
     ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Subtitle
-        Text(
-          response['sub_title'],
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFEDF1F7), Color(0xFFFFFFFF)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-        const SizedBox(height: 20),
-        // Match Details
-        Text(
-          "Boy: ${boyGirlDetails['boy_name']} (${boyGirlDetails['boy_dob']})",
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          "Girl: ${boyGirlDetails['girl_name']} (${boyGirlDetails['girl_dob']})",
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 20),
-        // Ashtakoot Details
-        const Text(
-          "Ashtakoot Details:",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 10),
-        ...ashtakootData.map((item) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[50],
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: ListTile(
-                title: Text(item['name']),
-                subtitle: Text(item['description']),
-                trailing: Text(
-                  "${item['tara'] ?? 0}/${item['full_score']}",
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Subtitle Section
+          Text(
+            response['sub_title'],
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 20),
+          // Boy & Girl Details Section
+          Card(
+            elevation: 3,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            color: const Color(0xFFF9FAFC),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Boy: ${boyGirlDetails['boy_name']} (${boyGirlDetails['boy_dob']})",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Girl: ${boyGirlDetails['girl_name']} (${boyGirlDetails['girl_dob']})",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
               ),
             ),
-          );
-        }).toList(),
-        const SizedBox(height: 20),
-        // Total Score
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey.shade400),
           ),
-          child: Text(
-            ashtakoot['bot_response'],
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          const Divider(
+            height: 30,
+            color: Colors.grey,
+            thickness: 0.8,
           ),
-        ),
-      ],
+          // Ashtakoot Details Section
+          const Text(
+            "Ashtakoot Details:",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 10),
+          ...ashtakootData.map((item) {
+            return Card(
+              elevation: 4, // Slightly increased elevation for depth
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color.fromARGB(255, 251, 226, 84),
+                      Color.fromARGB(255, 251, 224, 151)
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  border: Border.all(
+                    color: Colors.orange, // Border color
+                    width: 1.5, // Border width
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title & Score
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          item['name'],
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.greenAccent.shade100,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            "${item['tara'] ?? 0}/${item['full_score']}",
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    // Description
+                    Text(
+                      item['description'],
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.black54,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    // Boy & Girl Details
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Boy: ${item['boy_tara'] ?? item['boy_gana'] ?? item['boy_yoni'] ?? item['boy_rasi'] ?? item['boy_lord'] ?? item['boy_vasya'] ?? item['boy_nadi'] ?? item['boy_varna']}",
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        Text(
+                          "Girl: ${item['girl_tara'] ?? item['girl_gana'] ?? item['girl_yoni'] ?? item['girl_rasi'] ?? item['girl_lord'] ?? item['girl_vasya'] ?? item['girl_nadi'] ?? item['girl_varna']}",
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
+          const SizedBox(height: 20),
+          // Total Score Section
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              gradient: const LinearGradient(
+                colors: [Color(0xFFFFF7E0), Color(0xFFFFF0C2)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Text(
+              ashtakoot['bot_response'],
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
