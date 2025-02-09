@@ -349,7 +349,7 @@ class _MatchmakingBoyState extends State<MatchmakingBoy>
                           elevation: 5,
                         ),
                         child: const Text(
-                          'Submit',
+                          'Next',
                           style: TextStyle(fontSize: 18, color: Colors.white),
                         ),
                       ),

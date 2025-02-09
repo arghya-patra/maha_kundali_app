@@ -9,6 +9,7 @@ import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/Dosha/doshaDetails.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/Kundli/kundliDetails.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/Kundli/kundliModel.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Kundli/saved_kundali_list.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:http/http.dart' as http;
@@ -36,6 +37,8 @@ class _KundliScreenState extends State<KundliScreen>
   String? _selectedLat;
   String? _selectedLon;
   bool isLoading2 = true;
+  bool _isSaved = false;
+  String selectedGender = "Male"; // Default gender
 
   @override
   void initState() {
@@ -115,7 +118,8 @@ class _KundliScreenState extends State<KundliScreen>
       'pob': _selectedCity,
       'lang': 'en',
       'lat': _selectedLat,
-      'lon': _selectedLon
+      'lon': _selectedLon,
+      'save_name': _nameController.text + DateTime.now().toString()
     });
     print(response.body);
 
@@ -304,7 +308,62 @@ class _KundliScreenState extends State<KundliScreen>
                         border: OutlineInputBorder(),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 0),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SavedKundalisScreen()),
+                          );
+                        },
+                        child: const Text(
+                          "Open Saved Kundali",
+                          style: TextStyle(
+                              decoration: TextDecoration.underline,
+                              color: Color.fromARGB(255, 213, 160, 0),
+                              fontSize: 16),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Text("Gender: ",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        Row(
+                          children: [
+                            Radio(
+                              value: "Male",
+                              groupValue: selectedGender,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedGender = value.toString();
+                                });
+                              },
+                            ),
+                            Text("Male"),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Radio(
+                              value: "Female",
+                              groupValue: selectedGender,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedGender = value.toString();
+                                });
+                              },
+                            ),
+                            Text("Female"),
+                          ],
+                        ),
+                      ],
+                    ),
                     TextField(
                       controller: _dateController,
                       readOnly: true,
@@ -380,18 +439,18 @@ class _KundliScreenState extends State<KundliScreen>
                       ),
 
                     // Display selected city's details
-                    if (_selectedCity != null)
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Selected City: $_selectedCity'),
-                            Text('Latitude: $_selectedLat'),
-                            Text('Longitude: $_selectedLon'),
-                          ],
-                        ),
-                      ),
+                    // if (_selectedCity != null)
+                    //   Padding(
+                    //     padding: const EdgeInsets.all(8.0),
+                    //     child: Column(
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       children: [
+                    //         Text('Selected City: $_selectedCity'),
+                    //         Text('Latitude: $_selectedLat'),
+                    //         Text('Longitude: $_selectedLon'),
+                    //       ],
+                    //     ),
+                    //   ),
 
                     const SizedBox(height: 16),
 
@@ -414,6 +473,20 @@ class _KundliScreenState extends State<KundliScreen>
                         },
                       ),
                     ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: _isSaved,
+                          onChanged: (value) {
+                            setState(() {
+                              _isSaved = value!;
+                            });
+                          },
+                        ),
+                        const Text("Save Kundali"),
+                      ],
+                    ),
+
                     const SizedBox(height: 30),
                     SizedBox(
                       width: double.infinity,
@@ -450,7 +523,9 @@ class _KundliScreenState extends State<KundliScreen>
                                     lat: _selectedLat,
                                     lon: _selectedLon,
                                     language: selectedLanguage,
-                                    screen: 'kun')),
+                                    saved: _isSaved ? _nameController.text : '',
+                                    screen: 'kun',
+                                    isByKundaliId: false)),
                           );
                         },
                         child: const Text(

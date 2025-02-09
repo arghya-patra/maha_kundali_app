@@ -15,6 +15,9 @@ class DoshaDetailsScreen extends StatefulWidget {
   String? lon;
   String? language;
   String? screen;
+  String? saved;
+  bool isByKundaliId;
+  String? id;
   DoshaDetailsScreen(
       {required this.name,
       required this.dob,
@@ -23,7 +26,10 @@ class DoshaDetailsScreen extends StatefulWidget {
       required this.lat,
       required this.lon,
       required this.language,
-      required this.screen});
+      this.saved,
+      required this.screen,
+      required this.isByKundaliId,
+      this.id});
 
   @override
   _DoshaDetailsScreenState createState() => _DoshaDetailsScreenState();
@@ -42,11 +48,88 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
   void initState() {
     super.initState();
 
+    print([widget.isByKundaliId, widget.id]);
+
     _tabController = TabController(length: 4, vsync: this);
-    _fetchHoroscopeData("horoscope"); // Fetch data for the first tab
-    _fetchHoroscopeData("dosha");
-    _fetchHoroscopeData("dasha");
-    _fetchHoroscopeData("chart");
+    if (widget.isByKundaliId == false) {
+      _fetchHoroscopeData("horoscope"); // Fetch data for the first tab
+      _fetchHoroscopeData("dosha");
+      _fetchHoroscopeData("dasha");
+      _fetchHoroscopeData("chart");
+    } else {
+      _fetchHoroscopeDataById("horoscope"); // Fetch data for the first tab
+      _fetchHoroscopeDataById("dosha");
+      _fetchHoroscopeDataById("dasha");
+      _fetchHoroscopeDataById("chart");
+    }
+  }
+
+  Future<void> _fetchHoroscopeDataById(page) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      // Replace with your API URL
+      String url = APIData.login;
+
+      print(url.toString());
+      final response = await http.post(Uri.parse(url), body: {
+        'action': 'view-saved-kundali-details',
+        'authorizationToken': ServiceManager.tokenID,
+        'id': widget.id,
+        'page': page
+      });
+      if (response.statusCode == 200) {
+        print(["%^%^%^%^%^", response.body]);
+        setState(() {
+          if (page == 'horoscope') {
+            var data = json.decode(response.body);
+            horoscopeData = data['horoscope'];
+            print(["%%%%%%%%%%%%%%", "jhjhj"]);
+          }
+
+          if (page == 'dosha') {
+            var data = json.decode(response.body);
+            doshaData = data['dosha'];
+            // print(["%%%%%%%%%%%%%%", doshaData!['mangaldosh']]);
+          }
+          if (page == 'dasha') {
+            var data = json.decode(response.body);
+            dashaData = data['dasha'];
+            print(["%%%%%%%%%%%%%%", dashaData]);
+          }
+          if (page == 'chart') {
+            var data = json.decode(response.body);
+            chartData = {
+              'Lagna': data['chart']['Lagna'],
+              'Dreshkana': data['chart']['Dreshkana'],
+              'Somanatha': data['chart']['Somanatha'],
+              'Saptamsa': data['chart']['Saptamsa'],
+              'Navamsa': data['chart']['Navamsa'],
+              'Dasamsa': data['chart']['Dasamsa'],
+              'Dasamsa-EvenReverse': data['chart']['Dasamsa-EvenReverse'],
+              'Dwadasamsa': data['chart']['Dwadasamsa'],
+              'Shodashamsa': data['chart']['Shodashamsa'],
+              'Vimsamsa': data['chart']['Vimsamsa'],
+              'ChaturVimshamsha': data['chart']['ChaturVimshamsha'],
+              'Trimshamsha': data['chart']['Trimshamsha'],
+              'KhaVedamsa': data['chart']['KhaVedamsa'],
+              'AkshaVedamsa': data['chart']['AkshaVedamsa'],
+              'Shastiamsha': data['chart']['Shastiamsha']
+            };
+          }
+        });
+      } else {
+        throw Exception("Failed to load data");
+      }
+    } catch (e) {
+      print("Error fetching data: $e");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   Future<void> _fetchHoroscopeData(page) async {
@@ -71,7 +154,8 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
         //'city': _selectedCity,
         'lat': widget.lat,
         'lon': widget.lon,
-        'page': page
+        'page': page,
+        'save_name': widget.saved != '' ? "${widget.name}" : null
       });
       if (response.statusCode == 200) {
         print(["%^%^%^%^%^", response.body]);

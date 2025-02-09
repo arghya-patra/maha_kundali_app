@@ -80,12 +80,6 @@ class _SplashScreenState extends State<SplashScreen> {
           ),
         ),
       ),
-
-      // Image.asset(
-      //   'images/splash_img.webp',
-      //   height: MediaQuery.of(context).size.height,
-      //   fit: BoxFit.contain,
-      // ),
     );
   }
 }

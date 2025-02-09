@@ -36,6 +36,8 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
   String? _selectedLon;
   bool _isLoading = false;
   String? subTitle;
+  String? title;
+  String? bottomText;
   @override
   void initState() {
     super.initState();
@@ -196,6 +198,8 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
       setState(() {
         svgData = data['content'];
         subTitle = data['sub_title'];
+        title = data['title'];
+        bottomText = data['bottom-text'];
         _isLoading2 = false;
       });
 
@@ -205,6 +209,8 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
             builder: (context) => BirthChartScreen(
                   svgData: svgData,
                   subTitle: subTitle,
+                  title: title,
+                  bottomText: bottomText,
                 )),
       );
     } else {

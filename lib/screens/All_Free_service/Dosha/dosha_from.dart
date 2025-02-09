@@ -420,6 +420,7 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
                                       lon: _selectedLon,
                                       language: selectedLanguage,
                                       screen: 'dos',
+                                      isByKundaliId: false,
                                     )),
                           );
                           //submitData();

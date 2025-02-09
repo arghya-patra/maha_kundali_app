@@ -6,7 +6,13 @@ import 'package:http/http.dart' as http;
 class BirthChartScreen extends StatefulWidget {
   String? svgData;
   String? subTitle;
-  BirthChartScreen({required this.svgData, required this.subTitle});
+  String? title;
+  String? bottomText;
+  BirthChartScreen(
+      {required this.svgData,
+      required this.subTitle,
+      required this.title,
+      required this.bottomText});
   @override
   _BirthChartScreenState createState() => _BirthChartScreenState();
 }
@@ -51,7 +57,7 @@ class _BirthChartScreenState extends State<BirthChartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Birth Chart'),
+        title: const Text('Chart'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -65,46 +71,74 @@ class _BirthChartScreenState extends State<BirthChartScreen> {
       body: Center(
         child: isLoading
             ? const CircularProgressIndicator()
-            : Column(
-                children: [
-                  Center(
-                    child: ShaderMask(
-                      shaderCallback: (bounds) {
-                        return const LinearGradient(
-                          colors: [Colors.deepOrangeAccent, Colors.black],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ).createShader(
-                            Rect.fromLTWH(0, 0, bounds.width, bounds.height));
-                      },
-                      child: Text(
-                        widget.subTitle!,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: Colors
-                              .white, // Required but gets overridden by ShaderMask
-                          shadows: [
-                            Shadow(
-                              blurRadius: 10,
-                              color: Colors.black45,
-                              offset: Offset(2, 2),
+            : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Title Section
+                        Text(
+                          widget.title ?? "Default Title",
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                            letterSpacing: 1.0,
+                          ),
+                        ), // Spacing between title and subtitle
+
+                        // Subtitle Section
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0, vertical: 2),
+                          child: Text(
+                            widget.subTitle ?? "Default Subtitle",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey.shade700,
+                              letterSpacing: 0.5,
                             ),
-                          ],
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                          width: 100,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: Colors.deepOrangeAccent,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      ],
+                    ),
+                    // Text(widget.subTitle!),
+                    svgData != null
+                        ? SvgPicture.string(
+                            svgData!,
+                            placeholderBuilder: (context) =>
+                                const CircularProgressIndicator(),
+                          )
+                        : const Text('Failed to load birth chart'),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 0),
+                      child: Text(
+                        widget.bottomText ?? "Default Subtitle",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey.shade700,
+                          letterSpacing: 0.5,
                         ),
                       ),
                     ),
-                  ),
-                  // Text(widget.subTitle!),
-                  svgData != null
-                      ? SvgPicture.string(
-                          svgData!,
-                          placeholderBuilder: (context) =>
-                              const CircularProgressIndicator(),
-                        )
-                      : const Text('Failed to load birth chart'),
-                ],
+                  ],
+                ),
               ),
       ),
     );
