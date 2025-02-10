@@ -144,6 +144,7 @@ class _SavedKundalisScreenState extends State<SavedKundalisScreen> {
                     saved: '',
                     screen: 'kun',
                     id: item['id'],
+                    gender: '',
                     isByKundaliId: true)),
           );
 

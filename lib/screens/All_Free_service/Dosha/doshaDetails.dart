@@ -18,6 +18,7 @@ class DoshaDetailsScreen extends StatefulWidget {
   String? saved;
   bool isByKundaliId;
   String? id;
+  String? gender;
   DoshaDetailsScreen(
       {required this.name,
       required this.dob,
@@ -29,6 +30,7 @@ class DoshaDetailsScreen extends StatefulWidget {
       this.saved,
       required this.screen,
       required this.isByKundaliId,
+      required this.gender,
       this.id});
 
   @override
@@ -52,6 +54,7 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
 
     _tabController = TabController(length: 4, vsync: this);
     if (widget.isByKundaliId == false) {
+      print("*****&&&&&***");
       _fetchHoroscopeData("horoscope"); // Fetch data for the first tab
       _fetchHoroscopeData("dosha");
       _fetchHoroscopeData("dasha");
@@ -151,22 +154,28 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
         'tob': widget.tob,
         'pob': widget.pob,
         'lang': widget.language == "English" ? 'en' : 'hi',
+        'gender': widget.gender == "Male" ? 'm' : 'f',
         //'city': _selectedCity,
         'lat': widget.lat,
         'lon': widget.lon,
         'page': page,
+
         'save_name': widget.saved != '' ? "${widget.name}" : null
       });
       if (response.statusCode == 200) {
         print(["%^%^%^%^%^", response.body]);
         setState(() {
           if (page == 'horoscope') {
-            horoscopeData = json.decode(response.body);
+            var data = json.decode(response.body);
+            horoscopeData = data['horoscope'];
             print(["%%%%%%%%%%%%%%", "jhjhj"]);
           }
 
           if (page == 'dosha') {
-            doshaData = json.decode(response.body);
+            // doshaData = json.decode(response.body);
+            var data = json.decode(response.body);
+            doshaData = data['dosha'];
+
             // print(["%%%%%%%%%%%%%%", doshaData!['mangaldosh']]);
           }
           if (page == 'dasha') {

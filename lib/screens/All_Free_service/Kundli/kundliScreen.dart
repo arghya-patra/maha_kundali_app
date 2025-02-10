@@ -525,6 +525,7 @@ class _KundliScreenState extends State<KundliScreen>
                                     language: selectedLanguage,
                                     saved: _isSaved ? _nameController.text : '',
                                     screen: 'kun',
+                                    gender: selectedGender,
                                     isByKundaliId: false)),
                           );
                         },
