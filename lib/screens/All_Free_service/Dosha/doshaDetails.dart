@@ -15,7 +15,7 @@ class DoshaDetailsScreen extends StatefulWidget {
   String? lon;
   String? language;
   String? screen;
-  String? saved;
+  bool? saved;
   bool isByKundaliId;
   String? id;
   String? gender;
@@ -143,9 +143,7 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
     try {
       // Replace with your API URL
       String url = APIData.login;
-
-      print(url.toString());
-      final response = await http.post(Uri.parse(url), body: {
+      var body1 = {
         'action': 'free-service-type',
         'authorizationToken': ServiceManager.tokenID,
         'type': 'kundali',
@@ -159,9 +157,27 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
         'lat': widget.lat,
         'lon': widget.lon,
         'page': page,
+        'save_name': "${widget.name}"
+      };
+      var body2 = {
+        'action': 'free-service-type',
+        'authorizationToken': ServiceManager.tokenID,
+        'type': 'kundali',
+        'name': widget.name,
+        'dob': widget.dob,
+        'tob': widget.tob,
+        'pob': widget.pob,
+        'lang': widget.language == "English" ? 'en' : 'hi',
+        'gender': widget.gender == "Male" ? 'm' : 'f',
+        //'city': _selectedCity,
+        'lat': widget.lat,
+        'lon': widget.lon,
+        'page': page,
+      };
 
-        'save_name': widget.saved != '' ? "${widget.name}" : null
-      });
+      print(url.toString());
+      final response =
+          await http.post(Uri.parse(url), body: widget.saved! ? body1 : body2);
       if (response.statusCode == 200) {
         print(["%^%^%^%^%^", response.body]);
         setState(() {
@@ -219,7 +235,7 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
   Widget _buildChartTab() {
     // Check if the chart data has been fetched
     if (chartData == null) {
-      return Center(
+      return const Center(
         child: CircularProgressIndicator(),
       );
     }
@@ -263,19 +279,19 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
         children: [
           Text(
             title,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           // Render the SVG image using an SVG package (like flutter_svg)
           SvgPicture.string(
             svgData,
             height: 300, // Adjust the size as needed
             width: double.infinity,
             placeholderBuilder: (BuildContext context) =>
-                CircularProgressIndicator(),
+                const CircularProgressIndicator(),
           ),
         ],
       ),
@@ -284,13 +300,13 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
 
   Widget _buildDashaTab() {
     if (isLoading) {
-      return Center(
+      return const Center(
         child: CircularProgressIndicator(),
       );
     }
 
     if (dashaData == null) {
-      return Center(
+      return const Center(
         child: CircularProgressIndicator(),
       );
     }
@@ -304,7 +320,7 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
 
     return SingleChildScrollView(
       child: Container(
-        color: Color.fromARGB(255, 255, 239, 191),
+        color: const Color.fromARGB(255, 255, 239, 191),
         child: DataTable(
           columns: const [
             DataColumn(label: Text('Maha Dasha')),
@@ -326,11 +342,11 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
 
   Widget _buildHoroscopeTab() {
     if (isLoading) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (horoscopeData == null) {
-      return Center(
+      return const Center(
         child: CircularProgressIndicator(),
       );
     }
@@ -338,18 +354,22 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
     final basicDetails = horoscopeData!['basic_details'];
     final ascendantReport = horoscopeData!['ascendant_report']['response'][0];
 
+    final sunSignDetails = horoscopeData!['sunsign']['response'];
+    final personalReport =
+        horoscopeData!['personal_characteristics']['response'][0];
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             "Basic Details",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Container(
-            color: Color.fromARGB(255, 255, 239, 191),
+            color: const Color.fromARGB(255, 255, 239, 191),
             child: Table(
               border: TableBorder.all(color: Colors.grey),
               columnWidths: const {
@@ -367,14 +387,14 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
               ],
             ),
           ),
-          SizedBox(height: 20),
-          Text(
+          const SizedBox(height: 20),
+          const Text(
             "Ascendant Report",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Container(
-            color: Color.fromARGB(255, 255, 239, 191),
+            color: const Color.fromARGB(255, 255, 239, 191),
             child: Table(
               border: TableBorder.all(color: Colors.grey),
               columnWidths: const {
@@ -390,8 +410,26 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
                     "House Location",
                     ascendantReport['ascendant_lord_house_location']
                         .toString()),
+                _buildTableRow("General Prediction",
+                    ascendantReport['general_prediction']),
+                _buildTableRow("Personalised Prediction",
+                    ascendantReport['personalised_prediction']),
+                _buildTableRow(
+                    "Verbal Location", ascendantReport['verbal_location']),
+                _buildTableRow("Ascendant Lord Strength",
+                    ascendantReport['ascendant_lord_strength']),
+                _buildTableRow("Zodiac Characteristics",
+                    ascendantReport['zodiac_characteristics']),
+                _buildTableRow(
+                    "Day For Fasting", ascendantReport['day_for_fasting']),
+                _buildTableRow(
+                    "Gayatri Mantra", ascendantReport['gayatri_mantra']),
+                _buildTableRow("Flagship Qualities",
+                    ascendantReport['flagship_qualities']),
                 _buildTableRow("Symbol", ascendantReport['symbol']),
                 _buildTableRow("Lucky Gem", ascendantReport['lucky_gem']),
+                _buildTableRow("Spirituality Advice",
+                    ascendantReport['spirituality_advice']),
                 _buildTableRow(
                     "Good Qualities", ascendantReport['good_qualities']),
                 _buildTableRow(
@@ -399,14 +437,271 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
               ],
             ),
           ),
+          const SizedBox(height: 20),
+          const Text(
+            "Sunsign",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            color: const Color.fromARGB(255, 255, 239, 191),
+            child: Table(
+              border: TableBorder.all(color: Colors.grey),
+              columnWidths: const {
+                0: FlexColumnWidth(1),
+                1: FlexColumnWidth(2)
+              },
+              children: [
+                _buildTableRow("Sunsign", sunSignDetails['sun_sign']),
+                _buildTableRow("Prediction", sunSignDetails['prediction']),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            "Personal Report",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            color: const Color.fromARGB(255, 255, 239, 191),
+            child: Table(
+              border: TableBorder.all(color: Colors.grey),
+              columnWidths: const {
+                0: FlexColumnWidth(1),
+                1: FlexColumnWidth(2)
+              },
+              children: [
+                _buildTableRow("Ascendant", personalReport['ascendant']),
+                _buildTableRow("Lord", personalReport['ascendant_lord']),
+                _buildTableRow(
+                    "Lord Location", personalReport['ascendant_lord_location']),
+                _buildTableRow("House Location",
+                    personalReport['ascendant_lord_house_location'].toString()),
+                _buildTableRow(
+                    "General Prediction", personalReport['general_prediction']),
+                _buildTableRow("Personalised Prediction",
+                    personalReport['personalised_prediction']),
+                _buildTableRow(
+                    "Verbal Location", personalReport['verbal_location']),
+                _buildTableRow("Ascendant Lord Strength",
+                    personalReport['ascendant_lord_strength']),
+                _buildTableRow("Zodiac Characteristics",
+                    personalReport['zodiac_characteristics']),
+                _buildTableRow(
+                    "Day For Fasting", personalReport['day_for_fasting']),
+                _buildTableRow(
+                    "Gayatri Mantra", personalReport['gayatri_mantra']),
+                _buildTableRow(
+                    "Flagship Qualities", personalReport['flagship_qualities']),
+                _buildTableRow("Symbol", personalReport['symbol']),
+                _buildTableRow("Lucky Gem", personalReport['lucky_gem']),
+                _buildTableRow("Spirituality Advice",
+                    personalReport['spirituality_advice']),
+                _buildTableRow(
+                    "Good Qualities", personalReport['good_qualities']),
+                _buildTableRow(
+                    "Bad Qualities", personalReport['bad_qualities']),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            "Birth Dasa",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            color: const Color.fromARGB(255, 255, 239, 191),
+            child: Table(
+              border: TableBorder.all(color: Colors.grey),
+              columnWidths: const {
+                0: FlexColumnWidth(1),
+                1: FlexColumnWidth(2)
+              },
+              children: [
+                _buildTableRow("Birth Dasa",
+                    horoscopeData!['planet_details']['response']['birth_dasa']),
+                _buildTableRow(
+                    "Birth Dasa Time",
+                    horoscopeData!['planet_details']['response']
+                        ['birth_dasa_time']),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            "Current Dasa",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            color: const Color.fromARGB(255, 255, 239, 191),
+            child: Table(
+              border: TableBorder.all(color: Colors.grey),
+              columnWidths: const {
+                0: FlexColumnWidth(1),
+                1: FlexColumnWidth(2)
+              },
+              children: [
+                _buildTableRow(
+                    "Current Dasa",
+                    horoscopeData!['planet_details']['response']
+                        ['current_dasa']),
+                _buildTableRow(
+                    "Current Dasa",
+                    horoscopeData!['planet_details']['response']
+                        ['current_dasa_time']),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            "Lucky Gem",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            color: const Color.fromARGB(255, 255, 239, 191),
+            child: Table(
+              border: TableBorder.all(color: Colors.grey),
+              columnWidths: const {
+                0: FlexColumnWidth(1),
+                1: FlexColumnWidth(2)
+              },
+              children: [
+                _buildTableRow(
+                    "Lucky Gem",
+                    horoscopeData!['planet_details']['response']['lucky_gem']
+                        .toString()),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            "Lucky Number",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            color: const Color.fromARGB(255, 255, 239, 191),
+            child: Table(
+              border: TableBorder.all(color: Colors.grey),
+              columnWidths: const {
+                0: FlexColumnWidth(1),
+                1: FlexColumnWidth(2)
+              },
+              children: [
+                _buildTableRow(
+                    "Lucky Number",
+                    horoscopeData!['planet_details']['response']['lucky_num']
+                        .toString()),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            "Lucky Colors",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            color: const Color.fromARGB(255, 255, 239, 191),
+            child: Table(
+              border: TableBorder.all(color: Colors.grey),
+              columnWidths: const {
+                0: FlexColumnWidth(1),
+                1: FlexColumnWidth(2)
+              },
+              children: [
+                _buildTableRow(
+                    "Lucky Colors",
+                    horoscopeData!['planet_details']['response']['lucky_colors']
+                        .toString()),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            "Lucky Name Strats",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            color: const Color.fromARGB(255, 255, 239, 191),
+            child: Table(
+              border: TableBorder.all(color: Colors.grey),
+              columnWidths: const {
+                0: FlexColumnWidth(1),
+                1: FlexColumnWidth(2)
+              },
+              children: [
+                _buildTableRow(
+                    "Lucky Name Starts",
+                    horoscopeData!['planet_details']['response']
+                            ['lucky_name_start']
+                        .toString()),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            "Planet Details",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          buildPlanetDetailsTable(horoscopeData!['planet_details'])
         ],
+      ),
+    );
+  }
+
+  Widget buildPlanetDetailsTable(Map<String, dynamic> planetDetails) {
+    Map<String, dynamic> response = planetDetails["response"];
+
+    // Extract only the first 10 (0-9) planets
+    List<Map<String, dynamic>> planetList = [];
+    for (int i = 0; i <= 9; i++) {
+      if (response.containsKey(i.toString())) {
+        planetList.add(response[i.toString()]);
+      }
+    }
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Container(
+        color: const Color.fromARGB(255, 255, 239, 191),
+        child: DataTable(
+          columnSpacing: 12.0,
+          border: TableBorder.all(color: Colors.grey),
+          columns: const [
+            DataColumn(label: Text('Name')),
+            DataColumn(label: Text('Full Name')),
+            DataColumn(label: Text('Zodiac')),
+            DataColumn(label: Text('House')),
+            DataColumn(label: Text('Nakshatra')),
+            DataColumn(label: Text('Nakshatra Lord')),
+            DataColumn(label: Text('Zodiac Lord')),
+          ],
+          rows: planetList.map((planet) {
+            return DataRow(cells: [
+              DataCell(Text(planet["name"].toString())),
+              DataCell(Text(planet["full_name"].toString())),
+              DataCell(Text(planet["zodiac"].toString())),
+              DataCell(Text(planet["house"].toString())),
+              DataCell(Text(planet["nakshatra"].toString())),
+              DataCell(Text(planet["nakshatra_lord"].toString())),
+              DataCell(Text(planet["zodiac_lord"].toString())),
+            ]);
+          }).toList(),
+        ),
       ),
     );
   }
 
   Widget _buildDoshaTab(Map<String, dynamic> data) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(8),
+      padding: const EdgeInsets.all(8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -419,10 +714,10 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
             "Bot Response": data['kaalsarpdosh']['response']['bot_response'],
             "Remedies": data['kaalsarpdosh']['response']['remedies'][0],
           }),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           // Remedies Section
           if (data['kaalsarpdosh']['response']['is_dosha_present']) ...[
-            Text(
+            const Text(
               "Remedies:",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
@@ -435,7 +730,7 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
           ],
 
           // Mangal Dosh Section
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           _buildTableForDosha("Mangal Dosh", {
             "Dosha Present": data['mangaldosh']['response']['is_dosha_present']
                 ? "Yes"
@@ -447,7 +742,7 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
           }),
 
           // Other Doshas Section
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           _buildTableForDosha("Pitra Dosh", {
             "Dosha Present": data['pitradosh']['response']['is_dosha_present']
                 ? "Yes"
@@ -465,14 +760,14 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
       children: [
         Text(
           title,
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Container(
-          color: Color.fromARGB(255, 255, 239, 191),
+          color: const Color.fromARGB(255, 255, 239, 191),
           child: Table(
             border: TableBorder.all(color: Colors.grey, width: 0.5),
-            columnWidths: {
+            columnWidths: const {
               0: FlexColumnWidth(1),
               1: FlexColumnWidth(2),
             },
@@ -482,7 +777,7 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     entry.key,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
                 Padding(
@@ -504,7 +799,7 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
           padding: const EdgeInsets.all(8.0),
           child: Text(
             key,
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
         Padding(
@@ -547,7 +842,7 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
           _buildHoroscopeTab(),
           doshaData != null
               ? _buildDoshaTab(doshaData!)
-              : Center(
+              : const Center(
                   child: CircularProgressIndicator(),
                 ),
           _buildDashaTab(),

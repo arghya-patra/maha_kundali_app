@@ -523,7 +523,7 @@ class _KundliScreenState extends State<KundliScreen>
                                     lat: _selectedLat,
                                     lon: _selectedLon,
                                     language: selectedLanguage,
-                                    saved: _isSaved ? _nameController.text : '',
+                                    saved: _isSaved,
                                     screen: 'kun',
                                     gender: selectedGender,
                                     isByKundaliId: false)),

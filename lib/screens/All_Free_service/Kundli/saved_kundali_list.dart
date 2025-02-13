@@ -141,7 +141,7 @@ class _SavedKundalisScreenState extends State<SavedKundalisScreen> {
                     lat: '',
                     lon: '',
                     language: '',
-                    saved: '',
+                    saved: false,
                     screen: 'kun',
                     id: item['id'],
                     gender: '',
