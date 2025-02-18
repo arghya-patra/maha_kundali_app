@@ -27,6 +27,8 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
   String formattedDate = "";
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+
   Timer? _debounce;
   List<dynamic> _cities = [];
   String? _selectedCity;
@@ -214,6 +216,17 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                        labelText: 'Name',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
                     _buildLabel('Select Date'),
                     GestureDetector(
                       onTap: () => _selectDate(context),
@@ -438,8 +451,9 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    PanchangScreen(panchang: panchang)),
+                                builder: (context) => PanchangScreen(
+                                    name: _nameController.text,
+                                    panchang: panchang)),
                           );
                           // Handle form submission
                         },

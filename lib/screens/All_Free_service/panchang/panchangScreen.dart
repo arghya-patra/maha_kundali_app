@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/panchang/panchang_model.dart';
 
 class PanchangScreen extends StatefulWidget {
+  String? name;
   final Panchang panchang;
 
-  PanchangScreen({required this.panchang});
+  PanchangScreen({required this.panchang, required this.name});
 
   @override
   State<PanchangScreen> createState() => _PanchangScreenState();
@@ -32,6 +33,17 @@ class _PanchangScreenState extends State<PanchangScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "Panchang of ${widget.name!}",
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
             _buildTitleSection(
                 'Day: ${widget.panchang.dayName}', Icons.calendar_today),
             _buildCardSection('Tithi', [

@@ -105,21 +105,21 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
           if (page == 'chart') {
             var data = json.decode(response.body);
             chartData = {
-              'Lagna': data['chart']['Lagna'],
-              'Dreshkana': data['chart']['Dreshkana'],
-              'Somanatha': data['chart']['Somanatha'],
-              'Saptamsa': data['chart']['Saptamsa'],
-              'Navamsa': data['chart']['Navamsa'],
-              'Dasamsa': data['chart']['Dasamsa'],
-              'Dasamsa-EvenReverse': data['chart']['Dasamsa-EvenReverse'],
-              'Dwadasamsa': data['chart']['Dwadasamsa'],
-              'Shodashamsa': data['chart']['Shodashamsa'],
-              'Vimsamsa': data['chart']['Vimsamsa'],
-              'ChaturVimshamsha': data['chart']['ChaturVimshamsha'],
-              'Trimshamsha': data['chart']['Trimshamsha'],
-              'KhaVedamsa': data['chart']['KhaVedamsa'],
-              'AkshaVedamsa': data['chart']['AkshaVedamsa'],
-              'Shastiamsha': data['chart']['Shastiamsha']
+              'Lagna': data['chart']['\"Lagna\"'],
+              'Dreshkana': data['chart']['\"Dreshkana\"'],
+              'Somanatha': data['chart']['\"Somanatha\"'],
+              'Saptamsa': data['chart']['\"Saptamsa\"'],
+              'Navamsa': data['chart']['\"Navamsa\"'],
+              'Dasamsa': data['chart']['\"Dasamsa\"'],
+              'Dasamsa-EvenReverse': data['chart']['\"Dasamsa-EvenReverse\"'],
+              'Dwadasamsa': data['chart']['\"Dwadasamsa\"'],
+              'Shodashamsa': data['chart']['\"Shodashamsa\"'],
+              'Vimsamsa': data['chart']['\"Vimsamsa\"'],
+              'ChaturVimshamsha': data['chart']['\"ChaturVimshamsha\"'],
+              'Trimshamsha': data['chart']['\"Trimshamsha\"'],
+              'KhaVedamsa': data['chart']['\"KhaVedamsa\"'],
+              'AkshaVedamsa': data['chart']['\"AkshaVedamsa\"'],
+              'Shastiamsha': data['chart']['\"Shastiamsha\"']
             };
           }
         });

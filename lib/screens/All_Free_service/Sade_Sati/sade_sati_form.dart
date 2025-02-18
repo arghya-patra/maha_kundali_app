@@ -2,24 +2,20 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
-import 'package:maha_kundali_app/screens/All_Free_service/Birth%20Chart/birthChartDetails.dart';
-import 'package:maha_kundali_app/screens/All_Free_service/Dosha/dashaDetails.dart';
-import 'package:maha_kundali_app/screens/All_Free_service/Dosha/doshaDetails.dart';
-import 'package:maha_kundali_app/screens/All_Free_service/Kundli/kundliDetails.dart';
-import 'package:maha_kundali_app/screens/All_Free_service/Kundli/kundliModel.dart';
-import 'package:maha_kundali_app/service/serviceManager.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/KPAstro/kp_astro_details.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Sade_Sati/sade_sati_details.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Sade_Sati/sade_sati_details2.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:http/http.dart' as http;
 
-class DoshaFormScreen extends StatefulWidget {
+class SateSatiForm extends StatefulWidget {
   @override
-  _DoshaFormScreenState createState() => _DoshaFormScreenState();
+  _SateSatiFormState createState() => _SateSatiFormState();
 }
 
-class _DoshaFormScreenState extends State<DoshaFormScreen>
+class _SateSatiFormState extends State<SateSatiForm>
     with SingleTickerProviderStateMixin {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _placeController = TextEditingController();
@@ -171,44 +167,11 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
     }
   }
 
-  // submitData() async {
-  //   setState(() {
-  //     _isLoading2 = true;
-  //   });
-  //   String url = APIData.login;
-
-  //   print(url.toString());
-  //   final response = await http.post(Uri.parse(url), body: {
-  //     'action': 'free-service-type',
-  //     'authorizationToken': ServiceManager.tokenID,
-  //     'type': 'dosha',
-  //     'name': _nameController.text,
-  //     'dob': _dateController.text,
-  //     'tob': _timeController.text,
-  //     'pob': _selectedCity,
-  //     'lang': 'en',
-  //     //'city': _selectedCity,
-  //     'lat': _selectedLat,
-  //     'lon': _selectedLon
-  //   });
-  //   print(response.body);
-
-  //   if (response.statusCode == 200) {
-  //     final Map<String, dynamic> data = jsonDecode(response.body);
-  //     setState(() {
-  //       svgData = data['content'];
-  //       _isLoading2 = false;
-  //     });
-  //   } else {
-  //     throw Exception('Failed to load horoscope details');
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Know your Dasha'),
+        title: const Text('Know your Sade Sati'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -412,7 +375,7 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => DashaDetailsScreen(
+                                builder: (context) => SadeSatiScreen(
                                     name: _nameController.text,
                                     dob: _dateController.text,
                                     tob: _timeController.text,
@@ -420,7 +383,6 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
                                     lat: _selectedLat,
                                     lon: _selectedLon,
                                     language: selectedLanguage,
-                                    screen: 'dos',
                                     gender: 'm')),
                           );
                           //submitData();
