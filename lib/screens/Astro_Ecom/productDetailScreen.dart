@@ -64,6 +64,47 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
     }
   }
 
+  Future<void> addToCart() async {
+    String url = APIData.login;
+    print(widget.productId);
+    print(url.toString());
+    final response = await http.post(Uri.parse(url), body: {
+      'action': 'add-product-in-cart',
+      'authorizationToken': ServiceManager.tokenID,
+      'product_id': widget.productId
+    });
+    var data = json.decode(response.body);
+    print([response.body, "**"]);
+    if (data['status'] == 200) {
+      setState(() {
+        print(["&*&*&*"]);
+        isLoading = false;
+      });
+    } else {
+      throw Exception('Failed to load product details');
+    }
+  }
+
+  Future<void> removeFromCart() async {
+    String url = APIData.login;
+    print(url.toString());
+    final response = await http.post(Uri.parse(url), body: {
+      'action': 'delete-product-from-cart',
+      'authorizationToken': ServiceManager.tokenID,
+      'product_id': widget.productId
+    });
+    var data = json.decode(response.body);
+    print(response.body);
+    if (data['status'] == 200) {
+      setState(() {
+        print(["&*&*&*"]);
+        isLoading = false;
+      });
+    } else {
+      throw Exception('Failed to load product details');
+    }
+  }
+
   @override
   void dispose() {
     _animationController.dispose();
@@ -301,9 +342,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                   setState(() {
                     isAddedToCart = !isAddedToCart;
                     if (!isAddedToCart) {
+                      removeFromCart();
                       cartCount--;
                       toastMessage(message: 'Item Removed from cart');
                     } else {
+                      addToCart();
                       toastMessage(message: 'Item Added to cart');
                       cartCount++;
                     }

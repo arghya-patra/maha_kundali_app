@@ -61,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen>
         ),
       ),
       body: Container(
-        decoration: kBackgroundDesign(context),
+        //  decoration: kBackgroundDesign(context),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -442,6 +442,7 @@ class _LoginScreenState extends State<LoginScreen>
           content: Text('Please check your mobile for OTP!'),
           backgroundColor: Colors.green,
         ));
+        print(["****", data['otp'].toString()]);
         ServiceManager().setToken('${data['authorizationToken']}');
         ServiceManager.tokenID = '${data['authorizationToken']}';
         Navigator.push(

@@ -105,7 +105,8 @@ class _PujaScreenState extends State<PujaScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PujaDetailsScreen(name: puja['name']),
+            builder: (context) =>
+                PujaDetailsScreen(name: puja['name'], id: puja['name']),
           ),
         );
       },
@@ -164,7 +165,10 @@ class _PujaScreenState extends State<PujaScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PujaDetailsScreen(name: puja['name']),
+                    builder: (context) => PujaDetailsScreen(
+                      name: puja['name'],
+                      id: puja['id'],
+                    ),
                   ),
                 );
               },

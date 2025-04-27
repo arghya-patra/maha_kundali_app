@@ -202,11 +202,16 @@ class _SettingsScreenState extends State<SettingsScreen>
     );
   }
 
+  bool isNoti = false;
+
   Widget _buildNotificationSwitch() {
     return SwitchListTile(
       title: const Text('Allow Notifications'),
-      value: true,
+      value: isNoti,
       onChanged: (bool value) {
+        setState(() {
+          isNoti = !isNoti;
+        });
         // Handle notification switch
       },
       secondary: const Icon(Icons.notifications_active, color: Colors.orange),

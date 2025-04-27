@@ -8,7 +8,7 @@
 
 
     <application
-        android:label="maha_kundali_app"
+        android:label="Mahakundali LLP"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

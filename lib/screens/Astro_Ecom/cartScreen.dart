@@ -130,23 +130,25 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
     }
   }
 
-  Future<void> _removeItemFromCart(String productId) async {
-    final url = 'https://yourapiendpoint.com/cart/remove'; // Update API URL
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        body: json.encode({'product_id': productId}),
-      );
-      if (response.statusCode == 200) {
-        setState(() {
-          cartItems.removeWhere((item) => item['product_id'] == productId);
-           toastMessage(message: 'Item Removed from cart');
-        });
-      } else {
-        print('Failed to remove item from cart');
-      }
-    } catch (e) {
-      print('Error: $e');
+  Future<void> removeFromCart(p_id) async {
+    String url = APIData.login;
+    print(url.toString());
+    final response = await http.post(Uri.parse(url), body: {
+      'action': 'delete-product-from-cart',
+      'authorizationToken': ServiceManager.tokenID,
+      'product_id': p_id
+    });
+    var data = json.decode(response.body);
+    print(response.body);
+    if (data['status'] == 200) {
+      setState(() {
+        print(["&*&*&*"]);
+        _fetchCartData();
+        toastMessage(message: '1 Item Removed from cart');
+        isLoading = false;
+      });
+    } else {
+      throw Exception('Failed to load product details');
     }
   }
 
@@ -211,7 +213,7 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                             ),
                             direction: DismissDirection.endToStart,
                             onDismissed: (direction) {
-                              _removeItemFromCart(item['product_id']);
+                              removeFromCart(item['product_id']);
                             },
                             child: Container(
                               margin: const EdgeInsets.symmetric(
@@ -255,7 +257,7 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                                   icon: const Icon(Icons.delete,
                                       color: Colors.redAccent),
                                   onPressed: () {
-                                    _removeItemFromCart(item['product_id']);
+                                    removeFromCart(item['product_id']);
                                   },
                                 ),
                               ),

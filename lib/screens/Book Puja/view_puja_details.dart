@@ -9,7 +9,8 @@ import 'package:http/http.dart' as http;
 
 class PujaDetailsScreen extends StatefulWidget {
   String name;
-  PujaDetailsScreen({required this.name});
+  String id;
+  PujaDetailsScreen({super.key, required this.name, required this.id});
   @override
   _PujaDetailsScreenState createState() => _PujaDetailsScreenState();
 }
@@ -128,6 +129,7 @@ class _PujaDetailsScreenState extends State<PujaDetailsScreen>
                             MaterialPageRoute(
                               builder: (context) => SelectAstrologerListScreen(
                                 pujaName: pujaDetails['name'],
+                                pujaId: widget.id,
                               ),
                             ),
                           );
@@ -265,7 +267,10 @@ class _PujaDetailsScreenState extends State<PujaDetailsScreen>
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PujaDetailsScreen(name: puja['name']),
+            builder: (context) => PujaDetailsScreen(
+              name: puja['name'],
+              id: puja['id'],
+            ),
           ),
         );
       },
@@ -299,7 +304,7 @@ class _PujaDetailsScreenState extends State<PujaDetailsScreen>
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          PujaDetailsScreen(name: puja['name']),
+                          PujaDetailsScreen(name: puja['name'], id: puja['id']),
                     ),
                   );
                 },

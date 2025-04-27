@@ -269,7 +269,9 @@ import 'package:http/http.dart' as http;
 
 class SelectAstrologerListScreen extends StatefulWidget {
   final String pujaName;
-  SelectAstrologerListScreen({required this.pujaName});
+  final String pujaId;
+  SelectAstrologerListScreen(
+      {super.key, required this.pujaName, required this.pujaId});
 
   @override
   _SelectAstrologerListScreenState createState() =>
@@ -551,6 +553,7 @@ class _SelectAstrologerListScreenState
                 MaterialPageRoute(
                   builder: (context) => BookingPujaScreen(
                     pujaName: widget.pujaName,
+                    pujaId: widget.pujaId,
                     astrologerId: astrologer.id,
                   ),
                 ),

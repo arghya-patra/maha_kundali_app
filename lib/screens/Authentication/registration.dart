@@ -251,22 +251,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ),
       ),
       body: _isLoading2
-          ? Center(
-              child: Shimmer.fromColors(
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildShimmerBox(),
-                    const SizedBox(height: 16),
-                    _buildShimmerBox(),
-                    const SizedBox(height: 16),
-                    _buildShimmerBox(),
-                  ],
-                ),
-              ),
-            )
+          ? Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: Form(
