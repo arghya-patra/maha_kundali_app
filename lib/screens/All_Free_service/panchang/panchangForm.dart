@@ -319,12 +319,13 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
                     TextField(
                       controller: _searchController,
                       decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
+                        contentPadding: const EdgeInsets.symmetric(
                             vertical: 8.0, horizontal: 12.0),
                         labelText: 'Place of Birth',
-                        border: OutlineInputBorder(),
-                        suffixIcon:
-                            _isLoading ? CircularProgressIndicator() : null,
+                        border: const OutlineInputBorder(),
+                        suffixIcon: _isLoading
+                            ? const CircularProgressIndicator()
+                            : null,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -365,7 +366,7 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
                                 ),
                                 child: Text(
                                   city,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize:
                                           16), // Customize text style if needed
                                 ),

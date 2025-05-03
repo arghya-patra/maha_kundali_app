@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:maha_kundali_app/screens/All_Free_service/Festivals/festivalsScreen.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/KPAstro/kp_astro_form.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Lal%20Kitab/lalkitabForm.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/Sade_Sati/sade_sati_form.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/Weekly_Horoscope/weekly_horoscope_form.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/learn_astrology/learn_astrology_screen.dart';
@@ -210,6 +211,8 @@ class _UserDashboardState extends State<UserDashboard> {
                 ),
                 _buildDrawerItem(Icons.book_online, 'Book a Pooja',
                     route: PujaScreen()),
+                _buildDrawerItem(Icons.book, 'Check Lal Kitab',
+                    route: LalKitabFormScreen()),
                 _buildDrawerItem(Icons.report_rounded, 'Book a Report',
                     route: AllServiceReportScreen()),
                 _buildDrawerItem(
