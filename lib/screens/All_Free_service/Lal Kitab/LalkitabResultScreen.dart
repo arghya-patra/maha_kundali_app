@@ -477,67 +477,39 @@ class _LalKitabScreenState extends State<LalKitabScreen>
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(12),
-        child: Table(
-          border: TableBorder.all(color: Colors.grey),
-          columnWidths: const {
-            0: FractionColumnWidth(0.25),
-            1: FractionColumnWidth(0.35),
-            2: FractionColumnWidth(0.4),
-          },
-          children: [
-            _buildDebtsHeader(),
-            ...debtsData.map<TableRow>((item) => TableRow(
+        child: Column(
+          children: debtsData.map<Widget>((item) {
+            return Card(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text(item['debt_name'] ?? '—',
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text(
+                      item['debt_name'] ?? '—',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text(item['indications'] ?? '—'),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Indications: ${item['indications'] ?? '—'}',
+                      style: const TextStyle(fontSize: 16),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text(item['events'] ?? '—'),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Events: ${item['events'] ?? '—'}',
+                      style: const TextStyle(fontSize: 16),
                     ),
                   ],
-                )),
-          ],
+                ),
+              ),
+            );
+          }).toList(),
         ),
       ),
-    );
-  }
-
-  TableRow _buildDebtsHeader() {
-    return const TableRow(
-      decoration: BoxDecoration(color: Colors.orangeAccent),
-      children: [
-        Padding(
-          padding: EdgeInsets.all(10),
-          child: Text('Debt Name',
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white)),
-        ),
-        Padding(
-          padding: EdgeInsets.all(10),
-          child: Text('Indications',
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white)),
-        ),
-        Padding(
-          padding: EdgeInsets.all(10),
-          child: Text('Events',
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white)),
-        ),
-      ],
     );
   }
 

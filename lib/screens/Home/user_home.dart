@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:maha_kundali_app/screens/All_Free_service/Festivals/festivalsScreen.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/KPAstro/kp_astro_form.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Lal%20Kitab/LalkitabResultScreen.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/Lal%20Kitab/lalkitabForm.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/Sade_Sati/sade_sati_form.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/Weekly_Horoscope/weekly_horoscope_form.dart';
@@ -767,6 +768,7 @@ class _UserDashboardState extends State<UserDashboard> {
     PanchangFormScreen(),
     AllServiceReportScreen(),
     ShoppingScreen(),
+    LalKitabFormScreen(),
     LearnAstrologyScreen(),
     const FestivalScreen(),
     KpAstroForm(),
