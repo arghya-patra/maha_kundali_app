@@ -219,6 +219,7 @@ class _FestivalScreenState extends State<FestivalScreen> {
                                 child: Text(
                                   festival['description'] ??
                                       'No description available.',
+                                  textAlign: TextAlign.justify,
                                 ),
                               ),
                               actions: [

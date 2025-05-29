@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
+import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -202,7 +203,7 @@ class _WalletScreenState extends State<WalletScreen> {
           ),
         ],
       ),
-      child: const Column(
+      child: Column(
         children: [
           Text(
             'Available Balance',
@@ -213,7 +214,7 @@ class _WalletScreenState extends State<WalletScreen> {
           ),
           SizedBox(height: 10.0),
           Text(
-            '₹ 12,500',
+            ServiceManager.balance,
             style: TextStyle(
               fontSize: 32.0,
               fontWeight: FontWeight.bold,
@@ -284,7 +285,7 @@ class _WalletScreenState extends State<WalletScreen> {
     return ElevatedButton(
       onPressed: () {
         if (_amountController.text.isNotEmpty) {
-         // print(_amountController.text.)
+          // print(_amountController.text.)
           startTransaction();
         } else {
           print("Please enter an amount");

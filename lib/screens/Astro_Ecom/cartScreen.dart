@@ -250,8 +250,8 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 subtitle: Text(
-                                  'Price: \$${item['sale_price']}',
-                                  style: TextStyle(color: Colors.grey[700]),
+                                  'Price: Rs.${item['sale_price']}',
+                                  style: TextStyle(color: Colors.grey[900]),
                                 ),
                                 trailing: IconButton(
                                   icon: const Icon(Icons.delete,

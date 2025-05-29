@@ -246,7 +246,7 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
         child: Column(
           children: [
             // Lagna Chart
-            _buildChartWidget('Lagna', chartData!['Lagna']),
+            //  _buildChartWidget('Lagna', chartData!['Lagna']),
 
             // Dreshkana Chart
             _buildChartWidget('Dreshkana', chartData!['Dreshkana']),

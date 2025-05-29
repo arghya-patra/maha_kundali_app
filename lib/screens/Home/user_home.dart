@@ -78,6 +78,9 @@ class _UserDashboardState extends State<UserDashboard> {
       setState(() {
         apiData = json.decode(response.body);
         print(apiData['free_services']);
+        print(["&&&&&&&&&&", apiData['our_blog'][0]]);
+        ServiceManager().setBalance('${apiData['userDetails']['balance']}');
+        ServiceManager().getBalance();
         balance = apiData['userDetails']['balance'].toString();
       });
       print(["&&&&&&&&&", apiData['userDetails']]);
@@ -188,7 +191,8 @@ class _UserDashboardState extends State<UserDashboard> {
                           ),
                         ),
                         Text(
-                          balance!, // Replace with the wallet balance variable
+                          ServiceManager
+                              .balance, // Replace with the wallet balance variable
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 12,
@@ -212,8 +216,8 @@ class _UserDashboardState extends State<UserDashboard> {
                 ),
                 _buildDrawerItem(Icons.book_online, 'Book a Pooja',
                     route: PujaScreen()),
-                _buildDrawerItem(Icons.book, 'Check Lal Kitab',
-                    route: LalKitabFormScreen()),
+                // _buildDrawerItem(Icons.book, 'Check Lal Kitab',
+                //     route: LalKitabFormScreen()),
                 _buildDrawerItem(Icons.report_rounded, 'Book a Report',
                     route: AllServiceReportScreen()),
                 _buildDrawerItem(
@@ -595,7 +599,7 @@ class _UserDashboardState extends State<UserDashboard> {
       floatingActionButton: Container(
         width: double.infinity, // Take full width of the screen
         padding: const EdgeInsets.symmetric(
-            horizontal: 16.0, vertical: 10.0), // Add padding around the buttons
+            horizontal: 6.0, vertical: 16.0), // Add padding around the buttons
         child: Row(
           mainAxisAlignment:
               MainAxisAlignment.center, // Center the buttons horizontally
@@ -617,7 +621,7 @@ class _UserDashboardState extends State<UserDashboard> {
                     size: 20, // Adjust icon size
                     color: Colors.black, // Match the style of the text
                   ),
-                  SizedBox(width: 8), // Space between icon and text
+                  SizedBox(width: 2), // Space between icon and text
                   Column(
                     mainAxisSize: MainAxisSize.min, // Keep the text tight
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -665,7 +669,7 @@ class _UserDashboardState extends State<UserDashboard> {
                     size: 20, // Adjust icon size
                     color: Colors.black, // Match the style of the text
                   ),
-                  SizedBox(width: 8), // Space between icon and text
+                  SizedBox(width: 2), // Space between icon and text
                   Column(
                     mainAxisSize: MainAxisSize.min, // Keep the text tight
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -1072,6 +1076,24 @@ class _UserDashboardState extends State<UserDashboard> {
     );
   }
 
+  Widget _buildStarRating(String rating) {
+    // Convert the string rating to an integer
+    int rateValue = int.tryParse(rating) ?? 0; // Default to 0 if parsing fails
+    List<Widget> stars = [];
+    for (int i = 1; i <= 5; i++) {
+      stars.add(
+        Icon(
+          i <= rateValue ? Icons.star : Icons.star_border,
+          color: Colors.amber,
+          size: 20,
+        ),
+      );
+    }
+    return Row(
+      children: stars,
+    );
+  }
+
   Widget buildCustomerStories(BuildContext context) {
     // Determine how many customer stories to show (4 initially, or all if "View All" is clicked)
     int storiesCount = _showAllStories ? apiData['customer_stories'].length : 4;
@@ -1103,17 +1125,22 @@ class _UserDashboardState extends State<UserDashboard> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0, left: 8),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
-                            child: Image.network(
-                              story['pic'],
-                              height: 80,
-                              width: 80,
-                              fit: BoxFit.cover,
+                        Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0, left: 8),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(15),
+                                child: Image.network(
+                                  story['pic'],
+                                  height: 80,
+                                  width: 80,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
-                          ),
+                            _buildStarRating(story['rating'].toString()),
+                          ],
                         ),
                         const SizedBox(width: 2),
                         Expanded(
@@ -1381,82 +1408,89 @@ class _UserDashboardState extends State<UserDashboard> {
                 final blog = apiData['our_blog'][index];
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Container(
-                    width: 180, // Increase the width for more content space
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 6,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(
-                              12), // Rounded corners for image
-                          child: Image.network(
-                            blog['pic'],
-                            height: 100,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
+                  child: GestureDetector(
+                    onTap: () {
+                      _showBlogDetails(context, blog);
+                    },
+                    child: Container(
+                      width: 180, // Increase the width for more content space
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 6,
+                            offset: Offset(0, 4),
                           ),
-                        ),
-                        const SizedBox(height: 5),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                          child: Text(
-                            blog['title'],
-                            maxLines: 2, // Limit the title to 2 lines
-                            overflow:
-                                TextOverflow.ellipsis, // Ellipsis for overflow
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.black87,
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                                12), // Rounded corners for image
+                            child: Image.network(
+                              blog['pic'],
+                              height: 100,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
                             ),
                           ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            GestureDetector(
-                              child: const Padding(
-                                padding: EdgeInsets.only(right: 8.0, top: 5.0),
-                                child: Text(
-                                  'More',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.blue,
+                          const SizedBox(height: 5),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                            child: Text(
+                              blog['title'],
+                              maxLines: 2, // Limit the title to 2 lines
+                              overflow: TextOverflow
+                                  .ellipsis, // Ellipsis for overflow
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              GestureDetector(
+                                child: const Padding(
+                                  padding:
+                                      EdgeInsets.only(right: 8.0, top: 5.0),
+                                  child: Text(
+                                    'More',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.blue,
+                                    ),
                                   ),
                                 ),
+                                onTap: () {
+                                  _showBlogDetails(context, blog);
+                                },
                               ),
-                              onTap: () {
-                                _showBlogDetails(context, blog);
-                              },
-                            ),
-                          ],
-                        ),
-                        // Align(
-                        //   alignment: Alignment.centerRight,
-                        //   child: TextButton(
-                        //     onPressed: () {
-                        //       _showBlogDetails(context, blog);
-                        //     },
-                        //     child: const Text(
-                        //       'More',
-                        //       style: TextStyle(
-                        //         fontSize: 12,
-                        //         color: Colors.blue,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
-                      ],
+                            ],
+                          ),
+                          // Align(
+                          //   alignment: Alignment.centerRight,
+                          //   child: TextButton(
+                          //     onPressed: () {
+                          //       _showBlogDetails(context, blog);
+                          //     },
+                          //     child: const Text(
+                          //       'More',
+                          //       style: TextStyle(
+                          //         fontSize: 12,
+                          //         color: Colors.blue,
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -1468,70 +1502,60 @@ class _UserDashboardState extends State<UserDashboard> {
 
 // Function to show the full blog details in a popup
   void _showBlogDetails(BuildContext context, Map<String, dynamic> blog) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Container(
-            padding:
-                const EdgeInsets.only(top: 6, left: 16, right: 16, bottom: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.amber,
+              title: const Text('Blog Details'),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Close icon at the top right corner
-                Align(
-                  alignment: Alignment.topRight,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.only(bottom: 8.0),
-                      child: Icon(Icons.close),
+            body: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Blog image
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      blog['pic'],
+                      height: 150,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                ),
-                // Blog image
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.network(
-                    blog['pic'],
-                    height: 150,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
+                  const SizedBox(height: 10),
+                  // Blog title
+                  Text(
+                    blog['title'],
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                // Blog title
-                Text(
-                  blog['title'],
-                  style: const TextStyle(
-                    fontSize: 16,
-                    //fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                  const SizedBox(height: 8),
+                  // Blog content (assuming `content` key holds the full blog text)
+                  Text(
+                    blog['description'] ?? '',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black87,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                // Blog content (assuming `content` key holds the full blog text)
-                Text(
-                  blog['content'] ?? '',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.black87,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 

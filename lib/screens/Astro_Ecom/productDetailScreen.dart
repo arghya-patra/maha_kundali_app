@@ -11,7 +11,7 @@ import 'dart:convert';
 
 class ProductDetailsScreen extends StatefulWidget {
   String productId;
-  ProductDetailsScreen({required this.productId});
+  ProductDetailsScreen({super.key, required this.productId});
   @override
   _ProductDetailsScreenState createState() => _ProductDetailsScreenState();
 }
@@ -56,7 +56,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
     if (response.statusCode == 200) {
       setState(() {
         productData = json.decode(response.body);
-        print(["&*&*&*", productData!['similar_product_list']]);
+        print(["&*&*&*", productData!]);
         isLoading = false;
       });
     } else {
@@ -212,21 +212,30 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
           ),
           const SizedBox(height: 8),
           Text(
-            'Price: ₹${productData!['productDetails']['product_price']}',
-            style: const TextStyle(fontSize: 20, color: Colors.redAccent),
+            'Price: ₹${productData!['productDetails']['sale_price']}',
+            style: const TextStyle(fontSize: 18, color: Colors.redAccent),
           ),
-          const SizedBox(height: 16),
+          Text(
+            'Price: ₹${productData!['productDetails']['product_price']}',
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.redAccent,
+              decoration: TextDecoration.lineThrough,
+            ),
+          ),
+          const SizedBox(height: 8),
           const Text(
             'Description',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 2),
           Text(
             productData!['productDetails']['description']
                 .replaceAll('&lt;', '<')
                 .replaceAll('&gt;', '>')
                 .replaceAll('&amp;', '&'),
             style: const TextStyle(fontSize: 16),
+            textAlign: TextAlign.justify,
           ),
           const SizedBox(height: 16),
           const Text(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:maha_kundali_app/screens/AstrologerProfile/astrologerList.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/Numerology/num_model.dart';
+import 'package:maha_kundali_app/screens/LiveAstrologers/liveastrologerScreen.dart';
 import 'package:shimmer/shimmer.dart';
 
 class NumerologyDetailsScreen extends StatefulWidget {
@@ -51,7 +52,7 @@ class _NumerologyDetailsScreenState extends State<NumerologyDetailsScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => AstrologerListScreen()));
+                        builder: (context) => LiveAstrologerListScreen()));
                 // Navigator.push(context,
                 //     MaterialPageRoute(builder: (context) => VideoCallScreen()));
               },

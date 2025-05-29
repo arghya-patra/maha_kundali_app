@@ -122,18 +122,22 @@ class _SettingsScreenState extends State<SettingsScreen>
         _buildSectionHeader('About Us'),
         _buildSettingsOption('Terms and Conditions', Icons.article,
             route: TermsAndConditionsScreen(
+              title: "Terms of Service",
               action: 'terms-of-service',
             )),
         _buildSettingsOption('Privacy Policy', Icons.privacy_tip,
             route: TermsAndConditionsScreen(
+              title: "Privacy Policy",
               action: 'privacy-policy',
             )),
         _buildSettingsOption('Refund Polocy', Icons.article,
             route: TermsAndConditionsScreen(
+              title: "Refund Policy",
               action: 'refund-policy',
             )),
         _buildSettingsOption('About Us', Icons.privacy_tip,
             route: TermsAndConditionsScreen(
+              title: "About Us",
               action: 'about-us',
             )),
         _buildSettingsOption('Contact Us', Icons.contact_page,

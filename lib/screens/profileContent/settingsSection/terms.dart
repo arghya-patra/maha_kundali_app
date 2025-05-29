@@ -6,8 +6,10 @@ import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 
 class TermsAndConditionsScreen extends StatefulWidget {
+  String? title;
   String? action;
-  TermsAndConditionsScreen({required this.action});
+  TermsAndConditionsScreen(
+      {super.key, required this.action, required this.title});
   @override
   _TermsAndConditionsScreenState createState() =>
       _TermsAndConditionsScreenState();
@@ -42,7 +44,10 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        //title: const Text('Settings'),
+        title: Text(
+          widget.title!,
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -67,17 +72,26 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    terms['title'],
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
+                  // Text(
+                  //   terms['title'],
+                  //   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  // ),
                   // SizedBox(height: 16),
                   // terms['title'] == 'About Us'
                   //     ? Image.network(terms['img'],
                   //         height: 200, fit: BoxFit.contain)
                   //     : Container(),
                   SizedBox(height: 0),
-                  Html(data: terms['contents']),
+                  Html(
+                    data: terms['contents'],
+                    style: {
+                      "body": Style(
+                        textAlign: TextAlign.justify,
+                        // color: Colors.white, // Optional: keep your app's theme
+                        //fontSize: FontSize(16), // Optional
+                      ),
+                    },
+                  ),
                 ],
               ),
             );

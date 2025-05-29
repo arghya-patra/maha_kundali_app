@@ -244,6 +244,7 @@ class _LoginScreenState extends State<LoginScreen>
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   TermsAndConditionsScreen(
+                                                    title: "Terms of Service",
                                                     action: 'terms-of-service',
                                                   )),
                                         );
@@ -269,6 +270,7 @@ class _LoginScreenState extends State<LoginScreen>
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   TermsAndConditionsScreen(
+                                                    title: "Privacy Policy",
                                                     action: 'privacy-policy',
                                                   )),
                                         );

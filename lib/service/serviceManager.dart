@@ -23,6 +23,7 @@ class ServiceManager {
   static String userAddress = '';
   static String addressID = '';
   static String roleAs = '';
+  static String balance = '';
   void setUserName(String name) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('username', name);
@@ -75,6 +76,16 @@ class ServiceManager {
   void getRole() async {
     final prefs = await SharedPreferences.getInstance();
     roleAs = prefs.getString('role_as') ?? '';
+  }
+
+  void setBalance(String balance) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('balance', balance);
+  }
+
+  void getBalance() async {
+    final prefs = await SharedPreferences.getInstance();
+    balance = prefs.getString('balance') ?? '';
   }
 
   void removeAll() async {

@@ -48,6 +48,15 @@ class _LearnAstrologyScreenState extends State<LearnAstrologyScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Learn Astrology'),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.orange, Colors.red],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: isLoading
           ? const Center(
@@ -133,16 +142,19 @@ class _LearnAstrologyScreenState extends State<LearnAstrologyScreen> {
   // Courses Section
   Widget _buildCoursesSection() {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(2.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Courses Available',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Colors.orange,
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: const Text(
+              'Courses Available',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.orange,
+              ),
             ),
           ),
           Divider(),
@@ -162,11 +174,12 @@ class _LearnAstrologyScreenState extends State<LearnAstrologyScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 12),
                     child: Text(
                       categoryName,
                       style: const TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
@@ -216,7 +229,7 @@ class _LearnAstrologyScreenState extends State<LearnAstrologyScreen> {
             0, // Remove card's default shadow since we're using custom shadow
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(4.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -228,8 +241,9 @@ class _LearnAstrologyScreenState extends State<LearnAstrologyScreen> {
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 8),
+
               ExpansionTile(
+                tilePadding: EdgeInsets.all(0),
                 title: const Text(
                   'Course Description',
                   style: TextStyle(
@@ -240,15 +254,16 @@ class _LearnAstrologyScreenState extends State<LearnAstrologyScreen> {
                 ),
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(4.0),
                     child: Text(
                       course['description'] ?? 'No description available.',
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white, height: 0),
+                      textAlign: TextAlign.justify,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              // const SizedBox(height: 8),
               Text(
                 'Duration: ${course['duration']} ${course['unit']}',
                 style: const TextStyle(color: Colors.white),

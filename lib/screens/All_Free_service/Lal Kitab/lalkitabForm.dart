@@ -355,7 +355,10 @@ class _LalKitabFormScreenState extends State<LalKitabFormScreen>
                                     dob: _dateController.text,
                                     tob: _timeController.text,
                                     lat: _selectedLat,
-                                    lon: _selectedLon)),
+                                    lon: _selectedLon,
+                                    language: selectedLanguage == "English"
+                                        ? 'en'
+                                        : 'hi')),
                           );
                           //submitData();
                           // Submit action and navigate to another screen

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
+import 'package:maha_kundali_app/screens/Astro_Ecom/cartScreen.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:shimmer/shimmer.dart';
 import 'dart:convert';
@@ -135,40 +137,74 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen>
               fit: BoxFit.cover,
             ),
           ),
-          SizedBox(height: 24),
-          Text(
-            reportDetails['name'],
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
+          SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  reportDetails['name'],
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ShoppingCartScreen()
+                          // WalletScreen(),
+                          ),
+                    );
+                    // Buy Now action
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 12),
+                    backgroundColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text(
+                    'Buy Now',
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
           ),
-          SizedBox(height: 12),
+          SizedBox(height: 4),
           Text(
             '₹${reportDetails['price']} - ${reportDetails['delivery_day']} Days Delivery',
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 16,
               fontWeight: FontWeight.w600,
               color: Colors.orangeAccent,
             ),
           ),
-          SizedBox(height: 24),
+          SizedBox(height: 6),
           Container(
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.all(6),
             decoration: BoxDecoration(
               color: Colors.grey[200],
               borderRadius: BorderRadius.circular(15),
             ),
             child: Text(
               reportDetails['short_description'],
+              textAlign: TextAlign.justify,
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 16,
                 color: Colors.grey[700],
               ),
             ),
           ),
-          SizedBox(height: 24),
+          SizedBox(height: 6),
           _buildSectionTitle('Details:'),
           SizedBox(height: 8),
           _buildRichText(reportDetails['description']),
@@ -192,6 +228,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen>
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
+      textAlign: TextAlign.justify,
       style: TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.bold,
@@ -203,8 +240,9 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen>
   Widget _buildRichText(String htmlContent) {
     return Text(
       _parseHtmlString(htmlContent),
+      textAlign: TextAlign.justify,
       style: TextStyle(
-        fontSize: 18,
+        fontSize: 16,
         color: Colors.black87,
         height: 1.5,
       ),
@@ -266,22 +304,6 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen>
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      // SizedBox(height: 4),
-                      // Text(
-                      //   '₹${report['price']}',
-                      //   style: TextStyle(
-                      //     color: Colors.orangeAccent,
-                      //     fontWeight: FontWeight.w500,
-                      //   ),
-                      // ),
-                      // SizedBox(height: 4),
-                      // Text(
-                      //   '${report['delivery_day']} Days Delivery',
-                      //   style: TextStyle(
-                      //     color: Colors.grey[600],
-                      //     fontSize: 14,
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
@@ -292,116 +314,6 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen>
       },
     );
   }
-
-  // Widget _buildServiceDetail(Map<String, dynamic> data) {
-  //   final reportDetails = data['reportDetails'];
-  //   final similarReports = data['similar_report_list'] as List<dynamic>;
-
-  //   return ListView(
-  //     padding: const EdgeInsets.all(16.0),
-  //     children: [
-  //       Image.network(reportDetails['icon']),
-  //       SizedBox(height: 16),
-  //       Text(
-  //         reportDetails['name'],
-  //         style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-  //       ),
-  //       SizedBox(height: 8),
-  //       Text(
-  //         '₹${reportDetails['price']} - ${reportDetails['delivery_day']} Days Delivery',
-  //         style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-  //       ),
-  //       SizedBox(height: 16),
-  //       Text(
-  //         reportDetails['short_description'],
-  //         style: TextStyle(fontSize: 16),
-  //       ),
-  //       SizedBox(height: 16),
-  //       Text(
-  //         'Details:',
-  //         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-  //       ),
-  //       SizedBox(height: 8),
-  //       Text(
-  //         _parseHtmlString(reportDetails['description']),
-  //         style: TextStyle(fontSize: 16),
-  //       ),
-  //       SizedBox(height: 16),
-  //       Text(
-  //         'Contains:',
-  //         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-  //       ),
-  //       SizedBox(height: 8),
-  //       Text(
-  //         _parseHtmlString(reportDetails['contain']),
-  //         style: TextStyle(fontSize: 16),
-  //       ),
-  //       SizedBox(height: 16),
-  //       Text(
-  //         'Benefits:',
-  //         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-  //       ),
-  //       SizedBox(height: 8),
-  //       Text(
-  //         _parseHtmlString(reportDetails['benefits']),
-  //         style: TextStyle(fontSize: 16),
-  //       ),
-  //       SizedBox(height: 24),
-  //       Text(
-  //         'Similar Reports:',
-  //         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-  //       ),
-  //       SizedBox(height: 8),
-  //       _buildSimilarReportsGrid(similarReports),
-  //     ],
-  //   );
-  // }
-
-  // Widget _buildSimilarReportsGrid(List<dynamic> similarReports) {
-  //   return GridView.builder(
-  //     shrinkWrap: true,
-  //     physics: NeverScrollableScrollPhysics(),
-  //     itemCount: similarReports.length,
-  //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-  //       crossAxisCount: 2,
-  //       crossAxisSpacing: 8.0,
-  //       mainAxisSpacing: 8.0,
-  //     ),
-  //     itemBuilder: (context, index) {
-  //       final report = similarReports[index];
-  //       return Card(
-  //         elevation: 4,
-  //         shape:
-  //             RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-  //         child: Column(
-  //           crossAxisAlignment: CrossAxisAlignment.stretch,
-  //           children: [
-  //             Expanded(
-  //               child: Image.network(
-  //                 report['icon'],
-  //                 fit: BoxFit.cover,
-  //               ),
-  //             ),
-  //             Padding(
-  //               padding: const EdgeInsets.all(8.0),
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   Text(
-  //                     report['name'],
-  //                     style: TextStyle(fontWeight: FontWeight.bold),
-  //                   ),
-  //                   Text('₹${report['price']}'),
-  //                   Text('${report['delivery_day']} Days Delivery'),
-  //                 ],
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
 
   String _parseHtmlString(String htmlString) {
     // Parse the HTML string and convert it to plain text

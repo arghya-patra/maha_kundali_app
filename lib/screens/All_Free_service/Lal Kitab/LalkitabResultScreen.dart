@@ -10,13 +10,14 @@ class LalKitabScreen extends StatefulWidget {
   String? tob;
   String? lat;
   String? lon;
+  String? language;
 
-  LalKitabScreen({
-    required this.dob,
-    required this.tob,
-    required this.lat,
-    required this.lon,
-  });
+  LalKitabScreen(
+      {required this.dob,
+      required this.tob,
+      required this.lat,
+      required this.lon,
+      required this.language});
 
   @override
   _LalKitabScreenState createState() => _LalKitabScreenState();
@@ -67,6 +68,7 @@ class _LalKitabScreenState extends State<LalKitabScreen>
         'lat': widget.lat ?? "",
         'lon': widget.lon ?? "",
         'zone': '5.5',
+        'language': widget.language,
         ...dobMap,
       });
 
@@ -133,6 +135,7 @@ class _LalKitabScreenState extends State<LalKitabScreen>
         'lat': widget.lat ?? "",
         'lon': widget.lon ?? "",
         'zone': '5.5',
+        'language': widget.language,
         ...dobMap,
       });
 
@@ -175,6 +178,7 @@ class _LalKitabScreenState extends State<LalKitabScreen>
         'lat': widget.lat ?? "",
         'lon': widget.lon ?? "",
         'zone': '5.5',
+        'language': widget.language,
         ...dobMap,
       });
 
@@ -216,6 +220,7 @@ class _LalKitabScreenState extends State<LalKitabScreen>
         'lat': widget.lat ?? "",
         'lon': widget.lon ?? "",
         'zone': '5.5',
+        'language': widget.language,
         ...dobMap,
       });
 
@@ -255,6 +260,7 @@ class _LalKitabScreenState extends State<LalKitabScreen>
         'lat': widget.lat ?? "",
         'lon': widget.lon ?? "",
         'zone': '5.5',
+        'language': widget.language,
         ...dobMap,
       });
 

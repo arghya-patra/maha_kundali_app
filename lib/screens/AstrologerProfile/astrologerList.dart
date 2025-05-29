@@ -557,7 +557,7 @@ class _AstrologerListScreenState extends State<AstrologerListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Astrologer List'),
+        title: Text('Our Astrologer List'),
         backgroundColor: Colors.deepOrange,
       ),
       body: StreamBuilder<List<Map<String, dynamic>>>(

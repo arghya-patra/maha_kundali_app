@@ -193,13 +193,7 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 side: const BorderSide(
-                                    color: Colors.orange, width: 2)
-
-                                //  product["isOffer"]
-                                //     ? const BorderSide(
-                                //         color: Colors.orange, width: 2)
-                                //     : BorderSide.none,
-                                ),
+                                    color: Colors.orange, width: 2)),
                             child: Column(
                               children: [
                                 Container(
@@ -236,6 +230,12 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.red),
                                           ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
                                           Text(
                                             "₹${product["price"]}",
                                             style: const TextStyle(
@@ -244,12 +244,6 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
                                               color: Colors.grey,
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
                                           GestureDetector(
                                             child: Icon(
                                               product["inCart"]

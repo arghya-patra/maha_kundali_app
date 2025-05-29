@@ -47,6 +47,7 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
   Future<Map<String, dynamic>> fetchAstrologerDetails() async {
     String url = APIData.login;
     print(url.toString());
+    print(widget.id);
     var response = await http.post(Uri.parse(url), body: {
       'action': 'astrologer-profile',
       'authorizationToken': ServiceManager.tokenID,
@@ -155,9 +156,8 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
                         // Profile image on the left
                         CircleAvatar(
                           radius: 50, // Reduced size for better alignment
-                          backgroundImage: NetworkImage(
-                            'https://mahakundali.hitechmart.in/uploads/supplier/1721132166_0.jpg',
-                          ),
+                          backgroundImage:
+                              NetworkImage(astrologerDetails['logo']),
                         ),
                         const SizedBox(width: 16),
 
@@ -228,15 +228,14 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
                       },
                     ),
                   ),
-
                   // Padding to add spacing between sections
-                  const SizedBox(height: 16),
-
+                  const SizedBox(height: 5),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Text(
                       astrologerDetails['company_desc'],
                       style: const TextStyle(fontSize: 16),
+                      textAlign: TextAlign.justify,
                     ),
                   ),
 
@@ -258,8 +257,10 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
                       itemCount: productList.length,
                       itemBuilder: (context, index) {
                         return Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 4.0), // Reduced horizontal padding
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
@@ -278,11 +279,25 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              Text(
-                                productList[index]['product_title'],
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.center,
+                              // Adjusted Text widget for product title
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Container(
+                                  width:
+                                      150, // Fixed width for consistent layout
+                                  child: Text(
+                                    productList[index]['product_title'],
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          14, // Slightly smaller font size
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    overflow: TextOverflow
+                                        .ellipsis, // Handle long text
+                                    maxLines: 1, // Limit to one line
+                                  ),
+                                ),
                               ),
                               const SizedBox(height: 4),
                               Text(
@@ -332,7 +347,7 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
                       },
                     ),
                   ),
-                  const Divider(color: Colors.deepOrange, thickness: 2),
+                  // const Divider(color: Colors.deepOrange, thickness: 2),
                   // const Padding(
                   //   padding: EdgeInsets.all(16.0),
                   //   child: Text(
@@ -395,7 +410,7 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
                   // ),
                   const Divider(color: Colors.deepOrange, thickness: 2),
                   const Padding(
-                    padding: EdgeInsets.all(16.0),
+                    padding: EdgeInsets.only(top: 16, left: 16.0),
                     child: Text(
                       'Availability',
                       style:
@@ -403,18 +418,41 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: availabilityList.map<Widget>((availability) {
-                        String day = availability.keys.first;
-                        String time = availability[day];
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4.0),
-                          child: Text('$day: $time',
-                              style: const TextStyle(fontSize: 16)),
-                        );
-                      }).toList(),
+                      children: [
+                        const SizedBox(height: 6),
+                        ...availabilityList.map<Widget>((availability) {
+                          String day = availability.keys.first;
+                          String time = availability[day]!;
+                          return Card(
+                            elevation: 2,
+                            margin: const EdgeInsets.symmetric(vertical: 4.0),
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    _getDayIcon(day),
+                                    color: Colors.deepOrange,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      '$day: $time',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ],
                     ),
                   ),
                   // Container(
@@ -459,21 +497,42 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: reviewList.length,
                     itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage:
-                                NetworkImage(reviewList[index]['logo']),
+                      return Card(
+                        elevation: 2,
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 16.0),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                backgroundImage:
+                                    NetworkImage(reviewList[index]['logo']),
+                                radius: 30,
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      reviewList[index]['date'],
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    _buildStarRating(reviewList[index]['rate']),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                          title: Text(reviewList[index]['date'],
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: Text(reviewList[index]['rate']),
                         ),
                       );
                     },
-                  ),
+                  )
                 ],
               ),
             );
@@ -481,6 +540,45 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
         },
       ),
     );
+  }
+
+  Widget _buildStarRating(String rating) {
+    // Convert the string rating to an integer
+    int rateValue = int.tryParse(rating) ?? 0; // Default to 0 if parsing fails
+    List<Widget> stars = [];
+    for (int i = 1; i <= 5; i++) {
+      stars.add(
+        Icon(
+          i <= rateValue ? Icons.star : Icons.star_border,
+          color: Colors.amber,
+          size: 20,
+        ),
+      );
+    }
+    return Row(
+      children: stars,
+    );
+  }
+
+  IconData _getDayIcon(String day) {
+    switch (day.toLowerCase()) {
+      case 'monday':
+        return Icons.calendar_today;
+      case 'tuesday':
+        return Icons.calendar_today;
+      case 'wednesday':
+        return Icons.calendar_today;
+      case 'thursday':
+        return Icons.calendar_today;
+      case 'friday':
+        return Icons.calendar_today;
+      case 'saturday':
+        return Icons.calendar_today;
+      case 'sunday':
+        return Icons.calendar_today;
+      default:
+        return Icons.calendar_today;
+    }
   }
 }
 
