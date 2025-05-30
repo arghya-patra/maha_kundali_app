@@ -13,6 +13,7 @@ import 'package:maha_kundali_app/screens/All_Free_service/learn_astrology/learn_
 import 'package:maha_kundali_app/screens/All_Free_service/match_Making/matchMakingBoy.dart';
 import 'package:maha_kundali_app/screens/Astro_remedies/astroRemediesList.dart';
 import 'package:maha_kundali_app/screens/Astro_remedies/remidies_details.dart';
+import 'package:maha_kundali_app/screens/Authentication/login.dart';
 import 'package:maha_kundali_app/screens/Blog/blog_screen.dart';
 import 'dart:convert';
 
@@ -128,13 +129,13 @@ class _UserDashboardState extends State<UserDashboard> {
                     children: [
                       ServiceManager.profileURL == 'https://mahakundali.com/'
                           ? const CircleAvatar(
-                              radius: 30,
+                              radius: 22,
                               backgroundImage:
                                   AssetImage('images/profile.jpeg'),
                               backgroundColor: Colors.transparent,
                             )
                           : CircleAvatar(
-                              radius: 30,
+                              radius: 22,
                               backgroundImage:
                                   NetworkImage(ServiceManager.profileURL),
                             ),
@@ -147,7 +148,7 @@ class _UserDashboardState extends State<UserDashboard> {
                             ServiceManager.userName,
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -169,41 +170,41 @@ class _UserDashboardState extends State<UserDashboard> {
                   ),
                 ),
               ),
-              Positioned(
-                bottom: 5, // Position the wallet section at the bottom left
-                right: 12,
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.account_balance_wallet_outlined,
-                      color: Colors.white,
-                      size: 29,
-                    ),
-                    const SizedBox(width: 8),
-                    Column(
-                      children: [
-                        const Text(
-                          "Balance",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          ServiceManager
-                              .balance, // Replace with the wallet balance variable
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+              // Positioned(
+              //   bottom: 5, // Position the wallet section at the bottom left
+              //   right: 12,
+              //   child: Row(
+              //     children: [
+              //       const Icon(
+              //         Icons.account_balance_wallet_outlined,
+              //         color: Colors.white,
+              //         size: 29,
+              //       ),
+              //       const SizedBox(width: 8),
+              //       Column(
+              //         children: [
+              //           const Text(
+              //             "Balance",
+              //             style: TextStyle(
+              //               color: Colors.white,
+              //               fontSize: 12,
+              //               fontWeight: FontWeight.w500,
+              //             ),
+              //           ),
+              //           Text(
+              //             ServiceManager
+              //                 .balance, // Replace with the wallet balance variable
+              //             style: const TextStyle(
+              //               color: Colors.white,
+              //               fontSize: 12,
+              //               fontWeight: FontWeight.w500,
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
           Expanded(
@@ -232,6 +233,10 @@ class _UserDashboardState extends State<UserDashboard> {
                     route: FavoriteAstrologersScreen()),
                 _buildDrawerItem(Icons.calendar_today, 'Daily Horoscope',
                     route: HoroscopeScreen()),
+                _buildDrawerItem(Icons.login, 'Sign up as Astrologer',
+                    route: WebViewScreen(url: 'https://mahakundali.com/')),
+                _buildDrawerItem(Icons.abc, 'Astro remedies',
+                    route: RemediesScreen()),
                 _buildDrawerItem(Icons.chat, 'Call History',
                     route: CallListHistory()),
                 _buildDrawerItem(Icons.shopping_bag, 'Astro Products',

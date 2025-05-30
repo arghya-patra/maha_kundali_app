@@ -154,18 +154,18 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
           //     ),
           //   ],
           // ),
-          // IconButton(
-          //   icon: const Icon(Icons.shopping_cart),
-          //   onPressed: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => ShoppingCartScreen()
-          //           // WalletScreen(),
-          //           ),
-          //     );
-          //     // Navigate to the cart screen or perform any action
-          //   },
-          // ),
+          IconButton(
+            icon: const Icon(Icons.shopping_cart),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ShoppingCartScreen()
+                    // WalletScreen(),
+                    ),
+              );
+              // Navigate to the cart screen or perform any action
+            },
+          ),
         ],
       ),
       body: Stack(

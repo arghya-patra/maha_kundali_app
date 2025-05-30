@@ -327,20 +327,44 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: CachedNetworkImage(
-                              imageUrl: photoGalleryList[index]['file'],
-                              placeholder: (context, url) =>
-                                  const SpinKitFadingCircle(
-                                color: Colors.deepOrange,
-                                size: 50.0,
+                          child: GestureDetector(
+                            onTap: () {
+                              // Show dialog with the larger image
+                              showDialog(
+                                context: context,
+                                builder: (context) => Dialog(
+                                  child: Container(
+                                    height: 400, // Set the height of the dialog
+                                    width: 300, // Set the width of the dialog
+                                    child: CachedNetworkImage(
+                                      imageUrl: photoGalleryList[index]['file'],
+                                      placeholder: (context, url) =>
+                                          const Center(
+                                              child:
+                                                  CircularProgressIndicator()),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: CachedNetworkImage(
+                                imageUrl: photoGalleryList[index]['file'],
+                                placeholder: (context, url) =>
+                                    const SpinKitFadingCircle(
+                                  color: Colors.deepOrange,
+                                  size: 50.0,
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
+                                height: 150,
+                                width: 150,
+                                fit: BoxFit.cover,
                               ),
-                              errorWidget: (context, url, error) =>
-                                  const Icon(Icons.error),
-                              height: 150,
-                              width: 150,
-                              fit: BoxFit.cover,
                             ),
                           ),
                         );

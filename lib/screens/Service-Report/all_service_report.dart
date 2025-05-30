@@ -357,9 +357,9 @@ class _AllServiceReportScreenState extends State<AllServiceReportScreen> {
                         Text(
                           '${report.deliveryDay} Days Delivery',
                           style: const TextStyle(
-                            fontSize: 12,
-                            color: Color(0xFF757575),
-                          ),
+                              fontSize: 12,
+                              color: Color(0xFF757575),
+                              fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),

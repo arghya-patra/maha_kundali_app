@@ -82,8 +82,17 @@ class _LiveAstrologerListScreenState extends State<LiveAstrologerListScreen> {
         0; // Parse the rating string
 
     return GestureDetector(
-      onDoubleTap: () {
-        print("&&&^^");
+      onTap: () {
+        print(["&&&^^", astrologer]);
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AstrologerProfileScreen(
+              id: astrologer['Details']['user_id'],
+            ),
+          ),
+        );
 
         // Navigator.push(
         //   context,
