@@ -38,6 +38,9 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
   String? subTitle;
   String? title;
   String? bottomText;
+  String selectedLanguage = "English";
+  String selectedGender = "Male"; // Default gender
+
   @override
   void initState() {
     super.initState();
@@ -172,50 +175,55 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
   }
 
   submitData() async {
-    setState(() {
-      _isLoading2 = true;
-    });
-    String url = APIData.login;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => BirthChartScreen(
 
-    print(url.toString());
-    final response = await http.post(Uri.parse(url), body: {
-      'action': 'free-service-type',
-      'authorizationToken': ServiceManager.tokenID,
-      'type': 'birthchart',
-      'name': _nameController.text,
-      'dob': _dateController.text,
-      'tob': _timeController.text,
-      'pob': _selectedCity,
-      'lang': 'en',
-      'city': _selectedCity,
-      'lat': _selectedLat,
-      'lon': _selectedLon
-    });
-    print(response.body);
+              //---
+              name: _nameController.text,
+              dob: _dateController.text,
+              tob: _timeController.text,
+              pob: _selectedCity,
+              lat: _selectedLat,
+              lon: _selectedLon,
+              language: selectedLanguage == "English" ? 'en' : 'hi',
+              gender: selectedGender == "Male" ? 'm' : 'f')),
+    );
+    // setState(() {
+    //   _isLoading2 = true;
+    // });
+    // String url = APIData.login;
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = jsonDecode(response.body);
-      setState(() {
-        svgData = data['content'];
-        subTitle = data['sub_title'];
-        title = data['title'];
-        bottomText = data['bottom-text'];
-        _isLoading2 = false;
-      });
+    // print(url.toString());
+    // final response = await http.post(Uri.parse(url), body: {
+    //   'action': 'free-service-type',
+    //   'authorizationToken': ServiceManager.tokenID,
+    //   'type': 'birthchart',
+    //   'name': _nameController.text,
+    //   'dob': _dateController.text,
+    //   'tob': _timeController.text,
+    //   'pob': _selectedCity,
+    //   'lang': 'en',
+    //   'city': _selectedCity,
+    //   'lat': _selectedLat,
+    //   'lon': _selectedLon
+    // });
+    // print(response.body);
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => BirthChartScreen(
-                  svgData: svgData,
-                  subTitle: subTitle,
-                  title: title,
-                  bottomText: bottomText,
-                )),
-      );
-    } else {
-      throw Exception('Failed to load horoscope details');
-    }
+    // if (response.statusCode == 200) {
+    //   final Map<String, dynamic> data = jsonDecode(response.body);
+    //   setState(() {
+    //     svgData = data['content'];
+    //     subTitle = data['sub_title'];
+    //     title = data['title'];
+    //     bottomText = data['bottom-text'];
+    //     _isLoading2 = false;
+    //   });
+
+    // } else {
+    //   throw Exception('Failed to load horoscope details');
+    // }
   }
 
   @override
@@ -276,17 +284,66 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                       ),
                     ),
                     const SizedBox(height: 20),
-
+                    Row(
+                      children: [
+                        const Text("Gender: ",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        Row(
+                          children: [
+                            Radio(
+                              value: "Male",
+                              groupValue: selectedGender,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedGender = value.toString();
+                                });
+                              },
+                            ),
+                            const Text("Male"),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Radio(
+                              value: "Female",
+                              groupValue: selectedGender,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedGender = value.toString();
+                                });
+                              },
+                            ),
+                            const Text("Female"),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: _timeController,
+                      readOnly: true,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                        labelText: 'Time of Birth',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.access_time),
+                      ),
+                      onTap: () => _selectTime(context),
+                    ),
+                    const SizedBox(height: 20),
                     //----------------------------------------------------------------------------
                     TextField(
                       controller: _searchController,
                       decoration: InputDecoration(
                         labelText: 'Place of Birth',
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(
+                        border: const OutlineInputBorder(),
+                        contentPadding: const EdgeInsets.symmetric(
                             vertical: 8.0, horizontal: 12.0),
-                        suffixIcon:
-                            _isLoading ? CircularProgressIndicator() : null,
+                        suffixIcon: _isLoading
+                            ? const CircularProgressIndicator()
+                            : null,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -327,7 +384,7 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                                 ),
                                 child: Text(
                                   city,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize:
                                           16), // Customize text style if needed
                                 ),
@@ -359,7 +416,7 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                     //     border: OutlineInputBorder(),
                     //   ),
                     // ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                     TextField(
                       controller: _dateController,
                       readOnly: true,
@@ -373,18 +430,25 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                       onTap: () => _selectDate(context),
                     ),
                     const SizedBox(height: 20),
-                    TextField(
-                      controller: _timeController,
-                      readOnly: true,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
-                        labelText: 'Time of Birth',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.access_time),
+                    _buildFieldContainer(
+                      child: DropdownButton<String>(
+                        isExpanded: true,
+                        value: selectedLanguage,
+                        underline: const SizedBox(),
+                        items: ["English", "Hindi"].map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedLanguage = value!;
+                          });
+                        },
                       ),
-                      onTap: () => _selectTime(context),
                     ),
+
                     const SizedBox(height: 30),
                     SizedBox(
                       width: double.infinity,
@@ -441,6 +505,18 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
         content: Text(message),
         backgroundColor: Colors.red,
       ),
+    );
+  }
+
+  Widget _buildFieldContainer({required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: child,
     );
   }
 }
