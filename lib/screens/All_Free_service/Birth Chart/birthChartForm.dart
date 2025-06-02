@@ -333,6 +333,20 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                       onTap: () => _selectTime(context),
                     ),
                     const SizedBox(height: 20),
+
+                    TextField(
+                      controller: _dateController,
+                      readOnly: true,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                        labelText: 'Date of Birth',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.calendar_today),
+                      ),
+                      onTap: () => _selectDate(context),
+                    ),
+                    const SizedBox(height: 20),
                     //----------------------------------------------------------------------------
                     TextField(
                       controller: _searchController,
@@ -416,20 +430,8 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                     //     border: OutlineInputBorder(),
                     //   ),
                     // ),
+
                     const SizedBox(height: 10),
-                    TextField(
-                      controller: _dateController,
-                      readOnly: true,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
-                        labelText: 'Date of Birth',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.calendar_today),
-                      ),
-                      onTap: () => _selectDate(context),
-                    ),
-                    const SizedBox(height: 20),
                     _buildFieldContainer(
                       child: DropdownButton<String>(
                         isExpanded: true,
