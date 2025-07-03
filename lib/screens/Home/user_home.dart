@@ -3,6 +3,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:maha_kundali_app/components/util.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/Festivals/festivalsScreen.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/KPAstro/kp_astro_form.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/Lal%20Kitab/LalkitabResultScreen.dart';
@@ -63,47 +64,147 @@ class _UserDashboardState extends State<UserDashboard> {
   }
 
   Future<void> fetchData() async {
-    print(["response 111111wdd1"]);
-    setState(() {
-      isLoading = true;
-    });
-    String url = APIData.login;
-    print(url.toString());
-    final response = await http.post(Uri.parse(url), body: {
-      'action': 'user-dashboard',
-      'authorizationToken': ServiceManager.tokenID
-    });
-    print(["response 1111111", response.body]);
-    if (response.statusCode == 200) {
-      await Future.delayed(const Duration(seconds: 1));
-      setState(() {
-        apiData = json.decode(response.body);
-        print(apiData['free_services']);
-        print(["&&&&&&&&&&", apiData['our_blog'][0]]);
+    debugPrint("Fetching user-dashboard data...");
+    setState(() => isLoading = true);
+
+    try {
+      final url = APIData.login;
+      final response = await http.post(Uri.parse(url), body: {
+        'action': 'user-dashboard',
+        'authorizationToken': ServiceManager.tokenID,
+      });
+
+      debugPrint("Response body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final decodedData = jsonDecode(response.body);
+        if (decodedData['status'] == 201 &&
+            decodedData['isSuccess'] == 'false' &&
+            decodedData['error'] == "Token does not exist!") {
+          ServiceManager().removeAll();
+          _showLogoutPopup();
+          return;
+        }
+        final userDetails = decodedData['userDetails'];
+
+        // Update state with fetched data
+        setState(() {
+          apiData = decodedData;
+          balance = userDetails['balance'].toString();
+          _banners = List<String>.from(
+            decodedData['home_sliders']
+                .map((item) => item['background'].toString()),
+          );
+        });
+
+        // Save balance to ServiceManager
+        ServiceManager().setBalance(balance!);
+        ServiceManager().getBalance();
+      } else {
+        debugPrint("Failed to load data - Status: ${response.statusCode}");
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      debugPrint("Error in fetchData: $e");
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
+  void _showLogoutPopup() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          title: const Text(
+            'Session Expired',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: const Text('Your session has expired. Please login again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+                ServiceManager().removeAll();
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                    (route) => false);
+              },
+              child: const Text(
+                'OK',
+                style: TextStyle(color: Colors.deepOrange),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> fetchData2() async {
+    print("Fetching user dashboard...");
+    setState(() => isLoading = true);
+
+    final url = APIData.login;
+
+    try {
+      final response = await http.post(Uri.parse(url), body: {
+        'action': 'user-dashboard',
+        'authorizationToken': ServiceManager.tokenID,
+      });
+
+      print("API Response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // Handle token expiry or invalid session
+        if (data['status'] == 201 &&
+            data['isSuccess'] == 'false' &&
+            data['error'] == "Token does not exist!") {
+          ServiceManager().removeAll();
+          _showLogoutPopup();
+          return;
+        }
+
+        // Simulate loading delay (optional)
+        await Future.delayed(const Duration(seconds: 1));
+
+        final userDetails = data['userDetails'];
+        final freeServices = data['free_services'];
+        final blogItem = data['our_blog'][0];
+        final sliders = data['home_sliders'];
+
+        print("Free Services: $freeServices");
+        print("Blog Item: $blogItem");
+
+        // final balanceString = userDetails['balance'].toString();
         ServiceManager().setBalance('${apiData['userDetails']['balance']}');
         ServiceManager().getBalance();
-        balance = apiData['userDetails']['balance'].toString();
-      });
-      print(["&&&&&&&&&", apiData['userDetails']]);
-      // print(["*********", apiData['userDetails']['balance']]);
-      _banners = apiData['home_sliders']
-          .map<String>((slider) => slider['background'].toString())
-          .toList();
 
-      print(_banners);
-      setState(() {
-        isLoading = false;
-      });
-      print("&&&&&&&&&&&&&&&&");
-    } else {
-      throw Exception('Failed to load data');
-      setState(() {
-        isLoading = false;
-      });
+        setState(() {
+          apiData = data;
+          balance = apiData['userDetails']['balance'].toString();
+          ;
+          _banners = sliders
+              .map<String>((slider) => slider['background'].toString())
+              .toList();
+          isLoading = false;
+        });
+
+        print("Banners: $_banners");
+      } else {
+        throw Exception("Failed to load data: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error fetching dashboard: $e");
+      toastMessage(message: 'Something went wrong!');
+      setState(() => isLoading = false);
     }
-    setState(() {
-      isLoading = false;
-    });
   }
 
   Widget _buildDrawer() {
@@ -227,21 +328,24 @@ class _UserDashboardState extends State<UserDashboard> {
                 _buildDrawerItem(Icons.history, 'Order History',
                     route: OrderHistoryScreen()),
                 _buildDrawerItem(Icons.chat_bubble, 'Chat with Astrologers',
-                    route: LiveAstrologerListScreen()),
+                    route: LiveAstrologerListScreen(
+                      isChat: true,
+                    )),
                 _buildDrawerItem(
                     Icons.favorite_border_rounded, 'Favourite Astrologers',
                     route: FavoriteAstrologersScreen()),
                 _buildDrawerItem(Icons.calendar_today, 'Daily Horoscope',
                     route: HoroscopeScreen()),
                 _buildDrawerItem(Icons.login, 'Sign up as Astrologer',
-                    route: WebViewScreen(url: 'https://mahakundali.com/')),
+                    route: WebViewScreen(
+                        url: 'https://mahakundali.com/astrologer-reg')),
                 _buildDrawerItem(Icons.abc, 'Astro remedies',
                     route: RemediesScreen()),
                 _buildDrawerItem(Icons.chat, 'Call History',
                     route: CallListHistory()),
                 _buildDrawerItem(Icons.shopping_bag, 'Astro Products',
                     route: ShoppingScreen()),
-                _buildDrawerItem(Icons.settings, 'Settings',
+                _buildDrawerItem(Icons.settings, 'My Account',
                     route: SettingsScreen()),
               ],
             ),
@@ -541,7 +645,9 @@ class _UserDashboardState extends State<UserDashboard> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => LiveAstrologerListScreen(),
+                            builder: (context) => LiveAstrologerListScreen(
+                              isChat: false,
+                            ),
                           ),
                         );
 
@@ -615,7 +721,9 @@ class _UserDashboardState extends State<UserDashboard> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LiveAstrologerListScreen(),
+                    builder: (context) => LiveAstrologerListScreen(
+                      isChat: true,
+                    ),
                   ),
                 );
               },
@@ -663,7 +771,9 @@ class _UserDashboardState extends State<UserDashboard> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LiveAstrologerListScreen(),
+                    builder: (context) => LiveAstrologerListScreen(
+                      isChat: true,
+                    ),
                   ),
                 );
               },
@@ -1721,6 +1831,9 @@ class _UserDashboardState extends State<UserDashboard> {
               );
             }),
           ),
+          SizedBox(
+            height: 100,
+          )
         ],
       ),
     );

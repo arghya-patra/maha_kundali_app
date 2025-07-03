@@ -52,7 +52,9 @@ class _NumerologyDetailsScreenState extends State<NumerologyDetailsScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => LiveAstrologerListScreen()));
+                        builder: (context) => LiveAstrologerListScreen(
+                              isChat: true,
+                            )));
                 // Navigator.push(context,
                 //     MaterialPageRoute(builder: (context) => VideoCallScreen()));
               },

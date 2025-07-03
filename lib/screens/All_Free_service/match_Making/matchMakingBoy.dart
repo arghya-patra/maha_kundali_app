@@ -39,6 +39,12 @@ class _MatchmakingBoyState extends State<MatchmakingBoy>
     _animationController =
         AnimationController(vsync: this, duration: const Duration(seconds: 2));
 
+    _dateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final now = TimeOfDay.now();
+      _timeController.text = now.format(context);
+    });
+
     // Simulating loading time
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
@@ -212,7 +218,32 @@ class _MatchmakingBoyState extends State<MatchmakingBoy>
                       ),
                     ),
                     const SizedBox(height: 20),
-
+                    TextField(
+                      controller: _dateController,
+                      readOnly: true,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                        labelText: 'Date of Birth',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.calendar_today),
+                      ),
+                      onTap: () => _selectDate(context),
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: _timeController,
+                      readOnly: true,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                        labelText: 'Time of Birth',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.access_time),
+                      ),
+                      onTap: () => _selectTime(context),
+                    ),
+                    const SizedBox(height: 20),
                     //----------------------------------------------------------------------------
                     TextField(
                       controller: _searchController,
@@ -272,32 +303,6 @@ class _MatchmakingBoyState extends State<MatchmakingBoy>
                           },
                         ),
                       ),
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: _dateController,
-                      readOnly: true,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
-                        labelText: 'Date of Birth',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.calendar_today),
-                      ),
-                      onTap: () => _selectDate(context),
-                    ),
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: _timeController,
-                      readOnly: true,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
-                        labelText: 'Time of Birth',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.access_time),
-                      ),
-                      onTap: () => _selectTime(context),
-                    ),
 
                     const SizedBox(height: 30),
                     SizedBox(

@@ -27,6 +27,7 @@ class _NumerologyFormScreenState extends State<NumerologyFormScreen> {
   String selectedLanguage = "English";
   String selectedTimezone = "IST";
   String birthPlace = "kolkata";
+  String selectedGender = "Male";
   final TextEditingController _nameController = TextEditingController();
 
   final TextEditingController _emailController = TextEditingController();
@@ -40,6 +41,8 @@ class _NumerologyFormScreenState extends State<NumerologyFormScreen> {
   @override
   void initState() {
     super.initState();
+    formattedDate = DateFormat('dd/MM/yyyy').format(selectedDate);
+
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
         isLoading = false;
@@ -123,6 +126,42 @@ class _NumerologyFormScreenState extends State<NumerologyFormScreen> {
                         labelText: 'Name',
                         border: OutlineInputBorder(),
                       ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        const Text("Gender: ",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        Row(
+                          children: [
+                            Radio(
+                              value: "Male",
+                              groupValue: selectedGender,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedGender = value.toString();
+                                });
+                              },
+                            ),
+                            const Text("Male"),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Radio(
+                              value: "Female",
+                              groupValue: selectedGender,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedGender = value.toString();
+                                });
+                              },
+                            ),
+                            const Text("Female"),
+                          ],
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     _buildLabel('Date of Birth'),

@@ -34,6 +34,8 @@ class _SateSatiFormState extends State<SateSatiForm>
   String? _selectedLon;
   bool _isLoading = false;
   String selectedLanguage = "English";
+  String selectedGender = "Male";
+
   @override
   void initState() {
     super.initState();
@@ -44,7 +46,11 @@ class _SateSatiFormState extends State<SateSatiForm>
 
     _fadeAnimation =
         Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
-
+    _dateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final now = TimeOfDay.now();
+      _timeController.text = now.format(context);
+    });
     // Simulating loading time
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
@@ -218,6 +224,69 @@ class _SateSatiFormState extends State<SateSatiForm>
                       ),
                     ),
                     const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        const Text("Gender: ",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        Row(
+                          children: [
+                            Radio(
+                              value: "Male",
+                              groupValue: selectedGender,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedGender = value.toString();
+                                });
+                              },
+                            ),
+                            const Text("Male"),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Radio(
+                              value: "Female",
+                              groupValue: selectedGender,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedGender = value.toString();
+                                });
+                              },
+                            ),
+                            const Text("Female"),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: _dateController,
+                      readOnly: true,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                        labelText: 'Date of Birth',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.calendar_today),
+                      ),
+                      onTap: () => _selectDate(context),
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: _timeController,
+                      readOnly: true,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                        labelText: 'Time of Birth',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.access_time),
+                      ),
+                      onTap: () => _selectTime(context),
+                    ),
+
+                    const SizedBox(height: 20),
 
                     //----------------------------------------------------------------------------
                     TextField(
@@ -301,32 +370,7 @@ class _SateSatiFormState extends State<SateSatiForm>
                     //     border: OutlineInputBorder(),
                     //   ),
                     // ),
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: _dateController,
-                      readOnly: true,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
-                        labelText: 'Date of Birth',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.calendar_today),
-                      ),
-                      onTap: () => _selectDate(context),
-                    ),
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: _timeController,
-                      readOnly: true,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
-                        labelText: 'Time of Birth',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.access_time),
-                      ),
-                      onTap: () => _selectTime(context),
-                    ),
+
                     const SizedBox(height: 20),
                     _buildFieldContainer(
                       child: DropdownButton<String>(

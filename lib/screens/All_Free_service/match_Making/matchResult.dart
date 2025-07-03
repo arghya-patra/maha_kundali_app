@@ -169,7 +169,7 @@ class _MatchmakingScreenState extends State<MatchmakingScreen>
           isLoading
               ? const Center(child: CircularProgressIndicator())
               : SingleChildScrollView(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(8.0),
                   child: ashtakootResponse != null
                       ? _buildAshtakootUI(ashtakootResponse!)
                       : const Center(
@@ -663,111 +663,110 @@ class _MatchmakingScreenState extends State<MatchmakingScreen>
     ];
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFFEDF1F7), Color(0xFFFFFFFF)],
+          colors: [Color(0xFFFAF3E0), Color(0xFFFFFFFF)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Subtitle Section
-          Text(
-            response['sub_title'],
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
-            ),
+          // Subtitle
+          Row(
+            children: const [
+              Icon(Icons.star, color: Colors.orange, size: 24),
+              SizedBox(width: 8),
+              Text(
+                "Ashtakoot Matching",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 20),
-          // Boy & Girl Details Section
+          const SizedBox(height: 16),
+
+          // Boy & Girl Info Card
           Card(
-            elevation: 3,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            color: const Color(0xFFF9FAFC),
-            child: Padding(
+            elevation: 4,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: Container(
               padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFE0F7FA), Color(0xFFB2EBF2)],
+                ),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Boy: ${boyGirlDetails['boy_name']} (${boyGirlDetails['boy_dob']})",
+                    "👦 Boy: ${boyGirlDetails['boy_name']} (${boyGirlDetails['boy_dob']})",
                     style: const TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "Girl: ${boyGirlDetails['girl_name']} (${boyGirlDetails['girl_dob']})",
+                    "👧 Girl: ${boyGirlDetails['girl_name']} (${boyGirlDetails['girl_dob']})",
                     style: const TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          const Divider(
-            height: 30,
-            color: Colors.grey,
-            thickness: 0.8,
-          ),
-          // Ashtakoot Details Section
+
+          const SizedBox(height: 20),
           const Text(
-            "Ashtakoot Details:",
+            "Score Details:",
             style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: Colors.black87,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
+
+          // Ashtakoot Score Cards
           ...ashtakootData.map((item) {
-            return Card(
-              elevation: 4, // Slightly increased elevation for depth
-              shape: RoundedRectangleBorder(
+            return Container(
+              margin: const EdgeInsets.symmetric(vertical: 6),
+              decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-              ),
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color.fromARGB(255, 251, 226, 84),
-                      Color.fromARGB(255, 251, 224, 151)
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  border: Border.all(
-                    color: Colors.orange, // Border color
-                    width: 1.5, // Border width
-                  ),
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.orange.shade100,
+                    Colors.orange.shade200,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.orange.shade100,
+                    blurRadius: 6,
+                    offset: const Offset(2, 2),
+                  )
+                ],
+                border: Border.all(color: Colors.deepOrange, width: 1.2),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Title & Score
+                    // Header
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -776,40 +775,37 @@ class _MatchmakingScreenState extends State<MatchmakingScreen>
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black87,
                           ),
                         ),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
+                              horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.greenAccent.shade100,
-                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.green.shade600,
+                            borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
                             "${item['tara'] ?? 0}/${item['full_score']}",
                             style: const TextStyle(
                               fontSize: 14,
+                              color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87,
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    // Description
+                    const SizedBox(height: 6),
                     Text(
                       item['description'],
                       style: const TextStyle(
                         fontSize: 14,
-                        color: Colors.black54,
+                        color: Colors.black87,
                       ),
+                      textAlign: TextAlign.justify,
                     ),
                     const SizedBox(height: 8),
-                    // Boy & Girl Details
+                    // Boy & Girl traits
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -817,7 +813,7 @@ class _MatchmakingScreenState extends State<MatchmakingScreen>
                           "Boy: ${item['boy_tara'] ?? item['boy_gana'] ?? item['boy_yoni'] ?? item['boy_rasi'] ?? item['boy_lord'] ?? item['boy_vasya'] ?? item['boy_nadi'] ?? item['boy_varna']}",
                           style: const TextStyle(
                             fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w500,
                             color: Colors.black87,
                           ),
                         ),
@@ -825,7 +821,7 @@ class _MatchmakingScreenState extends State<MatchmakingScreen>
                           "Girl: ${item['girl_tara'] ?? item['girl_gana'] ?? item['girl_yoni'] ?? item['girl_rasi'] ?? item['girl_lord'] ?? item['girl_vasya'] ?? item['girl_nadi'] ?? item['girl_varna']}",
                           style: const TextStyle(
                             fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w500,
                             color: Colors.black87,
                           ),
                         ),
@@ -836,24 +832,25 @@ class _MatchmakingScreenState extends State<MatchmakingScreen>
               ),
             );
           }).toList(),
+
           const SizedBox(height: 20),
-          // Total Score Section
+          // Bot Response Summary
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
               gradient: const LinearGradient(
-                colors: [Color(0xFFFFF7E0), Color(0xFFFFF0C2)],
+                colors: [Color(0xFFFFF7E0), Color(0xFFFFECB3)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
+              borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
+                  color: Colors.orange.withOpacity(0.2),
                   blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
+                  offset: const Offset(2, 4),
+                )
               ],
             ),
             child: Text(

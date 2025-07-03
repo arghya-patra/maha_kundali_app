@@ -54,6 +54,11 @@ class _MatchmakingGirlState extends State<MatchmakingGirl>
 
     _animationController =
         AnimationController(vsync: this, duration: const Duration(seconds: 2));
+    _dateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final now = TimeOfDay.now();
+      _timeController.text = now.format(context);
+    });
 
     // Simulating loading time
     Future.delayed(const Duration(seconds: 2), () {
@@ -287,6 +292,33 @@ class _MatchmakingGirlState extends State<MatchmakingGirl>
                       ),
                     ),
                     const SizedBox(height: 20),
+                    TextField(
+                      controller: _dateController,
+                      readOnly: true,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                        labelText: 'Date of Birth',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.calendar_today),
+                      ),
+                      onTap: () => _selectDate(context),
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: _timeController,
+                      readOnly: true,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                        labelText: 'Time of Birth',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.access_time),
+                      ),
+                      onTap: () => _selectTime(context),
+                    ),
+
+                    const SizedBox(height: 20),
 
                     //----------------------------------------------------------------------------
                     TextField(
@@ -347,34 +379,8 @@ class _MatchmakingGirlState extends State<MatchmakingGirl>
                           },
                         ),
                       ),
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: _dateController,
-                      readOnly: true,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
-                        labelText: 'Date of Birth',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.calendar_today),
-                      ),
-                      onTap: () => _selectDate(context),
-                    ),
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: _timeController,
-                      readOnly: true,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
-                        labelText: 'Time of Birth',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.access_time),
-                      ),
-                      onTap: () => _selectTime(context),
-                    ),
-
                     const SizedBox(height: 30),
+
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(

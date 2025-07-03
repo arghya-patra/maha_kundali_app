@@ -51,7 +51,11 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
 
     _fadeAnimation =
         Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
-
+    _dateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final now = TimeOfDay.now();
+      _timeController.text = now.format(context);
+    });
     // Simulating loading time
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
+import 'package:maha_kundali_app/screens/Astro_Ecom/cartScreen.dart';
 import 'dart:convert';
 
 import 'package:maha_kundali_app/screens/Astro_Ecom/productDetailScreen.dart';
@@ -82,6 +84,105 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
           cart.removeWhere((item) => item['id'] == product['id']);
         }
         isLoading = false;
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              titlePadding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              actionsPadding:
+                  const EdgeInsets.only(bottom: 20, right: 20, left: 20),
+              title: Row(
+                children: [
+                  Icon(
+                    product['inCart']
+                        ? Icons.check_circle
+                        : Icons.remove_circle,
+                    color: product['inCart'] ? Colors.green : Colors.red,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      product['inCart'] ? "Added to Cart" : "Removed from Cart",
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              content: const Text(
+                "What would you like to do next?",
+                style: TextStyle(fontSize: 16),
+              ),
+              actions: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        icon: const Icon(Icons.shopping_bag,
+                            color: Colors.deepOrange),
+                        label: const Text(
+                          "Continue",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.deepOrange,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Colors.deepOrange),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        icon: const Icon(Icons.shopping_cart,
+                            color: Colors.deepOrange),
+                        label: const Text(
+                          "Go to Cart",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.deepOrange,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Colors.deepOrange),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ShoppingCartScreen()
+                                // WalletScreen(),
+                                ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
       });
     } else {
       setState(() {
@@ -191,59 +292,82 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
                           child: Card(
                             elevation: 4,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                side: const BorderSide(
-                                    color: Colors.orange, width: 2)),
+                              borderRadius: BorderRadius.circular(12),
+                              side: const BorderSide(
+                                  color: Colors.orange, width: 2),
+                            ),
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                // Image Section
                                 Container(
-                                  height: 120,
-                                  padding: const EdgeInsets.all(8.0),
+                                  height: 100,
                                   width: double.infinity,
+                                  padding: const EdgeInsets.all(8.0),
                                   child: Image.network(
                                     product["image"],
-                                    fit: BoxFit.fill,
+                                    fit: BoxFit.cover,
                                     errorBuilder: (context, error, stackTrace) {
                                       return const Icon(Icons.error);
                                     },
                                   ),
                                 ),
+
+                                // Text + Pricing Section
                                 Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 8.0, left: 8.0, right: 7),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0, vertical: 4),
                                   child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
+                                      // Title
                                       Text(
                                         product["title"],
                                         style: const TextStyle(
                                             fontWeight: FontWeight.bold),
-                                        maxLines: 2, // Limit to 1 line
+                                        maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                       ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "₹${product["discountedPrice"]}",
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.red),
-                                          ),
-                                        ],
+                                      const SizedBox(height: 4),
+
+                                      // Discounted Price
+                                      Text(
+                                        "₹${NumberFormat('#,##0.##').format(product["discountedPrice"])}",
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.red,
+                                        ),
                                       ),
+                                      // Text(
+                                      //   "₹${product["discountedPrice"]}",
+                                      //   style: const TextStyle(
+                                      //     fontWeight: FontWeight.bold,
+                                      //     color: Colors.red,
+                                      //   ),
+                                      // ),
+
+                                      // Original Price + Cart Icon
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            "₹${product["price"]}",
+                                            "₹${NumberFormat('#,##0.##').format(product["price"])}",
                                             style: const TextStyle(
                                               decoration:
                                                   TextDecoration.lineThrough,
                                               color: Colors.grey,
                                             ),
                                           ),
+                                          // Text(
+                                          //   "₹${product["price"]}",
+                                          //   style: const TextStyle(
+                                          //     decoration:
+                                          //         TextDecoration.lineThrough,
+                                          //     color: Colors.grey,
+                                          //   ),
+                                          // ),
                                           GestureDetector(
                                             child: Icon(
                                               product["inCart"]
@@ -252,26 +376,13 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
                                                       .shopping_cart_outlined,
                                               color: product["inCart"]
                                                   ? Colors.green
-                                                  : Colors.grey,
+                                                  : Colors.orange,
+                                              size: 20,
                                             ),
                                             onTap: () {
                                               toggleCartStatus(product);
                                             },
-                                          )
-                                          // IconButton(
-                                          //   icon: Icon(
-                                          //     product["inCart"]
-                                          //         ? Icons.shopping_cart
-                                          //         : Icons
-                                          //             .shopping_cart_outlined,
-                                          //     color: product["inCart"]
-                                          //         ? Colors.green
-                                          //         : Colors.grey,
-                                          //   ),
-                                          //   onPressed: () {
-                                          //     toggleCartStatus(product);
-                                          //   },
-                                          // ),
+                                          ),
                                         ],
                                       ),
                                     ],

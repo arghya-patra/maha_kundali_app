@@ -232,66 +232,134 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
     }
   }
 
+  // Widget _buildChartTab() {
+  //   // Check if the chart data has been fetched
+  //   if (chartData == null) {
+  //     return const Center(
+  //       child: CircularProgressIndicator(),
+  //     );
+  //   }
+
+  //   return Container(
+  //     // color: Color.fromARGB(255, 255, 160, 122),
+  //     child: SingleChildScrollView(
+  //       child: Column(
+  //         children: [
+  //           // Lagna Chart
+  //           //  _buildChartWidget('Lagna', chartData!['Lagna']),
+
+  //           // Dreshkana Chart
+  //           _buildChartWidget('Dreshkana', chartData!['Dreshkana']),
+  //           _buildChartWidget('Somanatha', chartData!['Somanatha']),
+  //           _buildChartWidget('Saptamsa', chartData!['Saptamsa']),
+  //           _buildChartWidget('Navamsa', chartData!['Navamsa']),
+  //           _buildChartWidget('Dasamsa', chartData!['Dasamsa']),
+  //           _buildChartWidget(
+  //               'Dasamsa-EvenReverse', chartData!['Dasamsa-EvenReverse']),
+  //           _buildChartWidget('Dwadasamsa', chartData!['Dwadasamsa']),
+  //           _buildChartWidget('Shodashamsa', chartData!['Shodashamsa']),
+  //           _buildChartWidget('Vimsamsa', chartData!['Vimsamsa']),
+  //           _buildChartWidget(
+  //               'ChaturVimshamsha', chartData!['ChaturVimshamsha']),
+  //           _buildChartWidget('Trimshamsha', chartData!['Trimshamsha']),
+  //           _buildChartWidget('KhaVedamsa', chartData!['KhaVedamsa']),
+  //           _buildChartWidget('AkshaVedamsa', chartData!['AkshaVedamsa']),
+  //           _buildChartWidget('Shastiamsha', chartData!['Shastiamsha']),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
   Widget _buildChartTab() {
-    // Check if the chart data has been fetched
     if (chartData == null) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
-    return Container(
-      // color: Color.fromARGB(255, 255, 160, 122),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Lagna Chart
-            //  _buildChartWidget('Lagna', chartData!['Lagna']),
+    final chartKeys = [
+      'Dreshkana',
+      'Somanatha',
+      'Saptamsa',
+      'Navamsa',
+      'Dasamsa',
+      'Dasamsa-EvenReverse',
+      'Dwadasamsa',
+      'Shodashamsa',
+      'Vimsamsa',
+      'ChaturVimshamsha',
+      'Trimshamsha',
+      'KhaVedamsa',
+      'AkshaVedamsa',
+      'Shastiamsha',
+    ];
 
-            // Dreshkana Chart
-            _buildChartWidget('Dreshkana', chartData!['Dreshkana']),
-            _buildChartWidget('Somanatha', chartData!['Somanatha']),
-            _buildChartWidget('Saptamsa', chartData!['Saptamsa']),
-            _buildChartWidget('Navamsa', chartData!['Navamsa']),
-            _buildChartWidget('Dasamsa', chartData!['Dasamsa']),
-            _buildChartWidget(
-                'Dasamsa-EvenReverse', chartData!['Dasamsa-EvenReverse']),
-            _buildChartWidget('Dwadasamsa', chartData!['Dwadasamsa']),
-            _buildChartWidget('Shodashamsa', chartData!['Shodashamsa']),
-            _buildChartWidget('Vimsamsa', chartData!['Vimsamsa']),
-            _buildChartWidget(
-                'ChaturVimshamsha', chartData!['ChaturVimshamsha']),
-            _buildChartWidget('Trimshamsha', chartData!['Trimshamsha']),
-            _buildChartWidget('KhaVedamsa', chartData!['KhaVedamsa']),
-            _buildChartWidget('AkshaVedamsa', chartData!['AkshaVedamsa']),
-            _buildChartWidget('Shastiamsha', chartData!['Shastiamsha']),
-          ],
-        ),
+    return DefaultTabController(
+      length: chartKeys.length,
+      child: Column(
+        children: [
+          Container(
+            color: Colors.orange.shade100,
+            child: TabBar(
+              isScrollable: true,
+              labelColor: Colors.black,
+              indicatorColor: Colors.orange,
+              tabs: chartKeys.map((key) => Tab(text: key)).toList(),
+            ),
+          ),
+          Expanded(
+            child: TabBarView(
+              children: chartKeys
+                  .map((key) => _buildChartWidget(key, chartData![key]))
+                  .toList(),
+            ),
+          ),
+        ],
       ),
     );
   }
 
+  // Widget _buildChartWidget(String title, String svgData) {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(vertical: 16.0),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Text(
+  //           title,
+  //           style: const TextStyle(
+  //             fontSize: 24,
+  //             fontWeight: FontWeight.bold,
+  //           ),
+  //         ),
+  //         const SizedBox(height: 8),
+  //         // Render the SVG image using an SVG package (like flutter_svg)
+  //         SvgPicture.string(
+  //           svgData,
+  //           height: 300, // Adjust the size as needed
+  //           width: double.infinity,
+  //           placeholderBuilder: (BuildContext context) =>
+  //               const CircularProgressIndicator(),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
   Widget _buildChartWidget(String title, String svgData) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 8),
-          // Render the SVG image using an SVG package (like flutter_svg)
+          const SizedBox(height: 16),
           SvgPicture.string(
             svgData,
-            height: 300, // Adjust the size as needed
+            height: 300,
             width: double.infinity,
             placeholderBuilder: (BuildContext context) =>
-                const CircularProgressIndicator(),
+                const Center(child: CircularProgressIndicator()),
           ),
         ],
       ),

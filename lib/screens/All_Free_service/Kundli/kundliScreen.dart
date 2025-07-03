@@ -49,7 +49,12 @@ class _KundliScreenState extends State<KundliScreen>
 
     _fadeAnimation =
         Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
-
+    // _getCurrentLocation();
+    _dateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final now = TimeOfDay.now();
+      _timeController.text = now.format(context);
+    });
     // Simulating loading time
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
@@ -72,6 +77,58 @@ class _KundliScreenState extends State<KundliScreen>
     _debounce?.cancel();
     super.dispose();
   }
+
+  // Future<void> _getCurrentLocation() async {
+  //   bool serviceEnabled;
+  //   LocationPermission permission;
+
+  //   // Check if location services are enabled
+  //   serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  //   if (!serviceEnabled) {
+  //     print('Location services are disabled.');
+  //     return;
+  //   }
+
+  //   // Check location permissions
+  //   permission = await Geolocator.checkPermission();
+  //   if (permission == LocationPermission.denied) {
+  //     permission = await Geolocator.requestPermission();
+  //     if (permission == LocationPermission.denied) {
+  //       print('Location permissions are denied');
+  //       return;
+  //     }
+  //   }
+
+  //   if (permission == LocationPermission.deniedForever) {
+  //     print('Location permissions are permanently denied');
+  //     return;
+  //   }
+
+  //   // Get current position
+  //   Position position = await Geolocator.getCurrentPosition(
+  //     desiredAccuracy: LocationAccuracy.high,
+  //   );
+
+  //   double lat = position.latitude;
+  //   double lon = position.longitude;
+
+  //   try {
+  //     List<Placemark> placemarks = await placemarkFromCoordinates(lat, lon);
+
+  //     if (placemarks.isNotEmpty) {
+  //       final Placemark place = placemarks[0];
+  //       final formattedAddress =
+  //           '${place.locality}, ${place.administrativeArea}, ${place.country}';
+
+  //       setState(() {
+  //         _searchController.text = formattedAddress;
+  //         _placeController.text = '$formattedAddress\nLat: $lat, Lng: $lon';
+  //       });
+  //     }
+  //   } catch (e) {
+  //     print('Error in reverse geocoding: $e');
+  //   }
+  // }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(

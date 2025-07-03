@@ -6,25 +6,28 @@ import 'package:shimmer/shimmer.dart';
 import 'package:http/http.dart' as http;
 
 class DashaDetailsScreen extends StatefulWidget {
-  String? name;
-  String? dob;
-  String? tob;
-  String? pob;
-  String? lat;
-  String? lon;
-  String? language;
-  String? screen;
-  String? gender;
-  DashaDetailsScreen(
-      {required this.name,
-      required this.dob,
-      required this.tob,
-      required this.pob,
-      required this.lat,
-      required this.lon,
-      required this.language,
-      required this.screen,
-      required this.gender});
+  final String? name;
+  final String? dob;
+  final String? tob;
+  final String? pob;
+  final String? lat;
+  final String? lon;
+  final String? language;
+  final String? screen;
+  final String? gender;
+
+  DashaDetailsScreen({
+    required this.name,
+    required this.dob,
+    required this.tob,
+    required this.pob,
+    required this.lat,
+    required this.lon,
+    required this.language,
+    required this.screen,
+    required this.gender,
+  });
+
   @override
   _DashaDetailsScreenState createState() => _DashaDetailsScreenState();
 }
@@ -52,7 +55,6 @@ class _DashaDetailsScreenState extends State<DashaDetailsScreen> {
         'pob': widget.pob,
         'lang': widget.language == "English" ? 'en' : 'hi',
         'gender': widget.gender == "Male" ? 'm' : 'f',
-        //'city': _selectedCity,
         'lat': widget.lat,
         'lon': widget.lon
       });
@@ -93,7 +95,7 @@ class _DashaDetailsScreenState extends State<DashaDetailsScreen> {
           baseColor: Colors.grey[300]!,
           highlightColor: Colors.grey[100]!,
           child: Container(
-            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             height: 50,
             decoration: BoxDecoration(
               color: Colors.white,
@@ -107,113 +109,190 @@ class _DashaDetailsScreenState extends State<DashaDetailsScreen> {
 
   Widget _buildDashaDetails() {
     if (dashaData == null) {
-      return Center(child: Text("No data available"));
+      return const Center(child: Text("No data available"));
     }
 
     var mahaDasha = dashaData!["dasha"]["maha_dasha"]["response"];
     var yoginiDasha = dashaData!["dasha"]["yogini-dasha-main"]["response"];
     var antarDasha = dashaData!["dasha"]["antar_dasha"]["response"];
+    var currentMahaDasha =
+        dashaData!["dasha"]["current_maha_dasha"]["response"];
+    var currentAntarDasha =
+        dashaData!["dasha"]["current_char_dasha"]["response"];
+    var mainCharDashas = dashaData!["dasha"]["main_char_dashas"]["response"];
+    var subCharDashas = dashaData!["dasha"]["sub_char_dashas"]["response"];
 
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(16),
+    return DefaultTabController(
+      length: 6, // Number of tabs
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildTable(
-            title: "Maha Dasha",
-            headers: ["Dasha", "Start Date"],
-            rows: List.generate(mahaDasha["mahadasha"].length, (index) {
-              return [
-                mahaDasha["mahadasha"][index],
-                mahaDasha["mahadasha_order"][index]
-              ];
-            }),
+          const TabBar(
+            isScrollable: true, // ✅ Makes tab names scrollable
+            indicatorColor: Colors.deepOrange,
+            labelColor: Colors.deepOrange,
+            unselectedLabelColor: Colors.black54,
+            labelStyle: TextStyle(fontWeight: FontWeight.bold),
+            tabs: [
+              Tab(text: "Maha Dasha"),
+              Tab(text: "Yogini Dasha"),
+              Tab(text: "Antar Dasha"),
+              Tab(text: "Current Maha Dasha"),
+              // Tab(text: "Current Antar Dasha"),
+              Tab(text: "Main Char Dashas"),
+              Tab(text: "Sub Char Dashas"),
+            ],
           ),
-          SizedBox(height: 20),
-          _buildTable(
-            title: "Yogini Dasha",
-            headers: ["Dasha", "End Date"],
-            rows: List.generate(yoginiDasha["dasha_list"].length, (index) {
-              return [
-                yoginiDasha["dasha_list"][index],
-                yoginiDasha["dasha_end_dates"][index]
-              ];
-            }),
-          ),
-          SizedBox(height: 20),
-          _buildTable(
-            title: "Antar Dasha",
-            headers: ["Antar Dasha", "Start Date"],
-            rows: List.generate(antarDasha["antardashas"].length, (index) {
-              return [
-                antarDasha["antardashas"][index].join(", "),
-                antarDasha["antardasha_order"][index].join(", ")
-              ];
-            }),
+          Expanded(
+            child: TabBarView(
+              children: [
+                _buildTable(
+                  title: "Maha Dasha",
+                  headers: ["Dasha", "Start Date"],
+                  rows: List.generate(mahaDasha["mahadasha"].length, (index) {
+                    return [
+                      mahaDasha["mahadasha"][index],
+                      mahaDasha["mahadasha_order"][index]
+                    ];
+                  }),
+                ),
+                _buildTable(
+                  title: "Yogini Dasha",
+                  headers: ["Dasha", "End Date"],
+                  rows:
+                      List.generate(yoginiDasha["dasha_list"].length, (index) {
+                    return [
+                      yoginiDasha["dasha_list"][index],
+                      yoginiDasha["dasha_end_dates"][index]
+                    ];
+                  }),
+                ),
+                _buildTable(
+                  title: "Antar Dasha",
+                  headers: ["Antar Dasha", "Start Date"],
+                  rows:
+                      List.generate(antarDasha["antardashas"].length, (index) {
+                    return [
+                      antarDasha["antardashas"][index].join(", "),
+                      antarDasha["antardasha_order"][index].join(", ")
+                    ];
+                  }),
+                ),
+                _buildTable(
+                  title: "Current Maha Dasha",
+                  headers: ["Dasha", "Start Date", "End Date"],
+                  rows: [
+                    [
+                      currentMahaDasha["mahadasha"]["name"],
+                      currentMahaDasha["mahadasha"]["start"],
+                      currentMahaDasha["mahadasha"]["end"],
+                    ],
+                  ],
+                ),
+                // _buildTable(
+                //   title: "Current Antar Dasha",
+                //   headers: ["Dasha", "Start Date", "End Date"],
+                //   rows: [
+                //     [
+                //       currentAntarDasha["antardasha"]["name"],
+                //       currentAntarDasha["antardasha"]["start"],
+                //       currentAntarDasha["antardasha"]["end"],
+                //     ],
+                //   ],
+                // ),
+                _buildTable(
+                  title: "Main Char Dashas",
+                  headers: ["Dasha", "Start Date", "End Date"],
+                  rows: List.generate(mainCharDashas["dasha_list"].length,
+                      (index) {
+                    return [
+                      mainCharDashas["dasha_list"][index],
+                      mainCharDashas["start_date"],
+                      mainCharDashas["dasha_end_dates"][index],
+                    ];
+                  }),
+                ),
+                _buildTable(
+                  title: "Sub Char Dashas",
+                  headers: ["Dasha", "Start Date", "End Date"],
+                  rows: List.generate(subCharDashas.length, (index) {
+                    return [
+                      subCharDashas[index]["main_dasha"],
+                      subCharDashas[index]["sub_dasha_start_date"],
+                      subCharDashas[index]["sub_dasha_end_dates"].join(", "),
+                    ];
+                  }),
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildTable(
-      {required String title,
-      required List<String> headers,
-      required List<List<String>> rows}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.orange, width: 2),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Table(
-            border: TableBorder.symmetric(
-              inside: BorderSide(color: Colors.orange, width: 1),
+  Widget _buildTable({
+    required String title,
+    required List<String> headers,
+    required List<List<String>> rows,
+  }) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            columnWidths: {
-              0: FlexColumnWidth(3),
-              1: FlexColumnWidth(3),
-            },
-            children: [
-              TableRow(
-                decoration: BoxDecoration(color: Colors.orange[300]),
-                children: headers.map((header) {
-                  return Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Center(
-                      child: Text(
-                        header,
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                      ),
-                    ),
-                  );
-                }).toList(),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.orange, width: 2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Table(
+              border: TableBorder.symmetric(
+                inside: const BorderSide(color: Colors.orange, width: 1),
               ),
-              ...rows.map((row) {
-                return TableRow(
-                  decoration: BoxDecoration(color: Colors.orange[100]),
-                  children: row.map((cell) {
+              columnWidths: {
+                0: const FlexColumnWidth(3),
+                1: const FlexColumnWidth(3),
+              },
+              children: [
+                TableRow(
+                  decoration: BoxDecoration(color: Colors.orange[300]),
+                  children: headers.map((header) {
                     return Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Text(cell, textAlign: TextAlign.center),
+                      padding: const EdgeInsets.all(10),
+                      child: Center(
+                        child: Text(
+                          header,
+                          style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
+                      ),
                     );
                   }).toList(),
-                );
-              }).toList(),
-            ],
+                ),
+                ...rows.map((row) {
+                  return TableRow(
+                    decoration: BoxDecoration(color: Colors.orange[100]),
+                    children: row.map((cell) {
+                      return Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Text(cell, textAlign: TextAlign.center),
+                      );
+                    }).toList(),
+                  );
+                }).toList(),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

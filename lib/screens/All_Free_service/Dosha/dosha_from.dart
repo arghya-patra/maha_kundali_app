@@ -2,15 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
-import 'package:maha_kundali_app/screens/All_Free_service/Birth%20Chart/birthChartDetails.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/Dosha/dashaDetails.dart';
-import 'package:maha_kundali_app/screens/All_Free_service/Dosha/doshaDetails.dart';
-import 'package:maha_kundali_app/screens/All_Free_service/Kundli/kundliDetails.dart';
-import 'package:maha_kundali_app/screens/All_Free_service/Kundli/kundliModel.dart';
-import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:http/http.dart' as http;
 
@@ -38,6 +32,7 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
   String? _selectedLon;
   bool _isLoading = false;
   String selectedLanguage = "English";
+  String selectedGender = "Male";
   @override
   void initState() {
     super.initState();
@@ -48,6 +43,11 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
 
     _fadeAnimation =
         Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
+    _dateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final now = TimeOfDay.now();
+      _timeController.text = now.format(context);
+    });
 
     // Simulating loading time
     Future.delayed(const Duration(seconds: 2), () {
@@ -171,39 +171,6 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
     }
   }
 
-  // submitData() async {
-  //   setState(() {
-  //     _isLoading2 = true;
-  //   });
-  //   String url = APIData.login;
-
-  //   print(url.toString());
-  //   final response = await http.post(Uri.parse(url), body: {
-  //     'action': 'free-service-type',
-  //     'authorizationToken': ServiceManager.tokenID,
-  //     'type': 'dosha',
-  //     'name': _nameController.text,
-  //     'dob': _dateController.text,
-  //     'tob': _timeController.text,
-  //     'pob': _selectedCity,
-  //     'lang': 'en',
-  //     //'city': _selectedCity,
-  //     'lat': _selectedLat,
-  //     'lon': _selectedLon
-  //   });
-  //   print(response.body);
-
-  //   if (response.statusCode == 200) {
-  //     final Map<String, dynamic> data = jsonDecode(response.body);
-  //     setState(() {
-  //       svgData = data['content'];
-  //       _isLoading2 = false;
-  //     });
-  //   } else {
-  //     throw Exception('Failed to load horoscope details');
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -256,6 +223,70 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
                     ),
                     const SizedBox(height: 20),
 
+                    Row(
+                      children: [
+                        const Text("Gender: ",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        Row(
+                          children: [
+                            Radio(
+                              value: "Male",
+                              groupValue: selectedGender,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedGender = value.toString();
+                                });
+                              },
+                            ),
+                            const Text("Male"),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Radio(
+                              value: "Female",
+                              groupValue: selectedGender,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedGender = value.toString();
+                                });
+                              },
+                            ),
+                            const Text("Female"),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+
+                    TextField(
+                      controller: _dateController,
+                      readOnly: true,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                        labelText: 'Date of Birth',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.calendar_today),
+                      ),
+                      onTap: () => _selectDate(context),
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: _timeController,
+                      readOnly: true,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                        labelText: 'Time of Birth',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.access_time),
+                      ),
+                      onTap: () => _selectTime(context),
+                    ),
+                    const SizedBox(height: 20),
+
                     //----------------------------------------------------------------------------
                     TextField(
                       controller: _searchController,
@@ -268,7 +299,7 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
                             _isLoading ? CircularProgressIndicator() : null,
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 20),
 
                     // Dropdown list for city suggestions
                     if (_cities.isNotEmpty)
@@ -315,56 +346,6 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
                           },
                         ),
                       ),
-
-                    // Display selected city's details
-                    // if (_selectedCity != null)
-                    //   Padding(
-                    //     padding: const EdgeInsets.all(3.0),
-                    //     child: Column(
-                    //       crossAxisAlignment: CrossAxisAlignment.start,
-                    //       children: [
-                    //         Text('Selected City: $_selectedCity'),
-                    //         Text('Latitude: $_selectedLat'),
-                    //         Text('Longitude: $_selectedLon'),
-                    //       ],
-                    //     ),
-                    //   ),
-
-                    //----------------------------------------------------------------------------
-                    // TextField(
-                    //   controller: _placeController,
-                    //   decoration: const InputDecoration(
-                    //     labelText: 'Place of Birth',
-                    //     border: OutlineInputBorder(),
-                    //   ),
-                    // ),
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: _dateController,
-                      readOnly: true,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
-                        labelText: 'Date of Birth',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.calendar_today),
-                      ),
-                      onTap: () => _selectDate(context),
-                    ),
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: _timeController,
-                      readOnly: true,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
-                        labelText: 'Time of Birth',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.access_time),
-                      ),
-                      onTap: () => _selectTime(context),
-                    ),
-                    const SizedBox(height: 20),
                     _buildFieldContainer(
                       child: DropdownButton<String>(
                         isExpanded: true,

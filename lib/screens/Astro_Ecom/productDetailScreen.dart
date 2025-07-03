@@ -115,7 +115,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Product Details'),
+        //title: const Text('Product Details'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(

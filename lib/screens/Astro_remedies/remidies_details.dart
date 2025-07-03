@@ -3,6 +3,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:maha_kundali_app/apiManager/apiData.dart';
+import 'package:maha_kundali_app/screens/Astro_remedies/orderREmedies.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 
 class RemedyDetailsScreen extends StatefulWidget {
@@ -68,131 +69,166 @@ class _RemedyDetailsScreenState extends State<RemedyDetailsScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Remedy Icon and Name
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        color: Colors.red,
-                        child: Image.network(
-                          remedyDetails['icon'],
-                          height: 220,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Remedy Icon and Name
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          color: Colors.red,
+                          child: Image.network(
+                            remedyDetails['icon'],
+                            height: 220,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 15),
-                    Text(
-                      remedyDetails['name'],
-                      style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.deepOrange,
+                      SizedBox(
+                        height: 10,
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      remedyDetails['short_description'],
-                      style:
-                          const TextStyle(fontSize: 16, color: Colors.black54),
-                    ),
-                    const SizedBox(height: 10),
-
-                    // Full Description
-                    _buildSectionTitle('Description:'),
-                    _buildSectionContent(remedyDetails['description']),
-                    const SizedBox(height: 10),
-
-                    // Features
-                    _buildSectionTitle('Features:'),
-                    _buildSectionContent(remedyDetails['features']),
-                    const SizedBox(height: 10),
-
-                    // Activities
-                    _buildSectionTitle('Activities:'),
-                    _buildSectionContent(remedyDetails['activities']),
-                    const SizedBox(height: 10),
-
-                    // Benefits
-                    _buildSectionTitle('Benefits:'),
-                    _buildSectionContent(remedyDetails['benefits']),
-                    const SizedBox(height: 10),
-
-                    // Similar Remedies
-                    _buildSectionTitle('Similar Remedies:'),
-                    const SizedBox(height: 10),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: similarRemedies.length,
-                      itemBuilder: (context, index) {
-                        final similarRemedy = similarRemedies[index];
-                        return GestureDetector(
-                          onTap: () {
-                            // Navigate to the remedy details of the similar remedy
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => RemedyDetailsScreen(
-                                  remedyId: similarRemedy['name'],
-                                ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          OutlinedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        OrderRemediesFormScreen()),
+                              );
+                              // Handle order logic
+                            },
+                            icon: const Icon(Icons.shopping_cart,
+                                color: Colors.deepOrange),
+                            label: const Text(
+                              "Order Now",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.deepOrange,
                               ),
-                            );
-                          },
-                          child: Card(
-                            elevation: 8,
-                            margin: const EdgeInsets.symmetric(vertical: 5),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.network(
-                                      similarRemedy['icon'],
-                                      height: 80,
-                                      width: 80,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 15),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          similarRemedy['name'],
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.blueAccent,
-                                          ),
-                                        ),
-                                        Text(
-                                          similarRemedy['short_description'],
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.black54,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 24, vertical: 12),
+                              side: const BorderSide(color: Colors.deepOrange),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8)),
                             ),
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        remedyDetails['name'],
+                        style: const TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.deepOrange,
+                        ),
+                      ),
+                      // const SizedBox(height: 10),
+                      Text(
+                        remedyDetails['short_description'],
+                        style: const TextStyle(
+                            fontSize: 16, color: Colors.black54),
+                      ),
+                      //const SizedBox(height: 10),
+
+                      // Full Description
+                      _buildSectionTitle('Description:'),
+                      _buildSectionContent(remedyDetails['description']),
+                      //const SizedBox(height: 10),
+
+                      // Features
+                      _buildSectionTitle('Features:'),
+                      _buildSectionContent(remedyDetails['features']),
+                      // const SizedBox(height: 10),
+
+                      // Activities
+                      _buildSectionTitle('Activities:'),
+                      _buildSectionContent(remedyDetails['activities']),
+                      //const SizedBox(height: 10),
+
+                      // Benefits
+                      _buildSectionTitle('Benefits:'),
+                      _buildSectionContent(remedyDetails['benefits']),
+                      //const SizedBox(height: 10),
+
+                      // Similar Remedies
+                      _buildSectionTitle('Similar Remedies:'),
+                      // const SizedBox(height: 10),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: similarRemedies.length,
+                        itemBuilder: (context, index) {
+                          final similarRemedy = similarRemedies[index];
+                          return GestureDetector(
+                            onTap: () {
+                              // Navigate to the remedy details of the similar remedy
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => RemedyDetailsScreen(
+                                    remedyId: similarRemedy['name'],
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Card(
+                              elevation: 8,
+                              margin: const EdgeInsets.symmetric(vertical: 5),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Row(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.network(
+                                        similarRemedy['icon'],
+                                        height: 80,
+                                        width: 80,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 15),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            similarRemedy['name'],
+                                            style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.blueAccent,
+                                            ),
+                                          ),
+                                          Text(
+                                            similarRemedy['short_description'],
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black54,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ]),
               ),
             );
           }
@@ -203,7 +239,7 @@ class _RemedyDetailsScreenState extends State<RemedyDetailsScreen> {
 
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.only(top: 10),
       child: Text(
         title,
         style: const TextStyle(
@@ -217,7 +253,7 @@ class _RemedyDetailsScreenState extends State<RemedyDetailsScreen> {
 
   Widget _buildSectionContent(String content) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),

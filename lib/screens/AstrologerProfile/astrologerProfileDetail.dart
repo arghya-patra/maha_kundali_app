@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
+import 'package:maha_kundali_app/screens/Astro_Ecom/productDetailScreen.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -24,11 +27,14 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
   late Animation<double> _animation;
   VideoPlayerController? _videoPlayerController;
   //late YoutubePlayerController _youtubePlayerController;
+  bool isFollowing = false;
+  bool isFavourite = false;
 
   @override
   void initState() {
     super.initState();
     _astrologerDetails = fetchAstrologerDetails();
+    print(["*&*&*&*&", _astrologerDetails]);
 
     _controller = AnimationController(
       duration: const Duration(seconds: 2),
@@ -57,10 +63,93 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
     print(response.body);
 
     if (response.statusCode == 200) {
-      print(data);
+      print(["^&^&^", data]);
+      setState(() {
+        isFollowing =
+            data['astrologerDetails']['follow'] == 'no' ? false : true;
+        isFavourite =
+            data['astrologerDetails']['favorite'] == 'no' ? false : true;
+      });
       return json.decode(response.body);
     } else {
       throw Exception('Failed to load astrologer details');
+    }
+  }
+
+  toggleFollowStatus(String astrologerId) async {
+    final String url = APIData.login;
+
+    try {
+      final response = await http.post(Uri.parse(url), body: {
+        'action':
+            isFollowing ? 'delete-follow-astrologer' : 'add-follow-astrologer',
+        'authorizationToken': ServiceManager.tokenID,
+        'astrologer_id': astrologerId,
+      });
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['status'] == 200) {
+        setState(() {
+          isFollowing = !isFollowing;
+        });
+        fetchAstrologerDetails();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(isFollowing ? 'Followed' : 'Unfollowed'),
+            backgroundColor: Colors.deepOrange,
+          ),
+        );
+      } else {
+        throw Exception(data['error'] ?? 'Failed to update follow status');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error: $e"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> toggleFavouriteStatus(String astrologerId) async {
+    final String url = APIData.login;
+
+    try {
+      final response = await http.post(Uri.parse(url), body: {
+        'action': isFavourite
+            ? 'delete-favorite-astrologer'
+            : 'add-favorite-astrologer',
+        'authorizationToken': ServiceManager.tokenID,
+        'astrologer_id': astrologerId,
+      });
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['status'] == 200) {
+        setState(() {
+          isFavourite = !isFavourite;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(isFavourite
+                ? 'Added to Favourites'
+                : 'Removed from Favourites'),
+            backgroundColor: Colors.deepOrange,
+          ),
+        );
+      } else {
+        throw Exception(data['error'] ?? 'Failed to update favourite status');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error: $e"),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -149,7 +238,8 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.only(
+                        left: 16.0, right: 16, top: 16, bottom: 2),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -188,13 +278,64 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
                       ],
                     ),
                   ),
+                  // const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      OutlinedButton.icon(
+                        onPressed: () {
+                          toggleFollowStatus(widget.id!);
+                        },
+                        icon: Icon(
+                          isFollowing ? Icons.check_circle : Icons.person_add,
+                          color: Colors.deepOrange,
+                        ),
+                        label: Text(
+                          isFollowing ? 'Following' : 'Follow',
+                          style: const TextStyle(
+                            color: Colors.deepOrange,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Colors.deepOrange),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      OutlinedButton.icon(
+                        onPressed: () {
+                          toggleFavouriteStatus(widget.id!);
+                        },
+                        icon: Icon(
+                          isFavourite ? Icons.favorite : Icons.favorite_border,
+                          color: Colors.deepOrange,
+                        ),
+                        label: Text(
+                          isFavourite ? 'Favourited' : 'Add to Favourite',
+                          style: const TextStyle(
+                            color: Colors.deepOrange,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Colors.deepOrange),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
 
                   const Divider(
                     color: Colors.deepOrange,
                     thickness:
                         1.5, // Slightly thinner divider for a cleaner look
-                    indent: 16,
-                    endIndent: 16,
+                    // indent: 16,
+                    // endIndent: 16,
                   ),
 
                   // Chat button with padding
@@ -215,17 +356,7 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
                         'Chat Now',
                         style: TextStyle(fontSize: 16, color: Colors.white),
                       ),
-                      onPressed: () {
-                        // Handle chat action here
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => ChatScreen(
-                        //       astrologerId: astrologerDetails['id'], // Pass necessary data
-                        //     ),
-                        //   ),
-                        // );
-                      },
+                      onPressed: () {},
                     ),
                   ),
                   // Padding to add spacing between sections
@@ -256,55 +387,69 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
                       scrollDirection: Axis.horizontal,
                       itemCount: productList.length,
                       itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 4.0), // Reduced horizontal padding
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: CachedNetworkImage(
-                                  imageUrl: productList[index]['product_photo'],
-                                  placeholder: (context, url) =>
-                                      const SpinKitFadingCircle(
-                                    color: Colors.deepOrange,
-                                    size: 50.0,
-                                  ),
-                                  errorWidget: (context, url, error) =>
-                                      const Icon(Icons.error),
-                                  height: 150,
-                                  width: 150,
-                                  fit: BoxFit.cover,
+                        return GestureDetector(
+                          onTap: () {
+                            print(productList[index]);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductDetailsScreen(
+                                  productId: productList[index]['product_id'],
                                 ),
                               ),
-                              const SizedBox(height: 8),
-                              // Adjusted Text widget for product title
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Container(
-                                  width:
-                                      150, // Fixed width for consistent layout
-                                  child: Text(
-                                    productList[index]['product_title'],
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          14, // Slightly smaller font size
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 4.0), // Reduced horizontal padding
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: CachedNetworkImage(
+                                    imageUrl: productList[index]
+                                        ['product_photo'],
+                                    placeholder: (context, url) =>
+                                        const SpinKitFadingCircle(
+                                      color: Colors.deepOrange,
+                                      size: 50.0,
                                     ),
-                                    textAlign: TextAlign.center,
-                                    overflow: TextOverflow
-                                        .ellipsis, // Handle long text
-                                    maxLines: 1, // Limit to one line
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(Icons.error),
+                                    height: 150,
+                                    width: 150,
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                productList[index]['product_price'],
-                                style: TextStyle(color: Colors.grey[700]),
-                              ),
-                            ],
+                                const SizedBox(height: 8),
+                                // Adjusted Text widget for product title
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    width:
+                                        150, // Fixed width for consistent layout
+                                    child: Text(
+                                      productList[index]['product_title'],
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            14, // Slightly smaller font size
+                                      ),
+                                      textAlign: TextAlign.center,
+                                      overflow: TextOverflow
+                                          .ellipsis, // Handle long text
+                                      maxLines: 1, // Limit to one line
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  productList[index]['product_price'],
+                                  style: TextStyle(color: Colors.grey[700]),
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },
@@ -529,10 +674,15 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
                           padding: const EdgeInsets.all(12.0),
                           child: Row(
                             children: [
-                              CircleAvatar(
-                                backgroundImage:
-                                    NetworkImage(reviewList[index]['logo']),
-                                radius: 30,
+                              GestureDetector(
+                                onTap: () {
+                                  print(reviewList[index]);
+                                },
+                                child: CircleAvatar(
+                                  backgroundImage:
+                                      NetworkImage(reviewList[index]['logo']),
+                                  radius: 30,
+                                ),
                               ),
                               const SizedBox(width: 12),
                               Expanded(
@@ -540,7 +690,14 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      reviewList[index]['date'],
+                                      reviewList[index]['name'],
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    Text(
+                                      _formatDate(reviewList[index]['date']),
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16,
@@ -564,6 +721,15 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen>
         },
       ),
     );
+  }
+
+  String _formatDate(String rawDate) {
+    try {
+      final parsedDate = DateTime.parse(rawDate); // Ensure it's in ISO format
+      return DateFormat('d MMM y').format(parsedDate); // e.g., 23 Jun 2025
+    } catch (e) {
+      return rawDate; // fallback if format fails
+    }
   }
 
   Widget _buildStarRating(String rating) {

@@ -25,6 +25,8 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
   String selectedTimezone = "IST";
   String birthPlace = "kolkata";
   String formattedDate = "";
+  String selectedGender = "Male";
+
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
@@ -40,6 +42,13 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
   @override
   void initState() {
     super.initState();
+    formattedDate = DateFormat('dd/MM/yyyy').format(selectedDate);
+
+    // _dateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final now = TimeOfDay.now();
+      _timeController.text = now.format(context);
+    });
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
         isLoading2 = false;
@@ -217,6 +226,7 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 10),
+                    _buildLabel('Name'),
                     TextField(
                       controller: _nameController,
                       decoration: const InputDecoration(
@@ -225,6 +235,43 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
                         labelText: 'Name',
                         border: OutlineInputBorder(),
                       ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    Row(
+                      children: [
+                        const Text("Gender: ",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        Row(
+                          children: [
+                            Radio(
+                              value: "Male",
+                              groupValue: selectedGender,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedGender = value.toString();
+                                });
+                              },
+                            ),
+                            const Text("Male"),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Radio(
+                              value: "Female",
+                              groupValue: selectedGender,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedGender = value.toString();
+                                });
+                              },
+                            ),
+                            const Text("Female"),
+                          ],
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     _buildLabel('Select Date'),
@@ -292,26 +339,7 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
                     //   ),
                     // ),
                     const SizedBox(height: 16),
-                    _buildLabel('Select Language'),
-                    _buildFieldContainer(
-                      child: DropdownButton<String>(
-                        isExpanded: true,
-                        value: selectedLanguage,
-                        underline: const SizedBox(),
-                        items: ["English", "Hindi"].map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedLanguage = value!;
-                          });
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 16),
+
                     _buildLabel('Place of Birth'),
 
                     //----------
@@ -329,8 +357,6 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
                       ),
                     ),
                     const SizedBox(height: 10),
-
-                    // Dropdown list for city suggestions
                     if (_cities.isNotEmpty)
                       Container(
                         height: 200,
@@ -375,20 +401,42 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
                           },
                         ),
                       ),
+                    const SizedBox(height: 16),
+                    _buildLabel('Select Language'),
+                    _buildFieldContainer(
+                      child: DropdownButton<String>(
+                        isExpanded: true,
+                        value: selectedLanguage,
+                        underline: const SizedBox(),
+                        items: ["English", "Hindi"].map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedLanguage = value!;
+                          });
+                        },
+                      ),
+                    ),
+
+                    // Dropdown list for city suggestions
 
                     // Display selected city's details
-                    if (_selectedCity != null)
-                      Padding(
-                        padding: const EdgeInsets.all(3.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Selected City: $_selectedCity'),
-                            Text('Latitude: $_selectedLat'),
-                            Text('Longitude: $_selectedLon'),
-                          ],
-                        ),
-                      ),
+                    // if (_selectedCity != null)
+                    //   Padding(
+                    //     padding: const EdgeInsets.all(3.0),
+                    //     child: Column(
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       children: [
+                    //         Text('Selected City: $_selectedCity'),
+                    //         Text('Latitude: $_selectedLat'),
+                    //         Text('Longitude: $_selectedLon'),
+                    //       ],
+                    //     ),
+                    //   ),
 
                     //---------
 
