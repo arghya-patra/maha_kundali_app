@@ -148,6 +148,7 @@ class _LalKitabScreenState extends State<LalKitabScreen>
           setState(() {
             horoscopeData = data['lalkitab_horoscope'];
             isLoading = false;
+            print(["********", horoscopeData]);
           });
         } else {
           setState(() {

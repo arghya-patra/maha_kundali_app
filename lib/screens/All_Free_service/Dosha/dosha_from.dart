@@ -19,6 +19,8 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
   final TextEditingController _placeController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
+  final TextEditingController _latController = TextEditingController();
+  final TextEditingController _lonController = TextEditingController();
 
   bool _isLoading2 = true;
   late AnimationController _animationController;
@@ -36,6 +38,14 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
   @override
   void initState() {
     super.initState();
+    _selectedCity = "Delhi";
+    _selectedLat = "28.6139";
+    _selectedLon = "77.2090";
+
+    // Also set initial values to the controllers
+    _searchController.text = _selectedCity!;
+    _latController.text = _selectedLat!;
+    _lonController.text = _selectedLon!;
     _searchController.addListener(_onSearchChanged);
 
     _animationController =
@@ -299,7 +309,7 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
                             _isLoading ? CircularProgressIndicator() : null,
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
 
                     // Dropdown list for city suggestions
                     if (_cities.isNotEmpty)
@@ -319,6 +329,8 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
                                   _selectedLon = lon;
                                   _searchController.text =
                                       city; // Set the selected city
+                                  _latController.text = lat.toString();
+                                  _lonController.text = lon.toString();
                                   _cities.clear(); // Clear the dropdown
                                 });
                               },
@@ -346,6 +358,47 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
                           },
                         ),
                       ),
+
+                    if (_selectedCity != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Coordinates (Editable):',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 8),
+                            TextFormField(
+                              controller: _latController,
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
+                              decoration: const InputDecoration(
+                                labelText: 'Latitude',
+                                border: OutlineInputBorder(),
+                              ),
+                              onChanged: (value) {
+                                _selectedLat = value;
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            TextFormField(
+                              controller: _lonController,
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
+                              decoration: const InputDecoration(
+                                labelText: 'Longitude',
+                                border: OutlineInputBorder(),
+                              ),
+                              onChanged: (value) {
+                                _selectedLon = value;
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    const SizedBox(height: 16),
                     _buildFieldContainer(
                       child: DropdownButton<String>(
                         isExpanded: true,

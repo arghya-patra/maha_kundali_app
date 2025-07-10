@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -25,7 +26,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final phoneNumberController = TextEditingController();
   final passwordController = TextEditingController();
 
-  bool _isLoading = true;
+  bool _isLoading = false;
+  bool _isLoading2 = false;
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -34,6 +36,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   String _gender = 'Male';
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
+  List<dynamic> _cities = [];
+  String? _selectedCity;
+  String? _selectedLat;
+  String? _selectedLon;
 
   @override
   void initState() {
@@ -46,14 +54,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     // Simulate a loading delay
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
-        _isLoading = false;
+        _isLoading2 = false;
       });
     });
+    _searchController.addListener(_onSearchChanged);
   }
 
   void getUserData() async {
     setState(() {
-      _isLoading = true;
+      _isLoading2 = true;
     });
     String url = APIData.login;
     var res = await http.post(Uri.parse(url), body: {
@@ -75,7 +84,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       // profileURL = '${data['userDetails']['logo']}';
       // userMobile = data['userDetails']['mobile'] ?? '';
       setState(() {
-        _isLoading = false;
+        _isLoading2 = false;
       });
     } else {}
   }
@@ -131,14 +140,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       toastMessage(message: 'Error: $e', colors: Colors.red);
     } finally {
       setState(() {
-        _isLoading = false;
+        _isLoading2 = false;
       });
     }
   }
 
   upDateProfileData2() async {
     setState(() {
-      _isLoading = true;
+      _isLoading2 = true;
     });
 
     String name = _nameController.text.trim();
@@ -164,7 +173,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     });
 
     setState(() {
-      _isLoading = false;
+      _isLoading2 = false;
     });
     if (response.statusCode == 200) {
       // Assuming a successful response contains a "success" key
@@ -295,6 +304,92 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
+  Future<void> _fetchCities(String query) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response = await http.post(Uri.parse(APIData.login), body: {
+        'action': 'get-city-name',
+        'name': query,
+      });
+
+      // Log the response to check if it's valid
+      print('Response: "${response.body}"'); // Log the response content
+      print('Response: "${response.statusCode}"');
+
+      if (response.body.isEmpty) {
+        // Handle empty response
+        print('Error: API returned an empty response');
+        setState(() {
+          _cities = [];
+          _isLoading = false;
+        });
+        return;
+      }
+
+      if (response.statusCode == 200) {
+        // Try decoding the response body
+        try {
+          final data = jsonDecode(response.body);
+
+          if (data != null && data['city'] != null) {
+            setState(() {
+              _cities = data['city'];
+              _isLoading = false;
+            });
+          } else {
+            print('Error: "city" key not found in the response');
+            setState(() {
+              _cities = [];
+              _isLoading = false;
+            });
+          }
+        } catch (e) {
+          print('Error decoding JSON: $e');
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      } else {
+        print(
+            'Error: Failed to fetch cities, status code: ${response.statusCode}');
+        setState(() {
+          _cities = [];
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        _cities = [];
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (_searchController.text.isNotEmpty) {
+        _fetchCities(_searchController.text);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _placeController.dispose();
+    _dateController.dispose();
+    _timeController.dispose();
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    _debounce?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -311,7 +406,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
         ),
       ),
-      body: _isLoading
+      body: _isLoading2
           ? Shimmer.fromColors(
               baseColor: Colors.grey[300]!,
               highlightColor: Colors.grey[100]!,
@@ -372,10 +467,51 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     const SizedBox(height: 16),
                     _buildGenderSelection(),
                     const SizedBox(height: 16),
-                    _buildTextFields(
-                      _placeController,
-                      'Place of Birth',
+                    TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                        labelText: 'Place of Birth',
+                        border: const OutlineInputBorder(),
+                        suffixIcon: _isLoading
+                            ? const CircularProgressIndicator()
+                            : null,
+                      ),
                     ),
+                    const SizedBox(height: 10),
+
+                    // Dropdown list for city suggestions
+                    if (_cities.isNotEmpty)
+                      Container(
+                        height: 200,
+                        child: ListView.builder(
+                          itemCount: _cities.length,
+                          itemBuilder: (context, index) {
+                            final city = _cities[index]['city'];
+                            final lat = _cities[index]['lat'];
+                            final lon = _cities[index]['lon'];
+                            return ListTile(
+                              title: Text(city),
+                              onTap: () {
+                                setState(() {
+                                  _selectedCity = city;
+                                  _selectedLat = lat;
+                                  _selectedLon = lon;
+                                  _searchController.text =
+                                      city; // Set the selected city
+                                  _cities.clear(); // Clear the dropdown
+                                });
+                              },
+                            );
+                          },
+                        ),
+                      ),
+
+                    // _buildTextFields(
+                    //   _placeController,
+                    //   'Place of Birth',
+                    // ),
                     const SizedBox(height: 16),
                     TextField(
                       controller: _dateController,
@@ -426,7 +562,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
-                      child: const Text('Update'),
+                      child: const Text(
+                        'Update',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ],
                 ),

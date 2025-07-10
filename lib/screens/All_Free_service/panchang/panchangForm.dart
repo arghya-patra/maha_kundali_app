@@ -30,6 +30,9 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _latController = TextEditingController();
+  final TextEditingController _lonController = TextEditingController();
 
   Timer? _debounce;
   List<dynamic> _cities = [];
@@ -42,7 +45,16 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
   @override
   void initState() {
     super.initState();
-    formattedDate = DateFormat('dd/MM/yyyy').format(selectedDate);
+    _selectedCity = "Delhi";
+    _selectedLat = "28.6139";
+    _selectedLon = "77.2090";
+
+    // Also set initial values to the controllers
+    _searchController.text = _selectedCity!;
+    _latController.text = _selectedLat!;
+    _lonController.text = _selectedLon!;
+    // formattedDate = DateFormat('dd/MM/yyyy').format(selectedDate);
+    _dateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
 
     // _dateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -67,7 +79,7 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
       'action': 'free-service-type',
       'authorizationToken': ServiceManager.tokenID,
       'type': 'panchang',
-      'date': formattedDate,
+      'date': _dateController.text,
       'hr': selectedHour,
       'min': selectedMinute,
       'pob': _selectedCity,
@@ -189,6 +201,7 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
   void dispose() {
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
+    _dateController.dispose();
     _debounce?.cancel();
     super.dispose();
   }
@@ -225,8 +238,8 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 10),
-                    _buildLabel('Name'),
+                    // const SizedBox(height: 10),
+                    // _buildLabel('Name'),
                     TextField(
                       controller: _nameController,
                       decoration: const InputDecoration(
@@ -274,18 +287,30 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    _buildLabel('Select Date'),
-                    GestureDetector(
+                    //_buildLabel('Select Date'),
+                    TextField(
+                      controller: _dateController,
+                      readOnly: true,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                        labelText: 'Date of Birth',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.calendar_today),
+                      ),
                       onTap: () => _selectDate(context),
-                      child: _buildFieldContainer(
-                          child: Text(
-                            "${selectedDate.toLocal()}".split(' ')[0],
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          verticalHeight: 10.0),
                     ),
+                    // GestureDetector(
+                    //   onTap: () => _selectDate(context),
+                    //   child: _buildFieldContainer(
+                    //       child: Text(
+                    //         "${selectedDate.toLocal()}".split(' ')[0],
+                    //         style: const TextStyle(fontSize: 16),
+                    //       ),
+                    //       verticalHeight: 10.0),
+                    // ),
                     const SizedBox(height: 16),
-                    _buildLabel('Select Time'),
+                    // _buildLabel('Select Time'),
                     TextField(
                       controller: _timeController,
                       readOnly: true,
@@ -340,7 +365,7 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
                     // ),
                     const SizedBox(height: 16),
 
-                    _buildLabel('Place of Birth'),
+                    //    _buildLabel('Place of Birth'),
 
                     //----------
 
@@ -356,7 +381,7 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
                             : null,
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    //const SizedBox(height: 10),
                     if (_cities.isNotEmpty)
                       Container(
                         height: 200,
@@ -374,6 +399,8 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
                                   _selectedLon = lon;
                                   _searchController.text =
                                       city; // Set the selected city
+                                  _latController.text = lat.toString();
+                                  _lonController.text = lon.toString();
                                   _cities.clear(); // Clear the dropdown
                                 });
                               },
@@ -401,8 +428,47 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
                           },
                         ),
                       ),
+                    if (_selectedCity != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Coordinates (Editable):',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 8),
+                            TextFormField(
+                              controller: _latController,
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
+                              decoration: const InputDecoration(
+                                labelText: 'Latitude',
+                                border: OutlineInputBorder(),
+                              ),
+                              onChanged: (value) {
+                                _selectedLat = value;
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            TextFormField(
+                              controller: _lonController,
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
+                              decoration: const InputDecoration(
+                                labelText: 'Longitude',
+                                border: OutlineInputBorder(),
+                              ),
+                              onChanged: (value) {
+                                _selectedLon = value;
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
                     const SizedBox(height: 16),
-                    _buildLabel('Select Language'),
+                    //    _buildLabel('Select Language'),
                     _buildFieldContainer(
                       child: DropdownButton<String>(
                         isExpanded: true,
@@ -450,7 +516,7 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
                     //   ),
                     // ),
                     const SizedBox(height: 16),
-                    _buildLabel('Timezone'),
+                    //  _buildLabel('Timezone'),
                     _buildFieldContainer(
                       child: DropdownButton<String>(
                         isExpanded: true,
@@ -487,7 +553,7 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
                             _showError("Please select a place of birth.");
                             return;
                           }
-                          if (formattedDate == "") {
+                          if (_dateController.text.isEmpty) {
                             _showError("Please select your date of birth.");
                             return;
                           }
@@ -531,16 +597,13 @@ class _PanchangFormScreenState extends State<PanchangFormScreen> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate,
+      initialDate: DateTime.now(),
       firstDate: DateTime(1900),
-      lastDate: DateTime(2101),
+      lastDate: DateTime.now(),
     );
-    if (picked != null && picked != selectedDate) {
+    if (picked != null) {
       setState(() {
-        selectedDate = picked;
-        formattedDate = DateFormat('dd/MM/yyyy').format(selectedDate);
-        print(formattedDate);
-        print(selectedDate);
+        _dateController.text = DateFormat('dd/MM/yyyy').format(picked);
       });
     }
   }

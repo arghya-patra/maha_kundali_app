@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'dart:convert';
@@ -125,7 +126,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
             SizedBox(height: 5),
             Text('Date: ${chat['date']}'),
             Text('Duration: ${chat['duration']}'),
-            Text('Charges: \$${chat['charges']}'),
+            Text(
+                'Charges: ₹${NumberFormat('#,##0.##').format(double.parse(chat['charges']))}'),
           ],
         ),
         // trailing: Icon(Icons.chat, color: Colors.blueAccent),

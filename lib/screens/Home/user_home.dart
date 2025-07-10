@@ -36,6 +36,7 @@ import 'package:maha_kundali_app/screens/Service-Report/all_service_report.dart'
 import 'package:maha_kundali_app/screens/chats/callHistory.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/panchang/panchangForm.dart';
 import 'package:maha_kundali_app/screens/profileContent/settingsScreen.dart';
+import 'package:maha_kundali_app/screens/profileContent/settingsSection/contactUs.dart';
 import 'package:maha_kundali_app/service/serviceManager.dart';
 import 'package:video_player/video_player.dart';
 // import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -347,29 +348,31 @@ class _UserDashboardState extends State<UserDashboard> {
                     route: ShoppingScreen()),
                 _buildDrawerItem(Icons.settings, 'My Account',
                     route: SettingsScreen()),
+                _buildDrawerItem(Icons.contact_mail, 'Contact us',
+                    route: ContactUsScreen()),
               ],
             ),
           ),
-          const Divider(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                const Text('Also available on'),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                        icon: const Icon(Icons.facebook), onPressed: () {}),
-                    IconButton(
-                        icon: const Icon(Icons.linked_camera),
-                        onPressed: () {}),
-                  ],
-                ),
-              ],
-            ),
-          ),
+          // const Divider(),
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: Column(
+          //     children: [
+          //       const Text('Also available on'),
+          //       const SizedBox(height: 8),
+          //       Row(
+          //         mainAxisAlignment: MainAxisAlignment.center,
+          //         children: [
+          //           IconButton(
+          //               icon: const Icon(Icons.facebook), onPressed: () {}),
+          //           IconButton(
+          //               icon: const Icon(Icons.linked_camera),
+          //               onPressed: () {}),
+          //         ],
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );

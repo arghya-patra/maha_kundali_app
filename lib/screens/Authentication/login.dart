@@ -283,7 +283,7 @@ class _LoginScreenState extends State<LoginScreen>
                               ),
                               textAlign: TextAlign.center,
                             ),
-                            const SizedBox(height: 30),
+                            const SizedBox(height: 10),
                             GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -302,11 +302,11 @@ class _LoginScreenState extends State<LoginScreen>
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 30),
+                            const SizedBox(height: 10),
                             GestureDetector(
                               onTap: () {
-                                _openWebView(
-                                    context, 'https://mahakundali.com/');
+                                _openWebView(context,
+                                    'https://mahakundali.com/astrologer-reg');
                               },
                               child: const Text(
                                 'Want to register as an Astrologer?',

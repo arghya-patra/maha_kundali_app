@@ -80,7 +80,7 @@ class _DashaDetailsScreenState extends State<DashaDetailsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(dashaData?["title"] ?? "Dasha Details"),
-        centerTitle: true,
+        // centerTitle: true,
         backgroundColor: Colors.orange,
       ),
       body: isLoading ? _buildShimmerEffect() : _buildDashaDetails(),
@@ -125,6 +125,7 @@ class _DashaDetailsScreenState extends State<DashaDetailsScreen> {
     return DefaultTabController(
       length: 6, // Number of tabs
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const TabBar(
             isScrollable: true, // ✅ Makes tab names scrollable
@@ -132,6 +133,8 @@ class _DashaDetailsScreenState extends State<DashaDetailsScreen> {
             labelColor: Colors.deepOrange,
             unselectedLabelColor: Colors.black54,
             labelStyle: TextStyle(fontWeight: FontWeight.bold),
+            tabAlignment: TabAlignment.start,
+
             tabs: [
               Tab(text: "Maha Dasha"),
               Tab(text: "Yogini Dasha"),
@@ -235,37 +238,52 @@ class _DashaDetailsScreenState extends State<DashaDetailsScreen> {
     required List<String> headers,
     required List<List<String>> rows,
   }) {
+    // Dynamically set column widths
+    Map<int, TableColumnWidth> columnWidths = {};
+    if (headers.length == 2) {
+      columnWidths = {
+        0: const FlexColumnWidth(3),
+        1: const FlexColumnWidth(3),
+      };
+    } else if (headers.length == 3) {
+      columnWidths = {
+        0: const FlexColumnWidth(2), // Name
+        1: const FlexColumnWidth(2), // Start
+        2: const FlexColumnWidth(3), // End (more space)
+      };
+    }
+
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.orange, width: 2),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Table(
-              border: TableBorder.symmetric(
-                inside: const BorderSide(color: Colors.orange, width: 1),
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Text(
+                title,
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              columnWidths: {
-                0: const FlexColumnWidth(3),
-                1: const FlexColumnWidth(3),
-              },
-              children: [
-                TableRow(
-                  decoration: BoxDecoration(color: Colors.orange[300]),
-                  children: headers.map((header) {
-                    return Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Center(
+            ),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.orange, width: 2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Table(
+                border: TableBorder.symmetric(
+                  inside: const BorderSide(color: Colors.orange, width: 1),
+                ),
+                columnWidths: columnWidths,
+                children: [
+                  // Header Row
+                  TableRow(
+                    decoration: BoxDecoration(color: Colors.orange[300]),
+                    children: headers.map((header) {
+                      return Padding(
+                        padding: const EdgeInsets.all(10),
                         child: Text(
                           header,
                           style: const TextStyle(
@@ -273,25 +291,32 @@ class _DashaDetailsScreenState extends State<DashaDetailsScreen> {
                               fontWeight: FontWeight.bold,
                               color: Colors.white),
                         ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-                ...rows.map((row) {
-                  return TableRow(
-                    decoration: BoxDecoration(color: Colors.orange[100]),
-                    children: row.map((cell) {
-                      return Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Text(cell, textAlign: TextAlign.center),
                       );
                     }).toList(),
-                  );
-                }).toList(),
-              ],
+                  ),
+                  // Data Rows
+                  ...rows.map((row) {
+                    return TableRow(
+                      decoration: BoxDecoration(color: Colors.orange[100]),
+                      children: row.map((cell) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              cell,
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  }).toList(),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

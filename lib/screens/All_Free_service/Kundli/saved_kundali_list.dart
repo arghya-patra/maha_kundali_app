@@ -58,7 +58,7 @@ class _SavedKundalisScreenState extends State<SavedKundalisScreen> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.deepOrangeAccent, Colors.black],
+              colors: [Colors.orange, Colors.deepOrange],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),

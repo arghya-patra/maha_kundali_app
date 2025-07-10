@@ -142,6 +142,7 @@ class _SettingsScreenState extends State<SettingsScreen>
             )),
         _buildSettingsOption('Contact Us', Icons.contact_page,
             route: ContactUsScreen()),
+
         _buildSectionHeader('Notification'),
         _buildNotificationSwitch(),
       ],

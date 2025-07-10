@@ -105,21 +105,21 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
           if (page == 'chart') {
             var data = json.decode(response.body);
             chartData = {
-              'Lagna': data['chart']['\"Lagna\"'],
-              'Dreshkana': data['chart']['\"Dreshkana\"'],
-              'Somanatha': data['chart']['\"Somanatha\"'],
-              'Saptamsa': data['chart']['\"Saptamsa\"'],
-              'Navamsa': data['chart']['\"Navamsa\"'],
-              'Dasamsa': data['chart']['\"Dasamsa\"'],
-              'Dasamsa-EvenReverse': data['chart']['\"Dasamsa-EvenReverse\"'],
-              'Dwadasamsa': data['chart']['\"Dwadasamsa\"'],
-              'Shodashamsa': data['chart']['\"Shodashamsa\"'],
-              'Vimsamsa': data['chart']['\"Vimsamsa\"'],
-              'ChaturVimshamsha': data['chart']['\"ChaturVimshamsha\"'],
-              'Trimshamsha': data['chart']['\"Trimshamsha\"'],
-              'KhaVedamsa': data['chart']['\"KhaVedamsa\"'],
-              'AkshaVedamsa': data['chart']['\"AkshaVedamsa\"'],
-              'Shastiamsha': data['chart']['\"Shastiamsha\"']
+              'Lagna': data['chart']['Lagna'],
+              'Dreshkana': data['chart']['Dreshkana'],
+              'Somanatha': data['chart']['Somanatha'],
+              'Saptamsa': data['chart']['Saptamsa'],
+              'Navamsa': data['chart']['Navamsa'],
+              'Dasamsa': data['chart']['Dasamsa'],
+              'Dasamsa-EvenReverse': data['chart']['Dasamsa-EvenReverse'],
+              'Dwadasamsa': data['chart']['Dwadasamsa'],
+              'Shodashamsa': data['chart']['Shodashamsa'],
+              'Vimsamsa': data['chart']['Vimsamsa'],
+              'ChaturVimshamsha': data['chart']['ChaturVimshamsha'],
+              'Trimshamsha': data['chart']['Trimshamsha'],
+              'KhaVedamsa': data['chart']['KhaVedamsa'],
+              'AkshaVedamsa': data['chart']['AkshaVedamsa'],
+              'Shastiamsha': data['chart']['Shastiamsha']
             };
           }
         });
@@ -773,50 +773,80 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Kaal Sarp Dosh Section
-          _buildTableForDosha("Kaal Sarp Dosh", {
-            "Dosha Present": data['kaalsarpdosh']['response']
-                    ['is_dosha_present']
-                ? "Yes"
-                : "No",
-            "Bot Response": data['kaalsarpdosh']['response']['bot_response'],
-            "Remedies": data['kaalsarpdosh']['response']['remedies'][0],
-          }),
-          const SizedBox(height: 10),
-          // Remedies Section
-          if (data['kaalsarpdosh']['response']['is_dosha_present']) ...[
-            const Text(
-              "Remedies:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          // === Kaal Sarp Dosh Section ===
+          if (data['kaalsarpdosh']?['response'] != null)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildTableForDosha("Kaal Sarp Dosh", {
+                  "Dosha Present": data['kaalsarpdosh']['response']
+                          ['is_dosha_present']
+                      ? "Yes"
+                      : "No",
+                  "Bot Response":
+                      data['kaalsarpdosh']['response']['bot_response'] ?? '',
+                  "Remedies":
+                      (data['kaalsarpdosh']['response']['remedies'] is List &&
+                              data['kaalsarpdosh']['response']['remedies']
+                                  .isNotEmpty)
+                          ? data['kaalsarpdosh']['response']['remedies'][0]
+                          : 'N/A',
+                }),
+                const SizedBox(height: 10),
+                if (data['kaalsarpdosh']['response']['is_dosha_present'] ==
+                        true &&
+                    data['kaalsarpdosh']['response']['remedies'] is List)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Remedies:",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      ...data['kaalsarpdosh']['response']['remedies']
+                          .map<Widget>(
+                            (remedy) => Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 4),
+                              child: Text("- $remedy"),
+                            ),
+                          )
+                          .toList(),
+                    ],
+                  ),
+              ],
             ),
-            ...data['kaalsarpdosh']['response']['remedies'].map<Widget>(
-              (remedy) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Text("- $remedy"),
-              ),
-            ),
-          ],
 
-          // Mangal Dosh Section
+          // === Mangal Dosh Section ===
           const SizedBox(height: 20),
-          _buildTableForDosha("Mangal Dosh", {
-            "Dosha Present": data['mangaldosh']['response']['is_dosha_present']
-                ? "Yes"
-                : "No",
-            "Bot Response": data['mangaldosh']['response']['bot_response'],
-            "Score": "${data['mangaldosh']['response']['score']}%",
-            "Moon": "${data['mangaldosh']['response']['factors']['moon']}",
-            "Venus": "${data['mangaldosh']['response']['factors']['venus']}",
-          }),
+          if (data['mangaldosh']?['response'] != null &&
+              data['mangaldosh']['response'] is Map &&
+              data['mangaldosh']['response'].containsKey('is_dosha_present'))
+            _buildTableForDosha("Mangal Dosh", {
+              "Dosha Present":
+                  data['mangaldosh']['response']['is_dosha_present'] == true
+                      ? "Yes"
+                      : "No",
+              "Bot Response":
+                  data['mangaldosh']['response']['bot_response'] ?? 'N/A',
+              "Score": "${data['mangaldosh']['response']['score'] ?? 'N/A'}%",
+              "Moon":
+                  "${data['mangaldosh']['response']['factors']?['moon'] ?? 'N/A'}",
+              "Venus":
+                  "${data['mangaldosh']['response']['factors']?['venus'] ?? 'N/A'}",
+            }),
 
-          // Other Doshas Section
+          // === Pitra Dosh Section ===
           const SizedBox(height: 20),
-          _buildTableForDosha("Pitra Dosh", {
-            "Dosha Present": data['pitradosh']['response']['is_dosha_present']
-                ? "Yes"
-                : "No",
-            "Bot Response": data['pitradosh']['response']['bot_response'],
-          }),
+          if (data['pitradosh']?['response'] != null)
+            _buildTableForDosha("Pitra Dosh", {
+              "Dosha Present":
+                  data['pitradosh']['response']['is_dosha_present'] == true
+                      ? "Yes"
+                      : "No",
+              "Bot Response":
+                  data['pitradosh']['response']['bot_response'] ?? 'N/A',
+            }),
         ],
       ),
     );
@@ -898,7 +928,7 @@ class _DoshaDetailsScreenState extends State<DoshaDetailsScreen>
           indicatorColor: Colors.orange,
           tabs: const [
             Tab(text: "Horoscope"),
-            Tab(text: "Dosh"),
+            Tab(text: "Dosha"),
             Tab(text: "Dasha"),
             Tab(text: "Chart"),
           ],

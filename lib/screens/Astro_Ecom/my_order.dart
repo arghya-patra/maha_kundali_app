@@ -25,16 +25,11 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
   }
 
   Future<void> _fetchOrderHistory() async {
-    setState(() {
-      _isLoading = true;
-    });
-    String url = APIData.login;
-    print(url.toString());
-    final response = await http.post(Uri.parse(url), body: {
+    setState(() => _isLoading = true);
+    final response = await http.post(Uri.parse(APIData.login), body: {
       'action': 'orderhistory',
       'authorizationToken': ServiceManager.tokenID,
     });
-    print(response.body);
 
     if (response.statusCode == 200) {
       setState(() {
@@ -42,135 +37,150 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
         _isLoading = false;
       });
     } else {
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
       throw Exception('Failed to load order history');
     }
   }
 
   Widget _buildOverviewTable() {
     if (_data == null) return Container();
-
     final overview = _data!['my_order_overview'] as List<dynamic>;
 
-    return DataTable(
-      columns: [
-        DataColumn(label: Text('Order Type')),
-        DataColumn(label: Text('Total')),
-      ],
-      rows: overview.map<DataRow>((item) {
-        final key = item.keys.first;
-        final value = item[key] ?? 'N/A';
-        return DataRow(
-          cells: [
-            DataCell(Text(key)),
-            DataCell(Text(value.toString())),
-          ],
-        );
-      }).toList(),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: Offset(0, 4))
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Order Overview',
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red)),
+          const SizedBox(height: 10),
+          ...overview.map((item) {
+            final key = item.keys.first;
+            final value = item[key] ?? 'N/A';
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(key,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w500, fontSize: 15)),
+                  Text(value.toString(),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.black87)),
+                ],
+              ),
+            );
+          }).toList()
+        ],
+      ),
     );
   }
 
   Widget _buildTabContent(List<dynamic> items, String type) {
-    if (_isLoading) {
-      return _buildShimmer();
-    }
+    if (_isLoading) return _buildShimmer();
 
     if (items.isEmpty) {
-      return Center(
-          child: Text('No orders to show',
-              style: TextStyle(fontSize: 18, color: Colors.grey)));
+      return const Center(
+        child: Text('No orders to show',
+            style: TextStyle(fontSize: 18, color: Colors.grey)),
+      );
     }
 
     return ListView.builder(
       itemCount: items.length,
+      padding: const EdgeInsets.only(bottom: 70),
       itemBuilder: (context, index) {
         final item = items[index];
+        Icon icon;
+        Color color;
+
+        switch (type) {
+          case 'call':
+            icon = const Icon(Icons.phone, color: Colors.blue);
+            break;
+          case 'chat':
+            icon = const Icon(Icons.chat, color: Colors.green);
+            break;
+          case 'puja':
+            icon = const Icon(Icons.calendar_today, color: Colors.purple);
+            break;
+          case 'report':
+            icon = const Icon(Icons.report, color: Colors.red);
+            break;
+          default:
+            icon = const Icon(Icons.info, color: Colors.grey);
+        }
+
         return Card(
-          color: const Color.fromARGB(255, 255, 211, 153),
-          elevation: 5,
-          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
+          elevation: 4,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (type == 'call')
-                  Row(
-                    children: [
-                      Icon(Icons.phone, color: Colors.blue),
-                      SizedBox(width: 8),
-                      Expanded(
-                          child: Text('Call Order #${item['call_id']}',
-                              style: TextStyle(fontWeight: FontWeight.bold))),
-                    ],
+                Row(children: [
+                  icon,
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      type == 'call'
+                          ? 'Call Order #${item['call_id']}'
+                          : type == 'chat'
+                              ? 'Chat with ${item['astrologer_name']}'
+                              : type == 'puja'
+                                  ? 'Puja Booking #${item['booking_id']}'
+                                  : 'Report #${item['booking_id']}',
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                if (type == 'chat')
-                  Row(
-                    children: [
-                      Icon(Icons.chat, color: Colors.green),
-                      SizedBox(width: 8),
-                      Expanded(
-                          child: Text('Chat with ${item['astrologer_name']}',
-                              style: TextStyle(fontWeight: FontWeight.bold))),
-                    ],
-                  ),
-                if (type == 'puja')
-                  Row(
-                    children: [
-                      Icon(Icons.calendar_today, color: Colors.purple),
-                      SizedBox(width: 8),
-                      Expanded(
-                          child: Text('Puja Booking #${item['booking_id']}',
-                              style: TextStyle(fontWeight: FontWeight.bold))),
-                    ],
-                  ),
-                if (type == 'report')
-                  Row(
-                    children: [
-                      Icon(Icons.report, color: Colors.red),
-                      SizedBox(width: 8),
-                      Expanded(
-                          child: Text('Report #${item['booking_id']}',
-                              style: TextStyle(fontWeight: FontWeight.bold))),
-                      IconButton(
-                        icon: Icon(Icons.download, color: Colors.blue),
-                        onPressed: () {
-                          downloadFile(item['download']);
-                        },
-                      ),
-                    ],
-                  ),
-                SizedBox(height: 8),
-                Text('Date: ${item['date']}',
-                    style: TextStyle(color: Colors.grey[600])),
-                SizedBox(height: 4),
+                  if (type == 'report')
+                    IconButton(
+                      icon: const Icon(Icons.download, color: Colors.blue),
+                      onPressed: () => downloadFile(item['download']),
+                    )
+                ]),
+                const SizedBox(height: 10),
+                Text('Date: ${item['date'] ?? ''}',
+                    style: const TextStyle(color: Colors.grey)),
                 if (type == 'chat' || type == 'puja')
                   Text('Amount: ${item['amount']}',
-                      style: TextStyle(color: Colors.grey[600])),
+                      style: const TextStyle(color: Colors.black87)),
                 if (type == 'puja')
                   Text('Puja: ${item['puja_name']}',
-                      style: TextStyle(color: Colors.grey[600])),
-                if (type == 'report')
+                      style: const TextStyle(color: Colors.black87)),
+                if (type == 'report') ...[
                   Text('Report: ${item['report_name'] ?? 'N/A'}',
-                      style: TextStyle(color: Colors.grey[600])),
-                SizedBox(height: 4),
+                      style: const TextStyle(color: Colors.black87)),
+                  Text('Amount: ${item['total'] ?? 'N/A'}',
+                      style: const TextStyle(color: Colors.black87)),
+                  Text('Status: ${item['status'] ?? 'N/A'}',
+                      style: const TextStyle(color: Colors.black87)),
+                ],
                 if (type == 'chat')
                   Text('Duration: ${item['duration']}',
-                      style: TextStyle(color: Colors.grey[600])),
+                      style: const TextStyle(color: Colors.black87)),
                 if (type == 'puja')
                   Text('Astrologer: ${item['astrologer_name']}',
-                      style: TextStyle(color: Colors.grey[600])),
-                if (type == 'report')
-                  Text('Amount: ${item['total'] ?? 'N/A'}',
-                      style: TextStyle(color: Colors.grey[600])),
-                if (type == 'report')
-                  Text('Status: ${item['status'] ?? 'N/A'}',
-                      style: TextStyle(color: Colors.grey[600])),
+                      style: const TextStyle(color: Colors.black87)),
               ],
             ),
           ),
@@ -189,36 +199,17 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
 
   Widget _buildShimmer() {
     return ListView.builder(
-      itemCount: 5,
+      itemCount: 4,
       itemBuilder: (context, index) {
         return Shimmer.fromColors(
-          baseColor: Colors.grey,
-          highlightColor: Colors.blueGrey,
-          child: Card(
-            elevation: 5,
-            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 16,
-                      color: Colors.white,
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: Container(
-                      height: 16,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            height: 100,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
         );
@@ -229,35 +220,43 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Order History')),
-      body: Column(
-        children: [
-          Expanded(
-            child: Column(
-              children: [
-                Container(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text('Overview',
-                      style: Theme.of(context).textTheme.titleLarge),
-                ),
-                Expanded(
-                  child: _buildOverviewTable(),
-                ),
-              ],
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        title: const Text('Order History'),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.orange, Colors.red],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
-          Container(),
-          SizedBox(
-            height: 180,
-          ),
-          TabBar(
-            controller: _tabController,
-            tabs: [
-              Tab(text: 'Calls'),
-              Tab(text: 'Chats'),
-              Tab(text: 'Puja'),
-              Tab(text: 'Reports'),
-            ],
+        ),
+      ),
+      body: Column(
+        children: [
+          _buildOverviewTable(),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(50),
+            ),
+            child: TabBar(
+              controller: _tabController,
+              labelColor: Colors.red,
+              unselectedLabelColor: Colors.black54,
+              indicator: BoxDecoration(
+                color: Colors.orange.shade100,
+                // borderRadius: BorderRadius.circular(50),
+              ),
+              tabs: const [
+                Tab(text: 'Calls'),
+                Tab(text: 'Chats'),
+                Tab(text: 'Puja'),
+                Tab(text: 'Reports'),
+              ],
+            ),
           ),
           Expanded(
             child: TabBarView(

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/components/util.dart';
 import 'package:maha_kundali_app/screens/Astro_Ecom/cartScreen.dart';
@@ -212,11 +213,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
           ),
           const SizedBox(height: 8),
           Text(
-            'Price: ₹${productData!['productDetails']['sale_price']}',
+            'Price: ₹${NumberFormat('#,##0.##').format(double.parse(productData!['productDetails']['sale_price']))}',
             style: const TextStyle(fontSize: 18, color: Colors.redAccent),
           ),
           Text(
-            'Price: ₹${productData!['productDetails']['product_price']}',
+            'Price: ₹${NumberFormat('#,##0.##').format(double.parse(productData!['productDetails']['product_price']))}',
             style: const TextStyle(
               fontSize: 14,
               color: Colors.redAccent,
@@ -251,8 +252,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
   }
 
   Widget buildSimilarProducts() {
-    return Container(
-      height: 250,
+    final screenWidth = MediaQuery.of(context).size.width;
+    final cardWidth = screenWidth * 0.5; // 50% of screen width
+    final imageHeight = cardWidth * 0.7; // image aspect ratio
+
+    return SizedBox(
+      height: imageHeight + 120, // total height to accommodate text
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: productData!['similar_product_list'].length,
@@ -270,10 +275,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                     ),
                   ),
                 );
-                // Handle product tap
               },
               child: Container(
-                width: 200,
+                width: cardWidth,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -282,7 +286,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                       color: Colors.grey.withOpacity(0.3),
                       spreadRadius: 2,
                       blurRadius: 5,
-                      offset: const Offset(0, 3), // changes position of shadow
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
@@ -296,7 +300,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                       ),
                       child: Image.network(
                         product['product_photo'],
-                        height: 140,
+                        height: imageHeight,
                         width: double.infinity,
                         fit: BoxFit.cover,
                       ),
@@ -310,16 +314,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                             product['product_title'],
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 16,
+                            style: TextStyle(
+                              fontSize: screenWidth < 350 ? 13 : 15,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '₹${product['sale_price']}',
-                            style: const TextStyle(
-                              fontSize: 16,
+                            '₹${NumberFormat('#,##0.##').format(double.parse(product['sale_price']))}',
+                            style: TextStyle(
+                              fontSize: screenWidth < 350 ? 14 : 16,
                               color: Colors.green,
                               fontWeight: FontWeight.bold,
                             ),

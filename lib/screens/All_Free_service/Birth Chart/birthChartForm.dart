@@ -24,6 +24,9 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
 
+  final TextEditingController _latController = TextEditingController();
+  final TextEditingController _lonController = TextEditingController();
+
   bool _isLoading2 = true;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -44,6 +47,14 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
   @override
   void initState() {
     super.initState();
+    _selectedCity = "Delhi";
+    _selectedLat = "28.6139";
+    _selectedLon = "77.2090";
+
+    // Also set initial values to the controllers
+    _searchController.text = _selectedCity!;
+    _latController.text = _selectedLat!;
+    _lonController.text = _selectedLon!;
     _searchController.addListener(_onSearchChanged);
 
     _animationController =
@@ -194,40 +205,6 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
               language: selectedLanguage == "English" ? 'en' : 'hi',
               gender: selectedGender == "Male" ? 'm' : 'f')),
     );
-    // setState(() {
-    //   _isLoading2 = true;
-    // });
-    // String url = APIData.login;
-
-    // print(url.toString());
-    // final response = await http.post(Uri.parse(url), body: {
-    //   'action': 'free-service-type',
-    //   'authorizationToken': ServiceManager.tokenID,
-    //   'type': 'birthchart',
-    //   'name': _nameController.text,
-    //   'dob': _dateController.text,
-    //   'tob': _timeController.text,
-    //   'pob': _selectedCity,
-    //   'lang': 'en',
-    //   'city': _selectedCity,
-    //   'lat': _selectedLat,
-    //   'lon': _selectedLon
-    // });
-    // print(response.body);
-
-    // if (response.statusCode == 200) {
-    //   final Map<String, dynamic> data = jsonDecode(response.body);
-    //   setState(() {
-    //     svgData = data['content'];
-    //     subTitle = data['sub_title'];
-    //     title = data['title'];
-    //     bottomText = data['bottom-text'];
-    //     _isLoading2 = false;
-    //   });
-
-    // } else {
-    //   throw Exception('Failed to load horoscope details');
-    // }
   }
 
   @override
@@ -325,20 +302,6 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                     ),
                     const SizedBox(height: 20),
                     TextField(
-                      controller: _timeController,
-                      readOnly: true,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
-                        labelText: 'Time of Birth',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.access_time),
-                      ),
-                      onTap: () => _selectTime(context),
-                    ),
-                    const SizedBox(height: 20),
-
-                    TextField(
                       controller: _dateController,
                       readOnly: true,
                       decoration: const InputDecoration(
@@ -349,6 +312,21 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                         suffixIcon: Icon(Icons.calendar_today),
                       ),
                       onTap: () => _selectDate(context),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    TextField(
+                      controller: _timeController,
+                      readOnly: true,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                        labelText: 'Time of Birth',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.access_time),
+                      ),
+                      onTap: () => _selectTime(context),
                     ),
                     const SizedBox(height: 20),
                     //----------------------------------------------------------------------------
@@ -384,6 +362,8 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                                   _selectedLon = lon;
                                   _searchController.text =
                                       city; // Set the selected city
+                                  _latController.text = lat.toString();
+                                  _lonController.text = lon.toString();
                                   _cities.clear(); // Clear the dropdown
                                 });
                               },
@@ -412,7 +392,50 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                         ),
                       ),
 
-                    // Display selected city's details
+                    //--------------
+
+                    if (_selectedCity != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Coordinates (Editable):',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 8),
+                            TextFormField(
+                              controller: _latController,
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
+                              decoration: const InputDecoration(
+                                labelText: 'Latitude',
+                                border: OutlineInputBorder(),
+                              ),
+                              onChanged: (value) {
+                                _selectedLat = value;
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            TextFormField(
+                              controller: _lonController,
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
+                              decoration: const InputDecoration(
+                                labelText: 'Longitude',
+                                border: OutlineInputBorder(),
+                              ),
+                              onChanged: (value) {
+                                _selectedLon = value;
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+
+                    //--------------
+
                     // if (_selectedCity != null)
                     //   Padding(
                     //     padding: const EdgeInsets.all(3.0),
