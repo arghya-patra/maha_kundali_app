@@ -56,7 +56,10 @@ class _KpAstroFormState extends State<KpAstroForm>
     _dateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final now = TimeOfDay.now();
-      _timeController.text = now.format(context);
+      final String formattedTime = now.hour.toString().padLeft(2, '0') +
+          ':' +
+          now.minute.toString().padLeft(2, '0');
+      _timeController.text = formattedTime;
     });
 
     // Simulating loading time

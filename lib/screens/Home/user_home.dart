@@ -894,7 +894,9 @@ class _UserDashboardState extends State<UserDashboard> {
     LearnAstrologyScreen(),
     const FestivalScreen(),
     KpAstroForm(),
-    SateSatiForm(),
+    SateSatiForm(
+      isDasha: false,
+    ),
     const FestivalScreen(),
     const FestivalScreen(),
     const FestivalScreen(),

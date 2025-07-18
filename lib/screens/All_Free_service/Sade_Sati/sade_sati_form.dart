@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:maha_kundali_app/apiManager/apiData.dart';
+import 'package:maha_kundali_app/screens/All_Free_service/Dosha/dashaDetails.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/KPAstro/kp_astro_details.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/Sade_Sati/sade_sati_details.dart';
 import 'package:maha_kundali_app/screens/All_Free_service/Sade_Sati/sade_sati_details2.dart';
@@ -11,6 +12,8 @@ import 'package:shimmer/shimmer.dart';
 import 'package:http/http.dart' as http;
 
 class SateSatiForm extends StatefulWidget {
+  bool isDasha;
+  SateSatiForm({super.key, required this.isDasha});
   @override
   _SateSatiFormState createState() => _SateSatiFormState();
 }
@@ -25,8 +28,8 @@ class _SateSatiFormState extends State<SateSatiForm>
   final TextEditingController _lonController = TextEditingController();
 
   bool _isLoading2 = true;
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
+  // late AnimationController _animationController;
+  // late Animation<double> _fadeAnimation;
   String? svgData;
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
@@ -49,24 +52,27 @@ class _SateSatiFormState extends State<SateSatiForm>
     _searchController.text = _selectedCity!;
     _latController.text = _selectedLat!;
     _lonController.text = _selectedLon!;
-    _searchController.addListener(_onSearchChanged);
 
-    _animationController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 2));
+    // _animationController =
+    //     AnimationController(vsync: this, duration: const Duration(seconds: 2));
 
-    _fadeAnimation =
-        Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
+    // _fadeAnimation =
+    //     Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
     _dateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final now = TimeOfDay.now();
-      _timeController.text = now.format(context);
+      final String formattedTime = now.hour.toString().padLeft(2, '0') +
+          ':' +
+          now.minute.toString().padLeft(2, '0');
+      _timeController.text = formattedTime;
     });
     // Simulating loading time
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
         _isLoading2 = false;
       });
-      _animationController.forward();
+      _searchController.addListener(_onSearchChanged);
+      // _animationController.forward();
     });
   }
 
@@ -146,7 +152,7 @@ class _SateSatiFormState extends State<SateSatiForm>
 
   @override
   void dispose() {
-    _animationController.dispose();
+    //_animationController.dispose();
     _nameController.dispose();
     _placeController.dispose();
     _dateController.dispose();
@@ -187,7 +193,9 @@ class _SateSatiFormState extends State<SateSatiForm>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Know your Sade Sati'),
+        title: widget.isDasha
+            ? Text('Know your Dasha')
+            : Text('Know your Sade Sati'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -467,19 +475,36 @@ class _SateSatiFormState extends State<SateSatiForm>
 
                           // If all validations pass, proceed with submission
                           // submitData();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SadeSatiScreen(
-                                    name: _nameController.text,
-                                    dob: _dateController.text,
-                                    tob: _timeController.text,
-                                    pob: _selectedCity,
-                                    lat: _selectedLat,
-                                    lon: _selectedLon,
-                                    language: selectedLanguage,
-                                    gender: 'm')),
-                          );
+                          if (widget.isDasha) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DashaDetailsScreen(
+                                      name: _nameController.text,
+                                      dob: _dateController.text,
+                                      tob: _timeController.text,
+                                      pob: _selectedCity,
+                                      lat: _selectedLat,
+                                      lon: _selectedLon,
+                                      language: selectedLanguage,
+                                      screen: 'dos',
+                                      gender: 'm')),
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SadeSatiScreen(
+                                      name: _nameController.text,
+                                      dob: _dateController.text,
+                                      tob: _timeController.text,
+                                      pob: _selectedCity,
+                                      lat: _selectedLat,
+                                      lon: _selectedLon,
+                                      language: selectedLanguage,
+                                      gender: 'm')),
+                            );
+                          }
                           //submitData();
                           // Submit action and navigate to another screen
                         },

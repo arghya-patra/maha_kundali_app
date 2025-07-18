@@ -46,10 +46,10 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
       'subject': subCon.text,
       'message': msgCon.text
     });
-    print(res.statusCode);
+    print(["&&&&&", res.body]);
     print(res.body);
     if (res.statusCode == 200) {
-      print(res.body);
+      print(["%%%%%%%%%", res.body]);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Thank you for contacting us!"),

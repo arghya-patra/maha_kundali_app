@@ -50,7 +50,6 @@ class _BirthChartScreenState extends State<BirthChartScreen> {
     });
 
     try {
-      // Replace with your API URL
       String url = APIData.login;
 
       print(url.toString());
@@ -115,75 +114,62 @@ class _BirthChartScreenState extends State<BirthChartScreen> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          title ?? "Chart",
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-            letterSpacing: 1.0,
+    final chartKeys = chartData?.keys.toList() ?? [];
+
+    return DefaultTabController(
+      length: chartKeys.length,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            title ?? "Chart",
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+              letterSpacing: 1.0,
+            ),
           ),
-        ),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.orange, Colors.deepOrange],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.orange, Colors.deepOrange],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
             ),
           ),
         ),
-      ),
-      body: Center(
-        child: isLoading
-            ? const CircularProgressIndicator()
-            : SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // Spacing between title and subtitle
-
-                    // Subtitle Section
-                    // Padding(
-                    //   padding: const EdgeInsets.symmetric(
-                    //       horizontal: 8.0, vertical: 2),
-                    //   child: Text(
-                    //     widget.subTitle ?? "Default Subtitle",
-                    //     textAlign: TextAlign.center,
-                    //     style: TextStyle(
-                    //       fontSize: 16,
-                    //       fontWeight: FontWeight.w500,
-                    //       color: Colors.grey.shade700,
-                    //       letterSpacing: 0.5,
-                    //     ),
-                    //   ),
-                    // ),
-                    //    Lagna Chart
-                    _buildChartWidget('Lagna', chartData!['Lagna']),
-
-                    // Dreshkana Chart
-                    _buildChartWidget('Dreshkana', chartData!['Dreshkana']),
-                    _buildChartWidget('Somanatha', chartData!['Somanatha']),
-                    _buildChartWidget('Saptamsa', chartData!['Saptamsa']),
-                    _buildChartWidget('Navamsa', chartData!['Navamsa']),
-                    _buildChartWidget('Dasamsa', chartData!['Dasamsa']),
-                    _buildChartWidget('Dasamsa-EvenReverse',
-                        chartData!['Dasamsa-EvenReverse']),
-                    _buildChartWidget('Dwadasamsa', chartData!['Dwadasamsa']),
-                    _buildChartWidget('Shodashamsa', chartData!['Shodashamsa']),
-                    _buildChartWidget('Vimsamsa', chartData!['Vimsamsa']),
-                    _buildChartWidget(
-                        'ChaturVimshamsha', chartData!['ChaturVimshamsha']),
-                    _buildChartWidget('Trimshamsha', chartData!['Trimshamsha']),
-                    _buildChartWidget('KhaVedamsa', chartData!['KhaVedamsa']),
-                    _buildChartWidget(
-                        'AkshaVedamsa', chartData!['AkshaVedamsa']),
-                    _buildChartWidget('Shastiamsha', chartData!['Shastiamsha']),
-                  ],
-                ),
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Column(
+                children: [
+                  Container(
+                    // color: Color.fromARGB(255, 255, 166, 13),
+                    child: TabBar(
+                      isScrollable: true,
+                      indicatorColor: Colors.deepOrange,
+                      labelColor: Colors.deepOrange,
+                      unselectedLabelColor: Colors.black54,
+                      labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                      tabAlignment: TabAlignment.start,
+                      tabs: chartKeys
+                          .map((key) => Tab(text: key.replaceAll('-', '\n')))
+                          .toList(),
+                    ),
+                  ),
+                  Expanded(
+                    child: TabBarView(
+                      children: chartKeys.map((key) {
+                        return SingleChildScrollView(
+                          padding: const EdgeInsets.all(16),
+                          child: _buildChartWidget(key, chartData![key]),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
               ),
       ),
     );
@@ -191,9 +177,9 @@ class _BirthChartScreenState extends State<BirthChartScreen> {
 
   Widget _buildChartWidget(String title, String svgData) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             title,
@@ -202,7 +188,7 @@ class _BirthChartScreenState extends State<BirthChartScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           // Render the SVG image using an SVG package (like flutter_svg)
           SvgPicture.string(
             svgData,

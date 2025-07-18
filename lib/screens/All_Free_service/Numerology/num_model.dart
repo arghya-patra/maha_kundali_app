@@ -75,12 +75,12 @@ class NumerologyItem {
 
   factory NumerologyItem.fromJson(Map<String, dynamic> json) {
     return NumerologyItem(
-      title: json['title'],
-      category: json['category'],
-      number: json['number'],
-      master: json['master'],
-      meaning: json['meaning'],
-      description: json['description'],
+      title: json['title'] ?? "",
+      category: json['category'] ?? "",
+      number: json['number'] ?? "",
+      master: json['master'] ?? "",
+      meaning: json['meaning'] ?? "",
+      description: json['description'] ?? "",
     );
   }
 }

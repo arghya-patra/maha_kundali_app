@@ -23,8 +23,8 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
   final TextEditingController _lonController = TextEditingController();
 
   bool _isLoading2 = true;
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
+  //late AnimationController _animationController;
+  //late Animation<double> _fadeAnimation;
   String? svgData;
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
@@ -46,17 +46,19 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
     _searchController.text = _selectedCity!;
     _latController.text = _selectedLat!;
     _lonController.text = _selectedLon!;
-    _searchController.addListener(_onSearchChanged);
 
-    _animationController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 2));
+    // _animationController =
+    // AnimationController(vsync: this, duration: const Duration(seconds: 2));
 
-    _fadeAnimation =
-        Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
+    // _fadeAnimation =
+    //     Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
     _dateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final now = TimeOfDay.now();
-      _timeController.text = now.format(context);
+      final String formattedTime = now.hour.toString().padLeft(2, '0') +
+          ':' +
+          now.minute.toString().padLeft(2, '0');
+      _timeController.text = formattedTime;
     });
 
     // Simulating loading time
@@ -64,8 +66,9 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
       setState(() {
         _isLoading2 = false;
       });
-      _animationController.forward();
+      // _animationController.forward();
     });
+    _searchController.addListener(_onSearchChanged);
   }
 
   void _onSearchChanged() {
@@ -144,7 +147,7 @@ class _DoshaFormScreenState extends State<DoshaFormScreen>
 
   @override
   void dispose() {
-    _animationController.dispose();
+    // _animationController.dispose();
     _nameController.dispose();
     _placeController.dispose();
     _dateController.dispose();

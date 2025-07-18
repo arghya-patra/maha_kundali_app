@@ -153,6 +153,7 @@ class _MatchmakingScreenState extends State<MatchmakingScreen>
         bottom: TabBar(
           isScrollable: true,
           controller: _tabController,
+          tabAlignment: TabAlignment.start,
           tabs: const [
             Tab(text: "Ashtakoot"),
             Tab(text: "Aggregate"),

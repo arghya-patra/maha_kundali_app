@@ -302,6 +302,7 @@ class _LalKitabScreenState extends State<LalKitabScreen>
           isScrollable: true,
           labelColor: Colors.white,
           unselectedLabelColor: Colors.black,
+          tabAlignment: TabAlignment.start,
           tabs: const [
             Tab(text: 'Horoscope'),
             Tab(text: 'Debts'),

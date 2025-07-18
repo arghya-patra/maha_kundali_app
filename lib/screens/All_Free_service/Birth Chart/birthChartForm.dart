@@ -247,14 +247,7 @@ class _BirthChartFormScreenState extends State<BirthChartFormScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Get Your Chart?",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 10),
                     TextField(
                       controller: _nameController,
                       decoration: const InputDecoration(

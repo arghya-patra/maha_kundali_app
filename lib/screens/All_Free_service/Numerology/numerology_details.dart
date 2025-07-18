@@ -6,7 +6,7 @@ import 'package:shimmer/shimmer.dart';
 
 class NumerologyDetailsScreen extends StatefulWidget {
   String? name;
-  final Future<NumerologyResponse> futureNumerology;
+  final futureNumerology;
 
   // Constructor to receive the future from the previous screen
   NumerologyDetailsScreen({required this.futureNumerology, required this.name});
@@ -18,6 +18,11 @@ class NumerologyDetailsScreen extends StatefulWidget {
 
 class _NumerologyDetailsScreenState extends State<NumerologyDetailsScreen> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -27,9 +32,7 @@ class _NumerologyDetailsScreenState extends State<NumerologyDetailsScreen> {
       ),
       body: Column(
         children: [
-          const SizedBox(
-            height: 10,
-          ),
+          const SizedBox(height: 10),
           Text(
             "Numerology of ${widget.name}",
             style: const TextStyle(
@@ -50,13 +53,12 @@ class _NumerologyDetailsScreenState extends State<NumerologyDetailsScreen> {
             child: GestureDetector(
               onTap: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => LiveAstrologerListScreen(
-                              isChat: true,
-                            )));
-                // Navigator.push(context,
-                //     MaterialPageRoute(builder: (context) => VideoCallScreen()));
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        LiveAstrologerListScreen(isChat: false),
+                  ),
+                );
               },
               child: const Text(
                 'To know more talk to our Astrologers',
@@ -68,20 +70,8 @@ class _NumerologyDetailsScreenState extends State<NumerologyDetailsScreen> {
             ),
           ),
           Expanded(
-            child: FutureBuilder<NumerologyResponse>(
-              future: widget.futureNumerology,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return buildShimmerEffect();
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (snapshot.hasData) {
-                  return buildDetailsList(snapshot.data!.numerology.response);
-                } else {
-                  return const Center(child: Text('No data found'));
-                }
-              },
-            ),
+            child:
+                buildDetailsList(widget.futureNumerology.numerology.response),
           ),
         ],
       ),
@@ -187,14 +177,16 @@ class _NumerologyDetailsScreenState extends State<NumerologyDetailsScreen> {
                   color: Colors.orangeAccent,
                 ),
                 const SizedBox(height: 10),
-                Text(
-                  item.meaning,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
-                  ),
-                ),
+                item.meaning == ""
+                    ? Container()
+                    : Text(
+                        item.meaning,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                        ),
+                      ),
                 const SizedBox(height: 15),
                 Text(
                   item.description,

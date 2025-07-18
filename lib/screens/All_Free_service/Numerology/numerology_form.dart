@@ -215,9 +215,8 @@ class _NumerologyFormScreenState extends State<NumerologyFormScreen> {
                             _showError("Please select your date of birth.");
                             return;
                           }
-                          setState(() {
-                            futureNumerology = submitData();
-                          });
+                          var futureNumerology = await submitData();
+
                           //submitData();
                           // NumerologyResponse numRes = await submitData();
                           Navigator.push(
