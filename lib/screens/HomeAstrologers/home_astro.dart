@@ -7,7 +7,6 @@ import 'package:maha_kundali_app/apiManager/apiData.dart';
 import 'package:maha_kundali_app/screens/Authentication/login.dart';
 import 'package:maha_kundali_app/screens/HomeAstrologers/Followers/astrologer_followers.dart';
 import 'package:maha_kundali_app/screens/HomeAstrologers/PortFolio/galary_image.dart';
-import 'package:maha_kundali_app/screens/HomeAstrologers/PortFolio/galary_video.dart';
 import 'package:maha_kundali_app/screens/HomeAstrologers/Request%20Payout/request_payout.dart';
 import 'package:maha_kundali_app/screens/HomeAstrologers/Review/astrologer_reviews.dart';
 import 'package:maha_kundali_app/screens/HomeAstrologers/Upload_Product/productList.dart';
@@ -163,15 +162,15 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
                 right: 12,
                 child: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.account_balance_wallet_outlined,
                       color: Colors.white,
                       size: 29,
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Column(
                       children: [
-                        Text(
+                        const Text(
                           "Balance",
                           style: TextStyle(
                             color: Colors.white,
@@ -181,7 +180,7 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
                         ),
                         Text(
                           balance,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
@@ -200,7 +199,7 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
               children: [
                 _buildDrawerItem(Icons.home, 'Home'),
                 _buildDrawerItem(Icons.upload, 'Product Upload',
-                    route: SupplierProductListScreen()),
+                    route: const SupplierProductListScreen()),
                 _buildDrawerItem(Icons.list_alt, 'Booking List',
                     route: BookingListScreen()),
                 _buildDrawerItem(Icons.money_off_csred_sharp, 'Earnings',
@@ -374,7 +373,7 @@ class _HomeAstroScreenState extends State<HomeAstroScreen> {
         padding: EdgeInsets.zero,
         children: [
           UserAccountsDrawerHeader(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Colors.orange, Colors.red],
               ),

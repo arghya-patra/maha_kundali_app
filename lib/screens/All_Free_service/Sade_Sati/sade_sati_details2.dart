@@ -161,6 +161,16 @@ class _SadeSatiScreenState extends State<SadeSatiScreen>
         backgroundColor: Colors.orange,
         title: const Text("Sade Sati Details"),
         bottom: TabBar(
+          labelColor: Colors.white, // Selected tab text color
+          unselectedLabelColor: Colors.black, // Unselected tab text color
+          labelStyle: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+          unselectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 15,
+          ),
           controller: _tabController,
           tabs: [
             const Tab(text: "Sade Sati Table"),
@@ -291,12 +301,12 @@ class _SadeSatiScreenState extends State<SadeSatiScreen>
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.star, color: Colors.white, size: 20),
+          Icon(Icons.star, color: Colors.deepOrange, size: 20),
           const SizedBox(width: 8),
           Expanded(
             child: RichText(
               text: TextSpan(
-                style: const TextStyle(fontSize: 16, color: Colors.white),
+                style: const TextStyle(fontSize: 16, color: Colors.black),
                 children: [
                   TextSpan(
                     text: "$title: ",
@@ -321,12 +331,12 @@ class _SadeSatiScreenState extends State<SadeSatiScreen>
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: Colors.white, size: 20),
+          Icon(icon, color: Colors.deepOrange, size: 20),
           const SizedBox(width: 8),
           Expanded(
             child: RichText(
               text: TextSpan(
-                style: const TextStyle(fontSize: 16, color: Colors.white),
+                style: const TextStyle(fontSize: 16, color: Colors.black),
                 children: [
                   TextSpan(
                     text: "$title: ",

@@ -63,7 +63,7 @@ class _HoroscopeDetailsScreenState extends State<HoroscopeDetailsScreen>
         title: Text(
           'Horoscope Details',
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -167,12 +167,12 @@ class _HoroscopeDetailsScreenState extends State<HoroscopeDetailsScreen>
       title: Text(
         'Horoscope Details',
         style: TextStyle(
-          color: Colors.white,
+          color: Colors.black,
           fontWeight: FontWeight.bold,
         ),
       ),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.white),
+        icon: const Icon(Icons.arrow_back, color: Colors.black),
         onPressed: () => Navigator.pop(context),
       ),
       centerTitle: true, // Center the title
@@ -208,7 +208,7 @@ class _HoroscopeDetailsScreenState extends State<HoroscopeDetailsScreen>
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -244,7 +244,7 @@ class _HoroscopeDetailsScreenState extends State<HoroscopeDetailsScreen>
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -281,12 +281,12 @@ class _HoroscopeDetailsScreenState extends State<HoroscopeDetailsScreen>
         const SizedBox(height: 8),
         Text(
           title,
-          style: const TextStyle(color: Colors.white70),
+          style: const TextStyle(color: Colors.black),
         ),
         Text(
           value,
           style: const TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -321,7 +321,7 @@ class _HoroscopeDetailsScreenState extends State<HoroscopeDetailsScreen>
               Text(
                 category,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
@@ -331,7 +331,7 @@ class _HoroscopeDetailsScreenState extends State<HoroscopeDetailsScreen>
           const SizedBox(height: 8),
           Text(
             prediction,
-            style: const TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.black),
           ),
         ],
       ),
@@ -352,14 +352,14 @@ class _HoroscopeDetailsScreenState extends State<HoroscopeDetailsScreen>
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                 ),
                 const SizedBox(height: 12),
                 Text(
                   'Week ${data['week_number']}',
                   style: const TextStyle(
-                    color: Colors.white70,
+                    color: Colors.black,
                     fontSize: 16,
                   ),
                 ),
@@ -396,7 +396,7 @@ class _HoroscopeDetailsScreenState extends State<HoroscopeDetailsScreen>
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -428,14 +428,14 @@ class _HoroscopeDetailsScreenState extends State<HoroscopeDetailsScreen>
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                 ),
                 SizedBox(height: 8),
                 Text(
                   'Detailed predictions for each quarter',
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: Colors.black,
                     fontSize: 14,
                   ),
                 ),
@@ -467,7 +467,7 @@ class _HoroscopeDetailsScreenState extends State<HoroscopeDetailsScreen>
                           child: Text(
                             quarter['period'],
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: Colors.black,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -494,8 +494,8 @@ class _HoroscopeDetailsScreenState extends State<HoroscopeDetailsScreen>
                     Text(
                       quarter['prediction'],
                       style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
+                        color: Colors.black,
+                        fontSize: 16,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -531,7 +531,7 @@ class _HoroscopeDetailsScreenState extends State<HoroscopeDetailsScreen>
                                 ? Text(
                                     categoryData['prediction'] ?? '',
                                     style: const TextStyle(
-                                      color: Colors.white70,
+                                      color: Colors.black,
                                       fontSize: 13,
                                     ),
                                   )
